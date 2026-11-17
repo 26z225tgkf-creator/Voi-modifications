@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Voi en Europe — Nos pays</title>
+<meta name="description" content="Trouvez les vélos et trottinettes électriques Voi dans votre pays et votre ville : carte interactive des villes desservies en Europe.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --coral:#F26A5E; --coral-d:#D9564B; --coral-l:#FFE4DF;
+    --ink:#1B1716; --ink-2:#4A4240; --mute:#857B78;
+    --cream:#FFF8F4; --card:#FFFFFF; --line:#EFE3DE;
+    --mint:#DDF3EA; --mint-ink:#1F6B52;
+    --sky:#E3EEFF; --sky-ink:#244C8F;
+    --sea:#EAF2F5; --land:#F6E9E3; --land-on:#FFD3CC;
+    --r:18px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:"DM Sans",system-ui,sans-serif;color:var(--ink);background:var(--cream);line-height:1.55;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,.wordmark{font-family:"Bricolage Grotesque",sans-serif;letter-spacing:-.02em;line-height:1.08;margin:0}
+  a{color:inherit}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+  header.top{position:sticky;top:0;z-index:20;background:rgba(255,248,244,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  header.top .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .wordmark{font-size:30px;font-weight:800;text-decoration:none;color:var(--ink)}
+  .wordmark span{color:var(--coral)}
+  nav.top{display:flex;align-items:center}
+  nav.top a{font-weight:500;text-decoration:none;margin-left:22px;color:var(--ink-2)}
+  nav.top a.on{color:var(--ink);font-weight:700;box-shadow:inset 0 -2px 0 var(--coral)}
+  nav.top a:hover{color:var(--coral-d)}
+  .btn{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#fff;text-decoration:none;font-weight:700;padding:12px 20px;border-radius:999px;border:0;cursor:pointer;font-size:15px;font-family:inherit}
+  .btn.coral{background:var(--coral);color:#fff}
+  .btn.coral:hover{background:var(--coral-d)}
+  .btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+
+  .hero{padding:64px 0 28px}
+  .eyebrow{display:inline-block;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--coral-d);margin-bottom:14px}
+  .hero h1{font-size:clamp(40px,6vw,76px);font-weight:800;max-width:15ch}
+  .hero h1 em{font-style:normal;color:var(--coral)}
+  .hero p.lead{font-size:19px;color:var(--ink-2);max-width:58ch;margin:20px 0 0}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:36px 0 0}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px}
+  .stat b{display:block;font-family:"Bricolage Grotesque";font-size:32px;font-weight:800}
+  .stat span{color:var(--mute);font-size:14px}
+
+  /* map */
+  .mapcard{background:var(--sea);border:1px solid var(--line);border-radius:24px;overflow:hidden;position:relative}
+  .mapcard{height:clamp(600px, 82vh, 900px)}
+  /* the map library writes its own size on the map element: force it to fill the card */
+  #map,#map.map{position:absolute !important;top:0 !important;left:0 !important;right:0 !important;bottom:0 !important;width:100% !important;height:100% !important;display:block}
+  .map svg{display:block}
+  /* the map breaks out of the text column: wide on large screens */
+  #mapslot{width:min(calc(100vw - 40px), 1500px);margin-left:calc(50% - min(calc(50vw - 20px), 750px))}
+  .map.small{height:440px}
+  .maplegend{position:absolute;left:16px;bottom:14px;background:rgba(255,255,255,.92);border-radius:12px;padding:8px 12px;font-size:13px;display:flex;gap:14px;align-items:center;z-index:3}
+  .dot{display:inline-block;width:11px;height:11px;border-radius:50%;background:var(--coral);border:2px solid #fff;box-shadow:0 0 0 1px var(--coral-d);vertical-align:-1px;margin-right:6px}
+  .maphint{position:absolute;right:16px;top:14px;background:rgba(255,255,255,.92);border-radius:999px;padding:6px 12px;font-size:12.5px;color:var(--ink-2);z-index:3}
+  /* jsvectormap essentials (its stylesheet cannot load here) */
+  .jvm-container{position:relative;overflow:hidden;touch-action:none;height:100%;width:100%}
+  #map>svg,.jvm-container>svg{display:block}
+  .jvm-tooltip{position:absolute;display:none;z-index:999;background:var(--ink);color:#fff;font:600 13px "DM Sans",sans-serif;padding:6px 10px;border-radius:8px;white-space:nowrap;pointer-events:none;box-shadow:0 6px 16px rgba(0,0,0,.18)}
+  .jvm-tooltip.active{display:block}
+  .jvm-zoom-btn{position:absolute;left:14px;width:32px;height:32px;border-radius:10px;background:#fff;color:var(--ink);border:1px solid var(--line);display:grid;place-items:center;cursor:pointer;font:700 18px/1 "DM Sans";z-index:3;user-select:none}
+  .jvm-zoom-btn.jvm-zoomin{top:14px}
+  .jvm-zoom-btn.jvm-zoomout{top:52px}
+  .jvm-zoom-btn:hover{border-color:var(--coral);color:var(--coral-d)}
+  .jvm-region{transition:fill .15s}
+  .jvm-marker,.jvm-element{cursor:pointer}
+  /* automatic name labels on the map */
+  .maplabels{position:absolute;inset:0;pointer-events:none;z-index:4;overflow:hidden;transition:opacity .2s ease}
+  .maplabels.hide{opacity:0}
+  .mlabel{position:absolute;transform:translate(-50%,-100%);white-space:nowrap;transition:opacity .15s}
+  .mlabel.city{background:#B8372C;color:#fff;font:700 13.5px "DM Sans",sans-serif;padding:5px 10px;border-radius:8px;margin-top:-14px;box-shadow:0 6px 14px -6px rgba(94,26,20,.6)}
+  .mlabel.city::after{content:"";position:absolute;left:50%;bottom:-5px;transform:translateX(-50%);border:5px solid transparent;border-bottom:0;border-top-color:#B8372C}
+  .mlabel.country{transform:translate(-50%,0);font:800 22px "Bricolage Grotesque",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#5E1A14;opacity:.75;text-shadow:0 0 4px #fff,0 0 8px #fff,0 0 2px #fff}
+  /* fallback map */
+  .fallback{position:relative;height:100%;background:radial-gradient(circle at 30% 30%,#fff 0,var(--sea) 70%)}
+  .fallback svg{width:100%;height:100%}
+
+  /* country grid */
+  .sec-title{display:flex;justify-content:space-between;align-items:end;gap:16px;margin:52px 0 18px;flex-wrap:wrap}
+  .sec-title h2{font-size:36px;font-weight:800}
+  .tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .search{position:relative;min-width:280px}
+  .search input{width:100%;font:inherit;font-size:15.5px;padding:12px 16px 12px 42px;border-radius:999px;border:1.5px solid var(--line);background:#fff;outline:none}
+  .search input:focus{border-color:var(--coral)}
+  .search svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);opacity:.5}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;padding-bottom:20px}
+  .country{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;text-decoration:none;transition:transform .15s,box-shadow .15s}
+  .country:hover{transform:translateY(-3px);box-shadow:0 14px 30px -18px rgba(70,30,20,.35)}
+  .country .flag{font-size:30px;line-height:1}
+  .country h3{font-size:24px;font-weight:800;margin:10px 0 4px}
+  .country .count{color:var(--coral-d);font-weight:700;font-size:14px}
+  .country p{color:var(--ink-2);font-size:14.5px;margin:10px 0 0;flex:1}
+  .country .match{margin-top:10px;font-size:13.5px;background:var(--coral-l);color:var(--coral-d);padding:5px 10px;border-radius:999px;align-self:flex-start;font-weight:700}
+  .empty{display:none;padding:30px;text-align:center;color:var(--mute)}
+
+  .tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .tag{font-size:12.5px;font-weight:700;padding:5px 10px;border-radius:999px;white-space:nowrap}
+  .tag.bike{background:var(--mint);color:var(--mint-ink)}
+  .tag.scoot{background:var(--sky);color:var(--sky-ink)}
+  .tag.new{background:var(--coral);color:#fff}
+  .tag.soon{background:#FFF0C7;color:#7A5A00}
+
+  /* country page */
+  .crumbs{padding:28px 0 0;font-size:14px;color:var(--mute)}
+  .crumbs a{color:var(--mute)}
+  .phead{display:flex;justify-content:space-between;align-items:end;gap:30px;padding:22px 0 30px;flex-wrap:wrap}
+  .phead h1{font-size:clamp(42px,6.5vw,80px);font-weight:800}
+  .phead h1 .flag{font-size:.7em;margin-right:12px;vertical-align:.08em}
+  .phead .lead{font-size:18px;color:var(--ink-2);max-width:60ch;margin:16px 0 0}
+  .pstats{display:flex;gap:12px;flex-wrap:wrap}
+  .pstat{background:var(--coral);color:#fff;border-radius:18px;padding:14px 18px;min-width:130px}
+  .pstat b{display:block;font-family:"Bricolage Grotesque";font-size:30px;font-weight:800;line-height:1.1}
+  .pstat span{font-size:13.5px;opacity:.92}
+  .pstat.alt{background:var(--ink)}
+
+  .split{display:grid;grid-template-columns:1.55fr 1fr;gap:18px;align-items:start}
+  .clist{background:#fff;border:1px solid var(--line);border-radius:24px;padding:8px;max-height:520px;overflow:auto}
+  .citem{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:14px;text-decoration:none;cursor:pointer;border:1.5px solid transparent}
+  .citem:hover,.citem.on{background:var(--coral-l)}
+  .citem.on{border-color:var(--coral)}
+  .citem .pin{flex:none;width:28px;height:28px;border-radius:50%;background:var(--coral);color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px;margin-top:2px}
+  .citem b{display:block;font-size:16px}
+  .citem small{display:block;color:var(--ink-2);font-size:13.5px;line-height:1.4;margin-top:2px}
+  .citem .tags{margin:6px 0 0}
+  .citem .tag{font-size:11.5px;padding:3px 8px}
+  .citem .go{font-size:13px;font-weight:700;color:var(--coral-d);margin-top:4px;display:inline-block}
+  .clist.wide{max-height:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:4px;padding:10px;margin-top:16px}
+  .clist.wide h4{grid-column:1/-1}
+  .clist h4{margin:10px 14px 4px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute)}
+
+  section.block{padding:44px 0;border-top:1px solid var(--line);margin-top:44px}
+  section.block h2{font-size:32px;font-weight:800;margin-bottom:20px}
+  .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px}
+  .card h3{font-size:20px;margin-bottom:8px}
+  .card p{margin:0;color:var(--ink-2);font-size:15px}
+  .num{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--coral-l);color:var(--coral-d);font-weight:800;margin-bottom:12px}
+  .others{display:flex;gap:10px;flex-wrap:wrap}
+  .others a{text-decoration:none;background:#fff;border:1px solid var(--line);padding:10px 16px;border-radius:999px;font-weight:500}
+  .others a:hover{border-color:var(--coral);color:var(--coral-d)}
+  .appband{background:var(--ink);color:#fff;border-radius:28px;padding:40px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;margin:44px 0 70px}
+  .appband h2{font-size:34px}
+  .appband p{color:#CFC6C3;margin:8px 0 0}
+  .store{display:inline-flex;align-items:center;gap:10px;background:#fff;color:var(--ink);text-decoration:none;font-weight:700;padding:12px 18px;border-radius:14px}
+  .cta-row{display:flex;gap:10px;flex-wrap:wrap}
+  .note{font-size:14px;color:var(--mute);margin-top:14px}
+
+  /* France city page (reused) */
+  .chero{display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:end;padding:28px 0 44px}
+  .chero h1{font-size:clamp(42px,6.5vw,84px);font-weight:800}
+  .chero h1 small{display:block;font-size:.32em;font-weight:600;color:var(--coral-d);letter-spacing:0;margin-bottom:10px;font-family:"DM Sans"}
+  .chero .lead{font-size:18px;color:var(--ink-2);margin:18px 0 24px}
+  .figure{background:var(--coral);border-radius:28px;padding:30px;color:#fff;min-height:260px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+  .figure .big{font-family:"Bricolage Grotesque";font-weight:800;font-size:64px;line-height:1}
+  .figure .lbl{opacity:.9;font-weight:500}
+  .figure svg{position:absolute;right:-10px;bottom:-14px;opacity:.22}
+  .figure .row{display:flex;gap:28px;position:relative}
+  .communes{display:flex;flex-wrap:wrap;gap:8px}
+  .communes span{background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:14.5px}
+  .communes span.hl{border-color:var(--coral);color:var(--coral-d);font-weight:700}
+  table.prices{width:100%;border-collapse:collapse;background:#fff;border-radius:var(--r);overflow:hidden;border:1px solid var(--line)}
+  table.prices td,table.prices th{padding:14px 18px;text-align:left;border-bottom:1px solid var(--line);font-size:15.5px}
+  table.prices th{background:#FBF1EC;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2)}
+  table.prices td:last-child{font-weight:700;white-space:nowrap}
+  .highlights{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  .hl-item{display:flex;gap:14px;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:20px}
+  .hl-item .ic{flex:none;width:42px;height:42px;border-radius:12px;background:var(--coral-l);display:grid;place-items:center;font-size:20px}
+  .hl-item b{display:block;margin-bottom:3px}
+  .hl-item p{margin:0;color:var(--ink-2);font-size:15px}
+  details{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 20px;margin-bottom:10px}
+  summary{font-weight:700;cursor:pointer;list-style:none;display:flex;justify-content:space-between}
+  summary::after{content:"+";color:var(--coral-d);font-size:22px;line-height:1}
+  details[open] summary::after{content:"–"}
+  details p{margin:10px 0 0;color:var(--ink-2)}
+  footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--mute);font-size:13.5px}
+  footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+
+  @media (max-width:860px){
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .split,.chero{grid-template-columns:1fr}
+    .cols,.highlights{grid-template-columns:1fr}
+    .mapcard{height:74vh;min-height:460px}
+    nav.top a.hide-m{display:none}
+    .appband{padding:28px}
+    .clist{max-height:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="wordmark" href="#pays">voi<span>.</span></a>
+    <nav class="top">
+      <a href="#pays" class="on" id="nav-pays">Nos pays</a>
+      <a class="hide-m" href="#france">France</a>
+      <a class="btn coral" style="margin-left:22px;padding:9px 16px" href="https://apps.apple.com/fr/app/voi-trottinettes-et-v%C3%A9los/id1395921017">Télécharger l'app</a>
+    </nav>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<footer>
+  <div class="wrap">
+    <div>© Voi Technology — Vélos et trottinettes électriques en libre-service en Europe</div>
+    <div>Couverture et tarifs en temps réel : consultez l'application Voi.</div>
+  </div>
+</footer>
+
+<script>
+const APP_IOS = "https://apps.apple.com/fr/app/voi-trottinettes-et-v%C3%A9los/id1395921017";
+const APP_AND = "https://play.google.com/store/apps/details?id=io.voiapp.voi&hl=fr";
+
+const CITIES = [
+  {
+    id:"paris", name:"Paris", region:"Île-de-France",
+    bikes:true, scooters:false, since:"octobre 2025", badge:"new",
+    short:"6 000 vélos électriques neufs dans les 20 arrondissements.",
+    lead:"Depuis le 1er octobre 2025, Voi fait partie des trois opérateurs de vélos en libre-service retenus par la Ville de Paris. Un vélo électrique de dernière génération, à quelques pas de chez vous.",
+    figures:[["6 000","vélos électriques"],["20","arrondissements"]],
+    zone:["Paris intra-muros (75001 → 75020)"], zoneNote:"À Paris, les trottinettes en libre-service ne sont pas autorisées : Voi y propose uniquement des vélos électriques.",
+    highlights:[
+      ["🚲","Une flotte toute neuve","6 000 vélos électriques déployés dans la capitale pour le lancement."],
+      ["🅿️","Stationnement encadré","Garez-vous sur les emplacements autorisés indiqués dans l'application, en respectant les règles de stationnement fixées par la Ville."],
+      ["🚇","Dans Bonjour RATP","Les vélos Voi d'Île-de-France se louent aussi directement depuis l'application Bonjour RATP."],
+      ["⚡","Assistance électrique","Les côtes de Montmartre ou de Belleville, sans arriver en sueur au bureau."]
+    ],
+    faq:[
+      ["Peut-on louer une trottinette Voi à Paris ?","Non. Depuis 2023, les trottinettes en libre-service sont interdites à Paris. Voi y propose uniquement des vélos électriques."],
+      ["Où garer mon vélo Voi à Paris ?","Uniquement sur les emplacements autorisés visibles dans l'application. Un stationnement hors zone peut empêcher de terminer la location."]
+    ]
+  },
+  {
+    id:"marseille", name:"Marseille", region:"Provence-Alpes-Côte d'Azur",
+    bikes:true, scooters:true,
+    short:"Trottinettes et vélos électriques, du Vieux-Port aux quartiers nord.",
+    lead:"Marseille est l'une des villes historiques de Voi en France. On y trouve à la fois des trottinettes et des vélos électriques, pour relier les quartiers sans chercher de place pour se garer.",
+    figures:[["1 500","trottinettes"],["750","vélos électriques"]],
+    zone:["Les 16 arrondissements de Marseille"],
+    highlights:[
+      ["🛴","Trottinettes + vélos","Voi propose les deux types de véhicules à Marseille : à vous de choisir selon le trajet."],
+      ["⛰️","Vélo électrique pour les collines","Notre-Dame-de-la-Garde, le Roucas, la Corniche : l'assistance électrique fait le travail."],
+      ["🅿️","Zones de stationnement","Déposez votre véhicule sur une zone autorisée indiquée dans l'application."],
+      ["🌊","Zones interdites près de l'eau","Certaines zones, notamment autour du Vieux-Port, sont réglementées : l'application vous les signale."]
+    ],
+    faq:[
+      ["Voi propose-t-il des vélos à Marseille ?","Oui. En plus de ses trottinettes, Voi a lancé une flotte de 750 vélos électriques à Marseille."],
+      ["Faut-il un casque ?","Le casque est obligatoire pour les mineurs et fortement recommandé pour tous."]
+    ]
+  },
+  {
+    id:"grenoble", name:"Grenoble", region:"Auvergne-Rhône-Alpes · Grenoble-Alpes Métropole",
+    bikes:true, scooters:true, since:"été 2025",
+    short:"Vélos et trottinettes sur 17 communes de la métropole — même avec vos skis.",
+    lead:"Depuis l'été 2025, Voi équipe l'agglomération grenobloise en vélos et trottinettes électriques. Une offre pensée pour la montagne : certains vélos sont même équipés de porte-skis.",
+    figures:[["1 300","vélos"],["1 300","trottinettes"]],
+    zone:["Grenoble","+ 16 autres communes de l'agglomération"], zoneNote:"Le service couvre 17 communes de l'aire grenobloise. La carte détaillée des zones est disponible dans l'application.",
+    highlights:[
+      ["🎿","Vélos porte-skis","Une centaine de vélos sont équipés de porte-skis pour rejoindre les navettes vers les stations sans voiture."],
+      ["📍","Un local Voi en centre-ville","Un espace Voi a ouvert au printemps 2026 au cœur de Grenoble : questions, conseils, découverte des véhicules."],
+      ["🌿","Alternative à la voiture","Un service intégré à l'offre de mobilité de la métropole, en complément du tram et du bus."],
+      ["🛴","Deux modes au choix","Trottinette pour les trajets courts, vélo électrique pour aller plus loin."]
+    ],
+    faq:[
+      ["Quelles communes sont couvertes ?","Grenoble et 16 autres communes de l'agglomération. Ouvrez l'application pour voir la zone exacte autour de vous."],
+      ["Comment utiliser le porte-skis ?","Repérez les vélos équipés dans l'application, fixez vos skis sur le support avant de démarrer la location."]
+    ]
+  },
+  {
+    id:"nantes", name:"Nantes Métropole", region:"Pays de la Loire",
+    bikes:true, scooters:false, since:"octobre 2026", badge:"new",
+    short:"Le nouveau vélo en libre-service des 24 communes de la métropole.",
+    lead:"Depuis le 19 octobre 2026, Voi opère le service de vélos en libre-service de Nantes Métropole. 100 % électrique, avec des emplacements à moins de 500 mètres de 96 % des habitants.",
+    figures:[["2 400","vélos d'ici janv. 2027"],["658","emplacements"]],
+    zone:["Nantes","Rezé","Carquefou","La Chapelle-sur-Erdre","Sainte-Luce-sur-Loire","Thouaré-sur-Loire","+ 18 autres communes (déploiement progressif)"],
+    zoneHL:6,
+    zoneNote:"Déploiement en 3 phases : 6 communes au lancement, puis les 24 communes de la métropole au 1er janvier 2027. Des trottinettes compléteront l'offre à partir d'avril 2027.",
+    prices:[
+      ["À la minute","Sans frais de déverrouillage","0,21 € / min"],
+      ["Packs de minutes","De 30 à 700 minutes","de 2,99 € à 54,99 €"],
+      ["Tarif solidaire","Selon quotient familial","jusqu'à −80 %"],
+      ["Seniors 60+ et étudiants boursiers","","−60 %"],
+      ["Abonnés Naolib","2 fois par jour","5 min offertes"],
+      ["Départ/arrivée en quartier prioritaire ou pôle d'échanges","","−1 € / trajet"]
+    ],
+    highlights:[
+      ["🔋","130 km d'autonomie","Les batteries sont rechargées par nos équipes : vous n'avez qu'à rouler."],
+      ["🏠","La Maison Voi","Boulevard Guist'hau, plus une Maison Voi mobile qui circule dans les communes : essais et ateliers gratuits."],
+      ["⏱️","Réservation gratuite","Réservez un vélo jusqu'à 15 minutes à l'avance depuis l'application."],
+      ["🎟️","Lié à Naolib","5 minutes offertes deux fois par jour pour les abonnés du réseau Naolib."]
+    ],
+    faq:[
+      ["Y a-t-il des bornes ?","Non. Les emplacements sont marqués au sol et géolocalisés dans l'application. Si un emplacement est plein, l'application vous indique le plus proche."],
+      ["Comment terminer ma location ?","Garez le vélo sur un emplacement autorisé, prenez une photo dans l'application : la géolocalisation valide la fin de trajet."],
+      ["Que deviennent les anciens vélos Naolib (ex-Bicloo) ?","Ils sont remplacés par les vélos électriques Voi sur l'ensemble du territoire."]
+    ]
+  },
+  {
+    id:"le-havre", name:"Le Havre", region:"Normandie · Le Havre Seine Métropole",
+    bikes:true, scooters:true,
+    short:"Trottinettes et vélos électriques au Havre et à Octeville-sur-Mer.",
+    lead:"Retenu par Le Havre Seine Métropole, Voi propose trottinettes et vélos à assistance électrique en libre-service, du centre reconstruit classé UNESCO jusqu'au front de mer.",
+    figures:[["1 000+","trottinettes"],["350","vélos électriques"]],
+    zone:["Le Havre","Octeville-sur-Mer"],
+    zoneNote:"Les zones de dépose et les zones interdites (notamment près des bassins) sont affichées dans l'application.",
+    highlights:[
+      ["💶","Tarif social","Un tarif réduit est proposé aux personnes à faibles ressources."],
+      ["🏅","Conduite prudente récompensée","Un système d'incitations financières récompense les utilisateurs qui roulent prudemment."],
+      ["🌊","Du centre au front de mer","Idéal pour longer la plage ou rejoindre la gare."],
+      ["🛴","Trottinettes + vélos","Les deux véhicules sont disponibles sur la même zone."]
+    ],
+    faq:[
+      ["Qui peut bénéficier du tarif social ?","Les personnes à faibles ressources. Les conditions et justificatifs sont précisés dans l'application."]
+    ]
+  },
+  {
+    id:"saint-quentin-en-yvelines", name:"Saint-Quentin-en-Yvelines", region:"Île-de-France · Yvelines",
+    bikes:true, scooters:true,
+    short:"Trottinettes et vélos sur les 12 communes de l'agglomération.",
+    lead:"Voi est l'opérateur de trottinettes et vélos électriques en libre-service de l'agglomération de Saint-Quentin-en-Yvelines. Parfait pour rejoindre la gare ou le travail.",
+    figures:[["12","communes"],["45 000","utilisateurs"]],
+    zone:["Montigny-le-Bretonneux","Guyancourt","Trappes","Élancourt","Plaisir","Maurepas","Coignières","La Verrière","Les Clayes-sous-Bois","Villepreux","Voisins-le-Bretonneux","Magny-les-Hameaux"],
+    highlights:[
+      ["🚆","Rejoindre la gare","Gare de Saint-Quentin-en-Yvelines – Montigny-le-Bretonneux, La Verrière, Trappes : le premier et dernier kilomètre simplifié."],
+      ["🚇","Dans Bonjour RATP","Les véhicules Voi d'Île-de-France se louent aussi via l'application Bonjour RATP."],
+      ["🛴","Trottinettes + vélos","Les deux modes sont disponibles sur l'agglomération."],
+      ["🅿️","Stationnement en zones","Des zones de stationnement dédiées sont prévues dans chaque commune."]
+    ],
+    faq:[
+      ["Puis-je passer d'une commune à l'autre ?","Oui, le service couvre l'agglomération : vous pouvez démarrer dans une commune et terminer dans une autre, sur une zone autorisée."]
+    ]
+  },
+  {
+    id:"grand-paris-seine-oise", name:"Grand Paris Seine & Oise", region:"Île-de-France · Yvelines (GPS&O)",
+    bikes:true, scooters:true, since:"mai 2026", badge:"new",
+    short:"700 trottinettes et 300 vélos dans 12 communes, de Mantes à Conflans.",
+    lead:"Depuis le 4 mai 2026, Voi opère le service de trottinettes et vélos électriques en libre-service de la Communauté urbaine Grand Paris Seine & Oise. Pensé pour les trajets du quotidien et les liaisons vers les gares.",
+    figures:[["1 000","véhicules"],["~360","stations"]],
+    zone:["Les Mureaux","Poissy","Meulan-en-Yvelines","Conflans-Sainte-Honorine","Andrésy","Mantes-la-Jolie","Mantes-la-Ville","Hardricourt","Carrières-sous-Poissy","…"],
+    zoneNote:"12 communes desservies au total. Verneuil-sur-Seine et Vernouillet ont consulté leurs habitants en novembre 2026 sur l'arrivée du service.",
+    soon:["Verneuil-sur-Seine","Vernouillet"],
+    highlights:[
+      ["🚆","Vers les gares","Un service conçu en complément des transports en commun, pour les trajets courts et les rabattements vers les gares."],
+      ["🛴","700 trottinettes","Pour les trajets rapides en centre-ville."],
+      ["🚲","300 vélos électriques","Pour les distances plus longues, entre communes."],
+      ["📍","~360 stations","Des stations marquées au sol, réparties sur tout le territoire desservi."]
+    ],
+    faq:[
+      ["Comment commencer ?","Téléchargez l'application Voi, enregistrez votre carte bancaire, choisissez l'abonnement ou le pass qui vous convient, puis scannez un véhicule pour le déverrouiller."]
+    ]
+  }
+];
+
+
+
+/* Coordinates of the French territories (for the map) */
+const FR_COORDS = {
+  "paris":[48.8566,2.3522], "marseille":[43.2965,5.3698], "grenoble":[45.1885,5.7245],
+  "nantes":[47.2184,-1.5536], "le-havre":[49.4944,0.1079],
+  "saint-quentin-en-yvelines":[48.7712,2.0333], "grand-paris-seine-oise":[48.9913,1.9097]
+};
+
+/* m: "b" = vélos, "s" = trottinettes, "bs" = les deux, "" = non précisé */
+const COUNTRIES = [
+  { id:"france", volume:"10 000 – 15 000", prep:"en", code:"FR", flag:"🇫🇷", name:"France",
+    intro:"Troisième marché de Voi en 2026 : vélos électriques à Paris et Nantes, vélos et trottinettes à Marseille, Grenoble, Le Havre et dans les Yvelines.",
+    stats:[["7","territoires"],["65+","communes"],["11 000+","vélos électriques"]],
+    cities: CITIES.map(c=>({name:c.name, lat:FR_COORDS[c.id][0], lng:FR_COORDS[c.id][1], m:(c.bikes&&c.scooters)?"bs":c.bikes?"b":"s", note:c.short, link:"#"+c.id, isNew:c.badge==="new"}))
+  },
+  { id:"allemagne", volume:"30 000 – 40 000", prep:"en", code:"DE", flag:"🇩🇪", name:"Allemagne",
+    intro:"Premier marché de Voi, avec plus de 50 villes actives — de Berlin, capitale européenne de la micromobilité, à Magdebourg, où Voi est l'opérateur exclusif.",
+    stats:[["52","villes actives"],["n°1","marché Voi"]],
+    cities:[
+      {name:"Berlin",lat:52.52,lng:13.405,m:"s",note:"Plus de 25 millions de trajets Voi, nouvelle génération de trottinettes."},
+      {name:"Hambourg",lat:53.5511,lng:9.9937,m:"s"},
+      {name:"Munich",lat:48.1351,lng:11.582,m:"bs",note:"Environ 700 nouveaux vélos électriques en plus des trottinettes."},
+      {name:"Cologne",lat:50.9375,lng:6.9603,m:"s"},
+      {name:"Francfort",lat:50.1109,lng:8.6821,m:"s",note:"Voi retenu parmi les trois opérateurs de l'appel d'offres 2026."},
+      {name:"Düsseldorf",lat:51.2277,lng:6.7735,m:"s"},
+      {name:"Stuttgart",lat:48.7758,lng:9.1829,m:"s"},
+      {name:"Nuremberg",lat:49.4521,lng:11.0767,m:"s"},
+      {name:"Hanovre",lat:52.3759,lng:9.732,m:"s"},
+      {name:"Aix-la-Chapelle",lat:50.7753,lng:6.0839,m:"s"},
+      {name:"Lübeck",lat:53.8655,lng:10.6866,m:"bs"},
+      {name:"Magdebourg",lat:52.1205,lng:11.6276,m:"s",note:"Voi, seul opérateur de trottinettes de la ville."},
+      {name:"Mannheim",lat:49.4875,lng:8.466,m:"s"},
+      {name:"Darmstadt",lat:49.8728,lng:8.6512,m:"s"},
+      {name:"Potsdam",lat:52.3906,lng:13.0645,m:"s"},
+      {name:"Kiel",lat:54.3233,lng:10.1228,m:"s"},
+      {name:"Brunswick",lat:52.2689,lng:10.5268,m:"s"},
+      {name:"Wurtzbourg",lat:49.7913,lng:9.9534,m:"s"},
+      {name:"Tübingen",lat:48.5216,lng:9.0576,m:"s"}
+    ], more:"…et une trentaine d'autres villes allemandes."
+  },
+  { id:"royaume-uni", more:"…et d'autres villes.", volume:"20 000 – 30 000", prep:"au", code:"GB", flag:"🇬🇧", name:"Royaume-Uni",
+    intro:"Vélos et trottinettes électriques à Londres et dans les grandes villes universitaires, plus un réseau de vélos électriques en Écosse.",
+    stats:[["10","arrondissements à Londres"],["2,7 M","habitants couverts à Londres"]],
+    cities:[
+      {name:"Londres",lat:51.5074,lng:-0.1278,m:"bs",note:"Vélos et trottinettes dans 10 arrondissements (boroughs)."},
+      {name:"Birmingham",lat:52.4862,lng:-1.8904,m:"s"},
+      {name:"Bristol",lat:51.4545,lng:-2.5879,m:"s"},
+      {name:"Liverpool",lat:53.4084,lng:-2.9916,m:"bs"},
+      {name:"Oxford",lat:51.752,lng:-1.2577,m:"bs"},
+      {name:"Cambridge",lat:52.2053,lng:0.1218,m:"bs"},
+      {name:"Northampton",lat:52.2405,lng:-0.9027,m:"s"},
+      {name:"Peterborough",lat:52.5695,lng:-0.2405,m:"s"},
+      {name:"Coventry & Univ. de Warwick",lat:52.4068,lng:-1.5197,m:"s"},
+      {name:"Portsmouth",lat:50.8198,lng:-1.088,m:"bs"},
+      {name:"Southampton",lat:50.9097,lng:-1.4044,m:"bs"},
+      {name:"Île de Wight",lat:50.7006,lng:-1.2925,m:"bs"},
+      {name:"Glasgow",lat:55.8642,lng:-4.2518,m:"b",note:"Premier réseau de vélos 100 % électriques du Royaume-Uni."},
+      {name:"Édimbourg",lat:55.9533,lng:-3.1883,m:""},
+      {name:"Swansea",lat:51.6214,lng:-3.9436,m:"b",note:"Contrat de vélos électriques remporté auprès de la ville."}
+    ]
+  },
+  { id:"suede", more:"…et d'autres villes.", volume:"15 000 – 20 000", prep:"en", code:"SE", flag:"🇸🇪", name:"Suède",
+    intro:"Le pays natal de Voi, fondé à Stockholm en 2018. C'est ici que la nouvelle génération de véhicules 2026 a été déployée en premier.",
+    stats:[["2018","création à Stockholm"]],
+    cities:[
+      {name:"Stockholm",lat:59.3293,lng:18.0686,m:"bs",note:"Licence renouvelée en 2026 ; 3 000 trottinettes Voiager 9 déployées."},
+      {name:"Göteborg",lat:57.7089,lng:11.9746,m:"s"},
+      {name:"Malmö",lat:55.605,lng:13.0038,m:"s"},
+      {name:"Uppsala",lat:59.8586,lng:17.6389,m:"s"},
+      {name:"Lund",lat:55.7047,lng:13.191,m:"s"},
+      {name:"Helsingborg",lat:56.0465,lng:12.6945,m:"s"},
+      {name:"Linköping",lat:58.4108,lng:15.6214,m:"s"}
+    ]
+  },
+  { id:"norvege", more:"…et d'autres villes.", volume:"~10 000", prep:"en", code:"NO", flag:"🇳🇴", name:"Norvège",
+    intro:"Trottinettes Voi à Oslo (également réservables dans l'application Ruter), Bergen, Trondheim et Drammen.",
+    stats:[],
+    cities:[
+      {name:"Oslo",lat:59.9139,lng:10.7522,m:"s",note:"Aussi disponible dans l'application Ruter."},
+      {name:"Trondheim",lat:63.4305,lng:10.3951,m:"s",note:"Voi retenu comme l'un des trois opérateurs."},
+      {name:"Bergen",lat:60.3913,lng:5.3221,m:"s"},
+      {name:"Drammen",lat:59.7439,lng:10.2045,m:"s"}
+    ]
+  },
+  { id:"danemark", more:"…et d'autres villes.", volume:"~5 000", prep:"au", code:"DK", flag:"🇩🇰", name:"Danemark",
+    intro:"Présent depuis 2019 à Aarhus et Aalborg, Voi revient à Copenhague avec 4 500 vélos électriques.",
+    stats:[["4 500","vélos à Copenhague"],["2019","arrivée au Danemark"]],
+    cities:[
+      {name:"Copenhague",lat:55.6761,lng:12.5683,m:"b",note:"Retour avec 4 500 vélos électriques.",isNew:true},
+      {name:"Aarhus",lat:56.1629,lng:10.2039,m:"s"},
+      {name:"Aalborg",lat:57.0488,lng:9.9217,m:"s"},
+      {name:"Odense",lat:55.4038,lng:10.4024,m:"s"}
+    ]
+  },
+  { id:"finlande", more:"…et d'autres villes.", volume:"~8 000", prep:"en", code:"FI", flag:"🇫🇮", name:"Finlande",
+    intro:"Trottinettes électriques Voi dans les principales villes finlandaises, dont Helsinki et Vantaa, où Voi fait partie des opérateurs autorisés.",
+    stats:[],
+    cities:[
+      {name:"Helsinki",lat:60.1699,lng:24.9384,m:"s",note:"Un des trois opérateurs autorisés pour la saison 2026."},
+      {name:"Tampere",lat:61.4978,lng:23.761,m:"s"},
+      {name:"Turku",lat:60.4518,lng:22.2666,m:"s"},
+      {name:"Vantaa",lat:60.2934,lng:25.0378,m:"s"}
+    ]
+  },
+  { id:"suisse", volume:"5 000 – 8 000", prep:"en", code:"CH", flag:"🇨🇭", name:"Suisse",
+    intro:"Voi est présent dans 16 villes et communes suisses. Zurich a été la première ville du pays à accueillir le vélo électrique Explorer 4.",
+    stats:[["16","villes et communes"]],
+    cities:[
+      {name:"Zurich",lat:47.3769,lng:8.5417,m:"bs",note:"Trottinettes et vélos électriques Explorer 4."},
+      {name:"Berne",lat:46.948,lng:7.4474,m:"s",note:"Autorisation jusqu'en 2029 ; stationnements dans les gares BLS."},
+      {name:"Winterthour",lat:47.4988,lng:8.7237,m:"s",note:"Première ville suisse de Voi, en 2019."},
+      {name:"Bâle",lat:47.5596,lng:7.5886,m:"s"},
+      {name:"Saint-Gall",lat:47.4245,lng:9.3767,m:"s"},
+      {name:"Frauenfeld",lat:47.5536,lng:8.8986,m:"s"},
+      {name:"Illnau-Effretikon",lat:47.4076,lng:8.7246,m:"s"}
+    ], more:"…et d'autres communes des agglomérations."
+  },
+  { id:"autriche", prep:"en", code:"AT", flag:"🇦🇹", name:"Autriche",
+    intro:"Plus de 2 millions de trajets Voi à Vienne, et une nouvelle ville en 2026 : Innsbruck.",
+    stats:[["2 M+","trajets à Vienne"],["180","trottinettes à Innsbruck"]],
+    cities:[
+      {name:"Vienne",lat:48.2082,lng:16.3738,m:"s",note:"Plus de 2 millions de trajets."},
+      {name:"Innsbruck",lat:47.2692,lng:11.4041,m:"s",note:"Lancement le 25 mars 2026 avec 180 trottinettes.",isNew:true}
+    ]
+  },
+  { id:"italie", more:"…et d'autres villes.", volume:"8 000 – 12 000", prep:"en", code:"IT", flag:"🇮🇹", name:"Italie",
+    intro:"Trottinettes Voi du nord au sud de la péninsule : Milan, Rome, Turin, Bologne, Gênes, Naples…",
+    stats:[],
+    cities:[
+      {name:"Milan",lat:45.4642,lng:9.19,m:"s"},
+      {name:"Rome",lat:41.9028,lng:12.4964,m:"s"},
+      {name:"Turin",lat:45.0703,lng:7.6869,m:"s"},
+      {name:"Bologne",lat:44.4949,lng:11.3426,m:"s"},
+      {name:"Gênes",lat:44.4056,lng:8.9463,m:"s"},
+      {name:"Reggio d'Émilie",lat:44.6989,lng:10.6297,m:"s"},
+      {name:"Naples",lat:40.8518,lng:14.2681,m:"s"}
+    ]
+  },
+  { id:"espagne", volume:"3 000 – 5 000", prep:"en", code:"ES", flag:"🇪🇸", name:"Espagne",
+    intro:"Trottinettes électriques Voi en Andalousie et à Madrid.",
+    stats:[],
+    cities:[
+      {name:"Madrid",lat:40.4168,lng:-3.7038,m:"s"},
+      {name:"Séville",lat:37.3891,lng:-5.9845,m:"s"},
+      {name:"Malaga",lat:36.7213,lng:-4.4214,m:"s"}
+    ], more:"…et d'autres villes espagnoles."
+  },
+  { id:"portugal", volume:"~3 000", prep:"au", code:"PT", flag:"🇵🇹", name:"Portugal",
+    intro:"Trottinettes électriques Voi à Lisbonne et à Porto.",
+    stats:[],
+    cities:[
+      {name:"Lisbonne",lat:38.7223,lng:-9.1393,m:"s"},
+      {name:"Porto",lat:41.1579,lng:-8.6291,m:"s"}
+    ], more:"…et d'autres villes portugaises."
+  },
+  { id:"belgique", more:"…et d'autres villes.", volume:"2 000 – 4 000", prep:"en", code:"BE", flag:"🇧🇪", name:"Belgique",
+    intro:"Vélos et trottinettes électriques Voi à Bruxelles et à Anvers.",
+    stats:[],
+    cities:[
+      {name:"Bruxelles",lat:50.8503,lng:4.3517,m:"bs"},
+      {name:"Anvers",lat:51.2194,lng:4.4025,m:"s"}
+    ]
+  },
+  { id:"pays-bas", prep:"aux", code:"NL", flag:"🇳🇱", name:"Pays-Bas",
+    intro:"13e pays de Voi depuis avril 2026 : 800 vélos (électriques et classiques) dans les régions d'Amersfoort et du Gooi & Vechtstreek. On peut prendre un vélo dans une commune et le rendre dans une autre.",
+    stats:[["10","communes"],["800","vélos"]],
+    cities:[
+      {name:"Amersfoort",lat:52.1561,lng:5.3878,m:"b",isNew:true},
+      {name:"Hilversum",lat:52.2292,lng:5.1669,m:"b",isNew:true},
+      {name:"Gooise Meren (Bussum)",lat:52.2738,lng:5.1606,m:"b",isNew:true},
+      {name:"Soest",lat:52.1739,lng:5.2911,m:"b",isNew:true},
+      {name:"Baarn",lat:52.2112,lng:5.2875,m:"b",isNew:true},
+      {name:"Huizen",lat:52.2994,lng:5.2417,m:"b",isNew:true},
+      {name:"Laren",lat:52.2567,lng:5.2276,m:"b",isNew:true},
+      {name:"Blaricum",lat:52.2723,lng:5.2433,m:"b",isNew:true},
+      {name:"Eemnes",lat:52.2537,lng:5.2567,m:"b",isNew:true},
+      {name:"Wijdemeren",lat:52.2036,lng:5.0735,m:"b",isNew:true}
+    ]
+  }
+];
+
+const ORDER=["france","allemagne","royaume-uni","suede","norvege","italie","finlande","suisse","danemark","espagne","portugal","belgique","autriche","pays-bas"];
+COUNTRIES.sort((a,b)=>ORDER.indexOf(a.id)-ORDER.indexOf(b.id));
+
+const HOW = [
+  ["Téléchargez l'app","Disponible gratuitement sur App Store et Google Play. Créez votre compte et ajoutez un moyen de paiement."],
+  ["Trouvez & scannez","La carte affiche les véhicules disponibles autour de vous. Scannez le QR code pour déverrouiller."],
+  ["Roulez & garez-vous","Terminez sur une zone de stationnement autorisée, prenez une photo, c'est fini."]
+];
+
+const $app = document.getElementById("app");
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+const totalCities = COUNTRIES.reduce((n,c)=>n+c.cities.length,0);
+
+function modeTags(m,isNew){
+  let t="";
+  if(isNew) t+=`<span class="tag new">Nouveau</span>`;
+  if(m.includes("b")) t+=`<span class="tag bike">Vélos électriques</span>`;
+  if(m.includes("s")) t+=`<span class="tag scoot">Trottinettes</span>`;
+  return t;
+}
+function franceTags(c){ return modeTags((c.bikes?"b":"")+(c.scooters?"s":""), c.badge==="new"); }
+
+/* ---------------- MAP (one single map kept alive across pages) ---------------- */
+let currentMap=null;
+function loadScript(src){ return new Promise((ok,ko)=>{const s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=ko;document.head.appendChild(s);}); }
+const LIB = (async()=>{
+  const tries=[
+    ["https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/js/jsvectormap.min.js","https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/maps/world.js"],
+    ["https://cdn.jsdelivr.net/npm/jsvectormap@1.6.0/dist/jsvectormap.min.js","https://cdn.jsdelivr.net/npm/jsvectormap@1.6.0/dist/maps/world.js"],
+    ["https://unpkg.com/jsvectormap@1.5.3/dist/js/jsvectormap.min.js","https://unpkg.com/jsvectormap@1.5.3/dist/maps/world.js"]
+  ];
+  for(const [lib,map] of tries){
+    try{
+      if(typeof window.jsVectorMap==="undefined") await loadScript(lib);
+      await loadScript(map);
+      return true;
+    }catch(e){}
+  }
+  return false;
+})();
+
+/* every city of every country, with a global index */
+const ALL=[];
+COUNTRIES.forEach(c=>c.cities.forEach((ct,j)=>{ ct.g=ALL.length; ALL.push(Object.assign({},ct,{country:c, j})); }));
+const EUROPE=["PT","FI","GB","IT","NO","AT"];
+const CITY_SCALE=30;
+
+const legend = `<div class="maplegend"><span><span class="dot"></span>Ville desservie par Voi</span><span><span class="dot" style="background:#B8372C;border-color:#5E1A14;box-shadow:none"></span>Ville sélectionnée</span></div>`;
+const MAPCARD=document.createElement("div");
+MAPCARD.className="mapcard";
+MAPCARD.innerHTML=`<div id="map" class="map"></div>${legend}<div class="maplabels" id="maplabels"></div>`;
+const MAPEL=MAPCARD.querySelector("#map");
+const LABELS=MAPCARD.querySelector("#maplabels");
+
+MAPEL.addEventListener("mouseout",()=>requestAnimationFrame(paintSelection));
+const VIEW={ target:{type:"europe"}, sel:-1, country:null, onCountryPick:null };
+let mapStarted=false, mapReady=false, fallbackMode=false;
+
+function mountMap(slot){ slot.appendChild(MAPCARD); if(!mapStarted){ mapStarted=true; initMap(); } else fitMapToBox(); }
+
+async function initMap(){
+  const ok=await LIB;
+  if(!ok || typeof jsVectorMap==="undefined"){ fallbackMode=true; mapReady=true; return applyView(false); }
+  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));  /* wait for final layout */
+  createMap();
+}
+let __builtW=0, __builtH=0;
+function createMap(){
+  try{ cancelAnimationFrame(__anim); __gliding=false; }catch(e){}
+  try{ currentMap && currentMap.destroy && currentMap.destroy(); }catch(e){}
+  document.querySelectorAll(".jvm-tooltip").forEach(x=>x.remove());
+  MAPEL.innerHTML="";
+  __builtW=MAPEL.clientWidth; __builtH=MAPEL.clientHeight;
+  try{
+    currentMap=new jsVectorMap({
+      selector: MAPEL, map:"world", backgroundColor:"transparent",
+      zoomButtons:true, zoomOnScroll:false, zoomMax:80, zoomAnimate:true,
+      regionsSelectable:false, markersSelectable:false,
+      selectedRegions: COUNTRIES.map(c=>c.code),
+      regionStyle:{
+        initial:{fill:"#F3E3DC", stroke:"#ffffff", strokeWidth:.4, fillOpacity:1},
+        hover:{fillOpacity:.85, cursor:"pointer"},
+        selected:{fill:"#FFC9C0"}
+      },
+      markers: ALL.map(m=>({name:m.name, coords:[m.lat,m.lng]})),
+      markerStyle:{
+        initial:{fill:"#F26A5E", stroke:"#ffffff", strokeWidth:2, r:6},
+        hover:{fill:"#D9564B", cursor:"pointer"}
+      },
+      onRegionTooltipShow(event, tooltip, code){
+        const c=COUNTRIES.find(x=>x.code===code);
+        if(!c){ event.preventDefault && event.preventDefault(); return; }
+        tooltip.text && tooltip.text(`${c.flag} ${c.name} · ${c.cities.length}${c.more?"+":""} villes`);
+      },
+      onRegionClick(e, code){
+        const c=COUNTRIES.find(x=>x.code===code);
+        if(c && location.hash!=="#"+c.id) location.hash=c.id;
+      },
+      onMarkerClick(e, g){ handleMarker(+g); },
+      onViewportChange(){ labelsWhileMoving(); }
+    });
+    mapReady=true;
+    applyView(false);   /* first display: straight to the right place, no animation */
+  }catch(err){ fallbackMode=true; mapReady=true; applyView(false); }
+}
+
+/* Move the map to VIEW.target. One single zoom from wherever the map currently is. */
+function applyView(animate){
+  if(!mapReady) return;
+  if(fallbackMode){ drawFallback(); return placeLabels(); }
+  paintSelection();
+  const t=VIEW.target;
+  const cfg = t.type==="city" ? {coords:t.coords, scale:CITY_SCALE}
+            : t.type==="country" ? (countryCfg(VIEW.country) || {regions:[t.code]})
+            : {regions: EUROPE};
+  LABELS.classList.add("hide");
+  clearTimeout(__lblTimer);
+  const showLabels=()=>{ clearTimeout(__lblTimer); __lblTimer=setTimeout(()=>{ placeLabels(); LABELS.classList.remove("hide"); }, 40); };
+  if(animate && glideTo(cfg, showLabels)) return;
+  try{ currentMap.setFocus(Object.assign(cfg,{animate:!!animate})); }
+  catch(e){ try{ currentMap.setFocus(cfg); }catch(_){} }
+  __lblTimer=setTimeout(()=>{ placeLabels(); LABELS.classList.remove("hide"); }, animate?700:80);
+}
+
+/* Frame a country on its Voi cities (not on its whole territory: the "FR" shape
+   also contains overseas departments, which pulled the view far to the side). */
+function countryCfg(c){
+  const m=currentMap; if(!m || !c) return null;
+  const base=m._baseScale || m.baseScale;
+  if(!base || typeof m.scale!=="number") return null;
+  const nodes=markerNodes(); if(nodes.length!==ALL.length) return null;
+  const by=(f,dir)=>ALL.reduce((best,x,i)=> best<0 || (dir*(f(x)-f(ALL[best]))>0) ? i : best, -1);
+  const iW=by(x=>x.lng,-1), iE=by(x=>x.lng,1), iS=by(x=>x.lat,-1), iN=by(x=>x.lat,1);
+  const R=i=>nodes[i].getBoundingClientRect();
+  const kx=(R(iE).left-R(iW).left)/(ALL[iE].lng-ALL[iW].lng)/m.scale;
+  const ky=(R(iS).top-R(iN).top)/(ALL[iN].lat-ALL[iS].lat)/m.scale;
+  if(!(kx>0) || !(ky>0)) return null;
+  const la=c.cities.map(x=>x.lat), lo=c.cities.map(x=>x.lng);
+  const minLa=Math.min(...la), maxLa=Math.max(...la), minLo=Math.min(...lo), maxLo=Math.max(...lo);
+  const W=MAPEL.clientWidth, H=MAPEL.clientHeight;
+  const spanLo=Math.max(maxLo-minLo, 1.6), spanLa=Math.max(maxLa-minLa, 1.0);
+  const sAbs=Math.min(W*0.72/(spanLo*kx), H*0.62/(spanLa*ky));
+  const rel=Math.min(sAbs/base, CITY_SCALE*0.8);
+  return {coords:[(minLa+maxLa)/2, (minLo+maxLo)/2], scale:rel};
+}
+
+/* Keep the framing right if the map box changes size (fonts, window, mobile rotation) */
+if(typeof ResizeObserver!=="undefined"){
+  let lastW=0, lastH=0, rT=null;
+  new ResizeObserver(()=>{
+    const w=MAPEL.clientWidth, h=MAPEL.clientHeight;
+    if(!w || !h || (w===lastW && h===lastH)) return; lastW=w; lastH=h;
+    clearTimeout(rT); rT=setTimeout(fitMapToBox, 120);
+  }).observe(MAPEL);
+}
+/* Make the drawing fill the whole map box (the library only measures its box on window resize) */
+/* The map library measures its box only once: whenever the box size differs from
+   the size the map was drawn at, redraw it at the right size, at the same place. */
+function fitMapToBox(){
+  if(!currentMap || fallbackMode) return;
+  const w=MAPEL.clientWidth, h=MAPEL.clientHeight;
+  if(!w || !h) return;
+  if(Math.abs(w-__builtW)>2 || Math.abs(h-__builtH)>2) createMap();
+}
+
+/* Smooth camera move: eased glide (and zoom if needed) from the current view to the target,
+   drawn frame by frame. Between two nearby cities it is a pure slide at the same zoom. */
+let __anim=null, __gliding=false;
+function glideTo(cfg, done){
+  const m=currentMap;
+  if(!m || typeof m._applyTransform!=="function" || typeof m.scale!=="number") return false;
+  const W=MAPEL.clientWidth, H=MAPEL.clientHeight; if(!W||!H) return false;
+  cancelAnimationFrame(__anim);
+  const s0=m.scale, x0=m.transX, y0=m.transY;
+  try{ m.setFocus(Object.assign({},cfg,{animate:false})); }catch(e){ return false; }
+  const s1=m.scale, x1=m.transX, y1=m.transY;
+  const set=(s,x,y)=>{ m.scale=s; m.transX=x; m.transY=y; m._applyTransform(); };
+  set(s0,x0,y0);
+  const c0x=W/(2*s0)-x0, c0y=H/(2*s0)-y0, c1x=W/(2*s1)-x1, c1y=H/(2*s1)-y1;
+  const zoomChange=Math.abs(Math.log(s1/s0));
+  const dist=Math.hypot((c1x-c0x)*s0,(c1y-c0y)*s0);            /* on-screen distance in px */
+  const dur=Math.min(1300, 550 + zoomChange*170 + Math.min(dist,1500)*0.12);
+  const ease=p=>p<.5 ? 4*p*p*p : 1-Math.pow(-2*p+2,3)/2;
+  const t0=performance.now(); __gliding=true;
+  const step=now=>{
+    const p=Math.min(1,(now-t0)/dur), e=ease(p);
+    const s=s0*Math.pow(s1/s0,e);
+    const cx=c0x+(c1x-c0x)*e, cy=c0y+(c1y-c0y)*e;
+    set(s, W/(2*s)-cx, H/(2*s)-cy);
+    if(p<1) __anim=requestAnimationFrame(step);
+    else { set(s1,x1,y1); __gliding=false; paintSelection(); done&&done(); }
+  };
+  __anim=requestAnimationFrame(step);
+  return true;
+}
+function goTo(target, sel, country, animate){
+  VIEW.target=target; VIEW.sel=(sel==null?-1:sel); VIEW.country=country||null;
+  applyView(animate && mapReady);
+}
+
+function handleMarker(g){
+  const m=ALL[g]; if(!m) return;
+  if(m.link){ if(location.hash!==m.link) location.hash=m.link.slice(1); return; }
+  if(VIEW.onCountryPick && VIEW.country===m.country){ VIEW.onCountryPick(m.j); return; }
+  window.__pendingCity=m.name; location.hash=m.country.id;
+}
+
+function markerNodes(){
+  let n=[...MAPEL.querySelectorAll("circle.jvm-marker, circle[data-index]")];
+  n=[...new Set(n)];
+  if(n.length && n[0].hasAttribute("data-index")) n.sort((p,q)=>(+p.getAttribute("data-index"))-(+q.getAttribute("data-index")));
+  return n;
+}
+function paintSelection(){
+  markerNodes().forEach((n,i)=>{
+    const s=i===VIEW.sel;
+    n.setAttribute("fill", s?"#B8372C":"#F26A5E"); n.style.fill = s?"#B8372C":"";
+    n.setAttribute("stroke", s?"#5E1A14":"#ffffff"); n.style.stroke = s?"#5E1A14":"";
+    n.setAttribute("stroke-width", s?2.5:2); n.setAttribute("r", s?7.5:6);
+  });
+}
+
+/* names written on the map */
+let __lblTimer=null;
+function labelsWhileMoving(){
+  if(__gliding) return;
+  LABELS.classList.add("hide");
+  clearTimeout(__lblTimer);
+  __lblTimer=setTimeout(()=>{ placeLabels(); LABELS.classList.remove("hide"); }, 180);
+}
+function placeLabels(){
+  if(!document.body.contains(MAPCARD)) return;
+  const base=LABELS.getBoundingClientRect();
+  const nodes = fallbackMode ? [...MAPEL.querySelectorAll(".fb circle")] : markerNodes();
+  const idx = fallbackMode ? (MAPEL.__fbIdx||[]) : ALL.map((_,i)=>i);
+  const pos = g => { const k=idx.indexOf(g); const n=nodes[k]; if(!n) return null; const r=n.getBoundingClientRect(); return {x:r.left+r.width/2-base.left, y:r.top+r.height/2-base.top, top:r.top-base.top, bottom:r.bottom-base.top}; };
+  let html="";
+  if(VIEW.country){
+    const pts=VIEW.country.cities.map(ct=>pos(ct.g)).filter(Boolean).filter(p=>p.x>-40&&p.x<base.width+40&&p.y>-40&&p.y<base.height+40);
+    if(pts.length){
+      const cx=pts.reduce((a,p)=>a+p.x,0)/pts.length;
+      const y=Math.min(Math.max(...pts.map(p=>p.bottom))+16, base.height-40);
+      html+=`<div class="mlabel country" style="left:${Math.min(Math.max(cx,90),base.width-90)}px;top:${y}px">${esc(VIEW.country.name)}</div>`;
+    }
+  }
+  if(VIEW.sel>=0){
+    const p=pos(VIEW.sel);
+    if(p) html+=`<div class="mlabel city" style="left:${p.x}px;top:${p.top}px">${esc(ALL[VIEW.sel].name)}</div>`;
+  }
+  LABELS.innerHTML=html;
+}
+window.addEventListener("resize",()=>{ clearTimeout(window.__rz); window.__rz=setTimeout(()=>{ fitMapToBox(); placeLabels(); },150); });
+
+/* fallback (map library unavailable): simple projected dot map of the current view */
+function drawFallback(){
+  const list = VIEW.country ? VIEW.country.cities.map(c=>c.g) : ALL.map((_,i)=>i);
+  MAPEL.__fbIdx=list;
+  const markers=list.map(g=>ALL[g]);
+  const lats=markers.map(m=>m.lat), lngs=markers.map(m=>m.lng);
+  let minLa=Math.min(...lats), maxLa=Math.max(...lats), minLo=Math.min(...lngs), maxLo=Math.max(...lngs);
+  const padLa=Math.max(.6,(maxLa-minLa)*.15), padLo=Math.max(.9,(maxLo-minLo)*.15);
+  minLa-=padLa;maxLa+=padLa;minLo-=padLo;maxLo+=padLo;
+  const W=1000,H=600, k=Math.cos((minLa+maxLa)/2*Math.PI/180);
+  const s=Math.min(W/((maxLo-minLo)*k), H/(maxLa-minLa));
+  const ox=(W-(maxLo-minLo)*k*s)/2, oy=(H-(maxLa-minLa)*s)/2;
+  MAPEL.innerHTML=`<div class="fallback"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${
+    markers.map((m,i)=>{const x=ox+(m.lng-minLo)*k*s, y=oy+(maxLa-m.lat)*s, on=list[i]===VIEW.sel;
+      return `<g class="fb" data-g="${list[i]}" style="cursor:pointer"><circle cx="${x}" cy="${y}" r="${on?10:9}" fill="${on?"#B8372C":"#F26A5E"}" stroke="${on?"#5E1A14":"#fff"}" stroke-width="3"/>${on?"":`<text x="${x+13}" y="${y+5}" font-family="DM Sans" font-size="17" font-weight="600" fill="#1B1716">${esc(m.name)}</text>`}</g>`}).join("")
+  }</svg></div>`;
+  MAPEL.querySelectorAll(".fb").forEach(gr=>gr.addEventListener("click",()=>handleMarker(+gr.dataset.g)));
+}
+
+function scrollToMap(behavior){
+  if(!document.body.contains(MAPCARD)) return;
+  const y=MAPCARD.getBoundingClientRect().top + window.scrollY - 80;
+  window.scrollTo({top:Math.max(0,y), behavior: behavior||"smooth"});
+}
+function mapOnScreen(){
+  const r=MAPCARD.getBoundingClientRect();
+  return r.top>=40 && r.bottom<=window.innerHeight+40;
+}
+
+/* ---------------- BLOCKS ---------------- */
+function howBlock(){
+  return `<section class="block"><h2>Comment ça marche</h2><div class="cols">${
+    HOW.map((h,i)=>`<div class="card"><div class="num">${i+1}</div><h3>${h[0]}</h3><p>${h[1]}</p></div>`).join("")
+  }</div></section>`;
+}
+function appBand(where){
+  return `<div class="appband"><div><h2>${where?`Prêt à rouler ${where} ?`:"Prêt à rouler ?"}</h2><p>Téléchargez l'application Voi et trouvez le véhicule le plus proche.</p></div>
+  <div class="cta-row"><a class="store" href="${APP_IOS}"> App Store</a><a class="store" href="${APP_AND}">▶ Google Play</a></div></div>`;
+}
+
+/* ---------------- HUB : PAYS ---------------- */
+let query="";
+function renderHub(){
+  document.title="Voi en Europe — Nos pays";
+  $app.innerHTML=`
+  <div class="wrap">
+    <section class="hero">
+      <span class="eyebrow">Voi en Europe</span>
+      <h1>Dans quels pays rouler avec <em>Voi</em> ?</h1>
+      <p class="lead">Vélos et trottinettes électriques en libre-service dans plus de 130 villes européennes. Choisissez un pays sur la carte ou dans la liste pour voir les villes desservies.</p>
+      <div class="stats">
+        <div class="stat"><b>${COUNTRIES.length}</b><span>pays présentés</span></div>
+        <div class="stat"><b>130+</b><span>villes en Europe</span></div>
+        <div class="stat"><b>200 000+</b><span>véhicules</span></div>
+        <div class="stat"><b>500 M+</b><span>trajets effectués</span></div>
+      </div>
+    </section>
+    <div id="mapslot"></div>
+    <div class="sec-title"><h2>Nos pays</h2>
+      <div class="tools"><label class="search"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Pays ou ville (ex. Munich, Rezé…)" value="${esc(query)}" aria-label="Rechercher un pays ou une ville"></label></div>
+    </div>
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="empty">Voi n'est pas encore présent ici. Ouvrez l'application pour vérifier la couverture autour de vous.</div>
+    ${howBlock()}
+    ${appBand()}
+  </div>`;
+  drawGrid();
+  document.getElementById("q").addEventListener("input",e=>{query=e.target.value;drawGrid();});
+  mountMap(document.getElementById("mapslot"));
+  VIEW.onCountryPick=null;
+  goTo({type:"europe"}, -1, null, true);
+}
+function drawGrid(){
+  const nq=norm(query.trim());
+  const list=COUNTRIES.map(c=>{
+    if(!nq) return {c};
+    if(norm(c.name).includes(nq)) return {c};
+    let hit=c.cities.find(x=>norm(x.name).includes(nq));
+    if(!hit && c.id==="france"){
+      const z=CITIES.flatMap(x=>x.zone).find(z=>!z.startsWith("+") && z!=="…" && norm(z).includes(nq));
+      if(z) hit={name:z};
+    }
+    return hit?{c,hit}:null;
+  }).filter(Boolean);
+  document.getElementById("grid").innerHTML=list.map(({c,hit})=>`
+    <a class="country" href="#${c.id}">
+      <span class="flag">${c.flag}</span>
+      <h3>${esc(c.name)}</h3>
+      <span class="count">${c.cities.length}${c.more?"+":""} ${c.id==="france"?"territoires":"villes"}${c.volume?` · ${c.volume} véhicules`:""}</span>
+      <p>${esc(c.intro)}</p>
+      ${hit?`<span class="match">✓ ${esc(hit.name)}</span>`:""}
+    </a>`).join("");
+  document.getElementById("empty").style.display=list.length?"none":"block";
+}
+
+/* ---------------- PAGE PAYS ---------------- */
+function renderCountry(c){
+  document.title=`Voi ${c.prep} ${c.name} — villes desservies | Voi`;
+  const isFR=c.id==="france";
+  const others=COUNTRIES.filter(x=>x.id!==c.id);
+  $app.innerHTML=`
+  <div class="wrap">
+    <div class="crumbs"><a href="#pays">Nos pays</a> / ${esc(c.name)}</div>
+    <section class="phead">
+      <div>
+        <h1><span class="flag">${c.flag}</span>Voi ${c.prep} ${esc(c.name)}</h1>
+        <p class="lead">${esc(c.intro)}</p>
+      </div>
+      <div class="pstats">${(c.volume?[[c.volume,"véhicules (estimation)"]]:[]).concat(c.stats).map((s,i)=>`<div class="pstat ${i%2?"alt":""}"><b>${s[0]}</b><span>${s[1]}</span></div>`).join("")}</div>
+    </section>
+    <div id="mapslot"></div>
+      <div class="clist wide" id="clist">
+        <h4>${c.cities.length}${c.more?"+":""} ${isFR?"territoires":"villes"} desservi${isFR?"s":"es"}</h4>
+        ${c.cities.map((ct,i)=>`
+          <div class="citem" data-i="${i}" ${ct.link?`data-href="${ct.link}"`:""}>
+            <span class="pin">${i+1}</span>
+            <div><b>${esc(ct.name)}</b>
+              ${ct.note?`<small>${esc(ct.note)}</small>`:""}
+              <div class="tags">${modeTags(ct.m,ct.isNew)}</div>
+              ${ct.link?`<a class="go" href="${ct.link}">Voir la page ville →</a>`:""}
+            </div>
+          </div>`).join("")}
+        ${c.more?`<p class="note" style="margin:8px 14px 12px">${esc(c.more)}</p>`:""}
+      </div>
+    ${howBlock()}
+    <section class="block"><h2>Voi dans d'autres pays</h2>
+      <div class="others">${others.map(o=>`<a href="#${o.id}">${o.flag} ${esc(o.name)}</a>`).join("")}</div>
+    </section>
+    ${appBand(c.prep+" "+c.name)}
+  </div>`;
+  const items=[...document.querySelectorAll(".citem")];
+  const mark=i=>items.forEach(x=>x.classList.toggle("on",+x.dataset.i===i));
+  const pick=i=>{
+    mark(i);
+    const ct=c.cities[i];
+    const go=()=>goTo({type:"city", coords:[ct.lat,ct.lng]}, ct.g, c, true);
+    if(mapOnScreen()) go(); else { scrollToMap(); setTimeout(go, 420); }
+  };
+  VIEW.onCountryPick=pick;
+  items.forEach(it=>it.addEventListener("click",e=>{ if(e.target.closest("a")) return; pick(+it.dataset.i); }));
+  mountMap(document.getElementById("mapslot"));
+  const pend=c.cities.findIndex(x=>x.name===window.__pendingCity); window.__pendingCity=null;
+  if(pend>=0){ mark(pend); const ct=c.cities[pend]; goTo({type:"city", coords:[ct.lat,ct.lng]}, ct.g, c, true); }
+  else goTo({type:"country", code:c.code}, -1, c, true);
+}
+
+/* ---------------- PAGE VILLE (France) ---------------- */
+const bikeSVG = `<svg width="220" height="140" viewBox="0 0 220 140" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="95" r="36"/><circle cx="170" cy="95" r="36"/><path d="M50 95 85 40h60l25 55M85 40l30 55h55M115 95 145 40M75 28h25M138 26h18"/></svg>`;
+function renderCity(c){
+  const FR = COUNTRIES.find(x=>x.id==="france");
+  document.title=`Vélos${c.scooters?" et trottinettes":""} électriques à ${c.name} | Voi`;
+  const others=CITIES.filter(x=>x.id!==c.id);
+  $app.innerHTML=`
+  <div class="wrap">
+    <div class="crumbs"><a href="#pays">Nos pays</a> / <a href="#france">France</a> / ${esc(c.name)}</div>
+    <section class="chero">
+      <div>
+        <div class="tags">${franceTags(c)}</div>
+        <h1><small>${c.scooters?"Vélos & trottinettes électriques":"Vélos électriques"} en libre-service</small>Voi à ${esc(c.name)}</h1>
+        <p class="lead">${esc(c.lead)}</p>
+        <div class="cta-row"><a class="btn coral" href="${APP_IOS}">Télécharger l'app</a><a class="btn ghost" href="#france">Toutes les villes en France</a></div>
+      </div>
+      <div class="figure">${bikeSVG}
+        <div class="lbl">${esc(c.region)}${c.since?` · depuis ${esc(c.since)}`:""}</div>
+        <div class="row">${c.figures.map(f=>`<div><div class="big">${f[0]}</div><div class="lbl">${f[1]}</div></div>`).join("")}</div>
+      </div>
+    </section>
+    <section class="block" style="margin-top:0"><h2>Voi à ${esc(c.name)} et ailleurs en France</h2>
+      <div id="mapslot"></div>
+        <div class="clist wide">${FR.cities.map((ct,i)=>`
+          <a class="citem ${ct.link==="#"+c.id?"on":""}" href="${ct.link}">
+            <span class="pin">${i+1}</span>
+            <div><b>${esc(ct.name)}</b><small>${esc(ct.note||"")}</small><div class="tags">${modeTags(ct.m,ct.isNew)}</div></div>
+          </a>`).join("")}</div>
+    </section>
+    <section class="block" style="margin-top:0"><h2>Ce qui vous attend à ${esc(c.name)}</h2>
+      <div class="highlights">${c.highlights.map(h=>`<div class="hl-item"><div class="ic">${h[0]}</div><div><b>${esc(h[1])}</b><p>${esc(h[2])}</p></div></div>`).join("")}</div>
+    </section>
+    <section class="block" style="margin-top:0"><h2>Zone desservie</h2>
+      <div class="communes">${c.zone.map((z,i)=>`<span class="${(c.zoneHL&&i<c.zoneHL)?"hl":""}">${esc(z)}</span>`).join("")}</div>
+      ${c.soon?`<p class="note" style="margin-top:18px"><span class="tag soon">En concertation</span> ${c.soon.map(esc).join(", ")}</p>`:""}
+      ${c.zoneNote?`<p class="note">${esc(c.zoneNote)}</p>`:""}
+    </section>
+    ${c.prices?`<section class="block" style="margin-top:0"><h2>Tarifs à ${esc(c.name)}</h2>
+      <table class="prices"><thead><tr><th>Formule</th><th>Détail</th><th>Prix</th></tr></thead><tbody>
+      ${c.prices.map(p=>`<tr><td>${esc(p[0])}</td><td>${esc(p[1])}</td><td>${esc(p[2])}</td></tr>`).join("")}
+      </tbody></table><p class="note">Tarifs indicatifs, susceptibles d'évoluer. Le prix exact s'affiche dans l'application avant chaque trajet.</p></section>`
+    :`<section class="block" style="margin-top:0"><h2>Tarifs</h2><p style="color:var(--ink-2);max-width:60ch">Paiement à la minute, pass journaliers ou abonnements mensuels : les formules disponibles à ${esc(c.name)} et leur prix s'affichent dans l'application avant chaque trajet.</p></section>`}
+    ${howBlock()}
+    <section class="block" style="margin-top:0"><h2>Questions fréquentes</h2>
+      ${c.faq.map(f=>`<details><summary>${esc(f[0])}</summary><p>${esc(f[1])}</p></details>`).join("")}
+    </section>
+    <section class="block" style="margin-top:0"><h2>Voi ailleurs en France</h2>
+      <div class="others">${others.map(o=>`<a href="#${o.id}">${esc(o.name)}</a>`).join("")}</div>
+    </section>
+    ${appBand("à "+c.name)}
+  </div>`;
+  const ct = FR.cities.find(x=>x.link==="#"+c.id);
+  VIEW.onCountryPick=null;
+  mountMap(document.getElementById("mapslot"));
+  goTo({type:"city", coords:[ct.lat,ct.lng]}, ct.g, FR, true);
+}
+
+/* ---------------- ROUTER ---------------- */
+function route(){
+  const id=(location.hash||"").slice(1);
+  const country=COUNTRIES.find(x=>x.id===id);
+  const city=CITIES.find(x=>x.id===id);
+  if(country) renderCountry(country);
+  else if(city) renderCity(city);
+  else renderHub();
+  document.getElementById("nav-pays").classList.toggle("on", !city);
+  if(country || city) scrollToMap("auto");
+  else window.scrollTo(0,0);
+}
+window.addEventListener("hashchange",route);
+route();
+</script>
+</body>
+</html>
