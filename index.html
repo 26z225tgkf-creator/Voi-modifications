@@ -182,7 +182,95 @@
   footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--mute);font-size:13.5px}
   footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 
+  /* page "Bienvenue à <ville>" (ouverte au clic sur une ville de la carte) */
+  .welcome{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:48px;align-items:center;padding:36px 0 56px}
+  .welcome #mapslot{width:auto;margin-left:0;min-width:0}
+  .welcome .mapcard{height:clamp(480px,72vh,760px)}
+  .wloc{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--ink-2);margin-bottom:14px;flex-wrap:wrap}
+  .wloc a{color:var(--coral-d);font-weight:700}
+  .welcome h1{font-size:clamp(48px,7vw,96px);font-weight:800;overflow-wrap:anywhere}
+  .welcome h1 em{font-style:normal;color:var(--coral)}
+  .welcome .tags{margin:18px 0 0}
+  .welcome .lead{font-size:17px;color:var(--ink-2);margin:14px 0 0;max-width:46ch}
+  .wmodes{display:inline-flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px;margin:24px 0 14px}
+  .wmodes button{border:0;background:transparent;font:inherit;font-weight:700;font-size:14px;padding:8px 16px;border-radius:999px;cursor:pointer;color:var(--ink-2)}
+  .wmodes button.on{background:var(--ink);color:#fff}
+  .wform{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:8px;max-width:440px;position:relative}
+  .wform label{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;background:var(--cream)}
+  .wform label+label{margin-top:8px}
+  .wform input{flex:1;min-width:0;border:0;background:transparent;font:inherit;font-size:15px;color:var(--ink);outline:none}
+  .wform .pt{width:10px;height:10px;border-radius:50%;background:var(--ink);flex:none}
+  .wform .pt.sq{border-radius:2px;background:var(--coral)}
+  .wform:before{content:"";position:absolute;left:24px;top:36px;height:32px;border-left:2px dotted var(--mute)}
+  .wsugg{list-style:none;margin:14px 0 0;padding:0;max-width:440px}
+  .wsugg a{display:flex;align-items:center;gap:12px;padding:10px 6px;text-decoration:none;border-bottom:1px solid var(--line)}
+  .wsugg a:hover b{color:var(--coral-d)}
+  .wsugg .ic{width:32px;height:32px;border-radius:50%;background:var(--coral-l);display:grid;place-items:center;flex:none;font-size:15px}
+  .wsugg small{display:block;color:var(--mute);font-size:13px}
+  .welcome .cta-row{margin-top:22px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .welcome .guide{font-weight:700;color:var(--coral-d)}
+
+  /* page Sécurité + quiz */
+  .secu-hero{padding:48px 0 8px}
+  .secu-hero h1{font-size:clamp(44px,6.5vw,84px);font-weight:800;max-width:14ch}
+  .secu-hero h1 em{font-style:normal;color:var(--coral)}
+  .secu-hero .lead{font-size:18px;color:var(--ink-2);max-width:60ch;margin:18px 0 0}
+  .rules{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:34px}
+  .rule{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+  .rule .ic{font-size:26px;line-height:1}
+  .rule b{display:block;font-size:17px;margin:12px 0 6px}
+  .rule p{margin:0;color:var(--ink-2);font-size:15px}
+  .quizband{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;background:var(--ink);color:#fff;border-radius:24px;padding:34px 38px;margin:40px 0 0}
+  .quizband h2{font-size:clamp(26px,3.4vw,38px);font-weight:800}
+  .quizband p{margin:8px 0 0;color:#D8CFCC;max-width:52ch}
+  .quiz{max-width:720px;margin:0 auto;padding:40px 0 20px}
+  .qtop{display:flex;justify-content:space-between;align-items:center;font-size:14px;color:var(--mute);font-weight:700}
+  .qbar{height:8px;background:var(--line);border-radius:99px;margin:10px 0 30px;overflow:hidden}
+  .qbar i{display:block;height:100%;background:var(--coral);border-radius:99px;transition:width .35s ease}
+  .quiz h1{font-size:clamp(28px,4vw,42px);font-weight:800}
+  .qopts{display:grid;gap:10px;margin:26px 0 0}
+  .qopt{display:flex;align-items:center;gap:14px;text-align:left;width:100%;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:15px 16px;font:inherit;font-size:16px;color:var(--ink);cursor:pointer}
+  .qopt:hover:not(:disabled){border-color:var(--coral)}
+  .qopt .k{width:30px;height:30px;border-radius:50%;background:var(--cream);display:grid;place-items:center;font-weight:700;flex:none}
+  .qopt:disabled{cursor:default}
+  .qopt.ok{border-color:var(--mint-ink);background:var(--mint)}
+  .qopt.ok .k{background:var(--mint-ink);color:#fff}
+  .qopt.ko{border-color:var(--coral-d);background:var(--coral-l)}
+  .qopt.ko .k{background:var(--coral-d);color:#fff}
+  .qexp{margin:18px 0 0;padding:16px 18px;border-radius:14px;background:var(--card);border:1px solid var(--line);color:var(--ink-2)}
+  .qexp b{color:var(--ink)}
+  .qnext{margin-top:22px}
+  .qscore{font-family:"Bricolage Grotesque",sans-serif;font-size:clamp(72px,12vw,130px);font-weight:800;color:var(--coral);line-height:1;margin:18px 0 6px}
+  .qrecap{list-style:none;padding:0;margin:28px 0 0;display:grid;gap:8px}
+  .qrecap li{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:15px}
+  .qrecap .mk{flex:none;font-weight:800}
+  .qrecap .mk.ok{color:var(--mint-ink)} .qrecap .mk.ko{color:var(--coral-d)}
+  .qrecap small{display:block;color:var(--mute)}
+
+  /* page FAQ */
+  .faq-hero{padding:48px 0 8px}
+  .faq-hero h1{font-size:clamp(44px,6.5vw,84px);font-weight:800}
+  .faq-hero h1 em{font-style:normal;color:var(--coral)}
+  .faq-hero .lead{font-size:18px;color:var(--ink-2);max-width:60ch;margin:18px 0 0}
+  .faq-cats{display:flex;gap:8px;flex-wrap:wrap}
+  .faq-cats button{border:1.5px solid var(--line);background:var(--card);font:inherit;font-weight:700;font-size:14px;padding:8px 14px;border-radius:999px;cursor:pointer;color:var(--ink-2)}
+  .faq-cats button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+  .faq-group{margin-top:34px}
+  .faq-group h2{font-size:clamp(24px,3vw,32px);font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+  .faq-group details p+p{margin-top:8px}
+  .faq-group summary{gap:16px}
+
   @media (max-width:860px){
+    .rules{grid-template-columns:1fr}
+    nav.top a{margin-left:14px;white-space:nowrap}
+    nav.top a.btn{margin-left:14px !important}
+  }
+  @media (max-width:560px){
+    nav.top a.btn{display:none}
+    nav.top a{margin-left:16px}
+    .quizband{padding:26px}
+    .welcome{grid-template-columns:1fr;gap:28px;padding-top:24px}
+    .welcome .mapcard{height:60vh;min-height:380px}
     .stats{grid-template-columns:repeat(2,1fr)}
     .split,.chero{grid-template-columns:1fr}
     .cols,.highlights{grid-template-columns:1fr}
@@ -201,6 +289,8 @@
     <nav class="top">
       <a href="#pays" class="on" id="nav-pays">Nos pays</a>
       <a class="hide-m" href="#france">France</a>
+      <a href="#securite" id="nav-secu">Sécurité</a>
+      <a href="#faq" id="nav-faq">FAQ</a>
       <a class="btn coral" style="margin-left:22px;padding:9px 16px" href="https://apps.apple.com/fr/app/voi-trottinettes-et-v%C3%A9los/id1395921017">Télécharger l'app</a>
     </nav>
   </div>
@@ -742,11 +832,15 @@ function goTo(target, sel, country, animate){
   applyView(animate && mapReady);
 }
 
+/* every city gets its own page: #ville/<slug> */
+const slug = s => norm(s).replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+ALL.forEach(m=>{ m.slug=slug(m.name); });
+const cityHref = m => "#ville/"+m.slug;
+
+/* clicking a city on the map opens its page */
 function handleMarker(g){
   const m=ALL[g]; if(!m) return;
-  if(m.link){ if(location.hash!==m.link) location.hash=m.link.slice(1); return; }
-  if(VIEW.onCountryPick && VIEW.country===m.country){ VIEW.onCountryPick(m.j); return; }
-  window.__pendingCity=m.name; location.hash=m.country.id;
+  if(location.hash!==cityHref(m)) location.hash=cityHref(m).slice(1);
 }
 
 function markerNodes(){
@@ -915,7 +1009,7 @@ function renderCountry(c){
             <div><b>${esc(ct.name)}</b>
               ${ct.note?`<small>${esc(ct.note)}</small>`:""}
               <div class="tags">${modeTags(ct.m,ct.isNew)}</div>
-              ${ct.link?`<a class="go" href="${ct.link}">Voir la page ville →</a>`:""}
+              <a class="go" href="${cityHref(ALL[ct.g])}">Voir la page ville →</a>
             </div>
           </div>`).join("")}
         ${c.more?`<p class="note" style="margin:8px 14px 12px">${esc(c.more)}</p>`:""}
@@ -999,16 +1093,243 @@ function renderCity(c){
   goTo({type:"city", coords:[ct.lat,ct.lng]}, ct.g, FR, true);
 }
 
+/* ---------------- PAGE "BIENVENUE À <VILLE>" (toutes les villes) ---------------- */
+function renderWelcome(m){
+  const c=m.country;
+  document.title=`Bienvenue à ${m.name} — Voi`;
+  const modes=[["b","Vélo électrique"],["s","Trottinette"]].filter(x=>m.m.includes(x[0]));
+  const others=c.cities.filter(x=>x.g!==m.g).slice(0,3).map(x=>ALL[x.g]);
+  const store=/android/i.test(navigator.userAgent)?APP_AND:APP_IOS;
+  $app.innerHTML=`
+  <div class="wrap">
+    <section class="welcome">
+      <div>
+        <div class="wloc">📍 ${esc(m.name)}, ${esc(c.code)} · <a href="#${c.id}">Changer de ville</a></div>
+        <h1>Bienvenue à <em>${esc(m.name)}</em></h1>
+        <div class="tags">${modeTags(m.m,m.isNew)}</div>
+        ${m.note?`<p class="lead">${esc(m.note)}</p>`:""}
+        <div class="wmodes" role="group" aria-label="Type de véhicule">${modes.map((x,i)=>`<button type="button" class="${i?"":"on"}">${x[1]}</button>`).join("")}</div>
+        <form class="wform" id="wform">
+          <label><span class="pt"></span><input placeholder="Saisissez un lieu de départ" aria-label="Lieu de départ"></label>
+          <label><span class="pt sq"></span><input placeholder="Saisissez votre destination" aria-label="Destination"></label>
+        </form>
+        ${others.length?`<ul class="wsugg">${others.map(o=>`<li><a href="${cityHref(o)}"><span class="ic">📍</span><span><b>${esc(o.name)}</b><small>Voi ${c.prep} ${esc(c.name)}</small></span></a></li>`).join("")}</ul>`:""}
+        <div class="cta-row">
+          <a class="btn" href="${store}">Trouver un véhicule</a>
+          ${m.link?`<a class="guide" href="${m.link}">Guide complet de ${esc(m.name)} →</a>`:""}
+        </div>
+      </div>
+      <div id="mapslot"></div>
+    </section>
+    ${howBlock()}
+    ${appBand("à "+m.name)}
+  </div>`;
+  const btns=[...document.querySelectorAll(".wmodes button")];
+  btns.forEach(b=>b.addEventListener("click",()=>btns.forEach(x=>x.classList.toggle("on",x===b))));
+  document.getElementById("wform").addEventListener("submit",e=>{ e.preventDefault(); location.href=store; });
+  VIEW.onCountryPick=null;
+  mountMap(document.getElementById("mapslot"));
+  goTo({type:"city", coords:[m.lat,m.lng]}, m.g, c, true);
+}
+
+/* ---------------- PAGE SÉCURITÉ ---------------- */
+const RULES = [
+  ["🛣️","Sur la piste cyclable","Roulez sur les pistes et bandes cyclables, sinon sur la chaussée. Jamais sur le trottoir."],
+  ["⏱️","25 km/h maximum","Adaptez votre vitesse à la circulation, aux piétons et à l'état de la route."],
+  ["🧍","Une seule personne","Un véhicule, un passager : pas de passager, pas d'enfant devant vous."],
+  ["🎧","Oreilles et mains libres","Écouteurs et téléphone tenu en main sont interdits pendant le trajet."],
+  ["⛑️","Le casque, toujours","Fortement recommandé en ville, obligatoire hors agglomération."],
+  ["🅿️","Garez-vous bien","Uniquement sur les zones de stationnement indiquées dans l'application."]
+];
+function renderSafety(){
+  document.title="Rouler en sécurité avec Voi";
+  $app.innerHTML=`
+  <div class="wrap">
+    <section class="secu-hero">
+      <span class="eyebrow">Sécurité</span>
+      <h1>Rouler en <em>sécurité</em>, à chaque trajet</h1>
+      <p class="lead">Vélo ou trottinette électrique : quelques règles simples vous protègent, vous et les autres usagers. Révisez-les, puis testez-vous avec notre quiz.</p>
+    </section>
+    <div class="rules">${RULES.map(r=>`<div class="rule"><div class="ic">${r[0]}</div><b>${esc(r[1])}</b><p>${esc(r[2])}</p></div>`).join("")}</div>
+    <div class="quizband">
+      <div><h2>Le quiz sécurité</h2><p>10 questions pour vérifier que vous connaissez les règles. Une explication après chaque réponse.</p></div>
+      <a class="btn coral" href="#securite/quiz">Commencer le quiz →</a>
+    </div>
+    ${howBlock()}
+    ${appBand()}
+  </div>`;
+}
+
+/* ---------------- QUIZ SÉCURITÉ (10 questions) ---------------- */
+const QUIZ = [
+  {q:"En ville, où devez-vous rouler avec une trottinette électrique ?",
+   a:["Sur le trottoir, en faisant attention aux piétons","Sur les pistes ou bandes cyclables, sinon sur la chaussée","Où je veux, tant que je roule doucement"], ok:1,
+   e:"Le trottoir est réservé aux piétons. On roule sur les pistes et bandes cyclables quand il y en a, sinon sur la chaussée."},
+  {q:"Quelle est la vitesse maximale d'une trottinette électrique ?",
+   a:["20 km/h","25 km/h","35 km/h"], ok:1,
+   e:"Les trottinettes électriques sont bridées à 25 km/h. Ralentissez près des piétons et quand la route est mouillée."},
+  {q:"Combien de personnes peuvent monter sur une trottinette ?",
+   a:["Une seule","Deux si le second est un enfant","Deux adultes maximum"], ok:0,
+   e:"Une trottinette, c'est une seule personne. À deux, l'équilibre et le freinage deviennent dangereux."},
+  {q:"Pendant le trajet, que faire de vos écouteurs et de votre téléphone ?",
+   a:["Un seul écouteur, c'est autorisé","Le téléphone en main pour suivre le GPS","Les ranger : les deux sont interdits en roulant"], ok:2,
+   e:"Écouteurs et téléphone tenu en main sont interdits. Vous devez entendre et voir ce qui se passe autour de vous."},
+  {q:"Le casque, c'est…",
+   a:["Inutile en ville","Fortement recommandé, et obligatoire hors agglomération","Seulement pour les vélos"], ok:1,
+   e:"Le casque réduit fortement la gravité des blessures à la tête. Hors agglomération, il est obligatoire en trottinette."},
+  {q:"À partir de quel âge peut-on conduire une trottinette électrique en France ?",
+   a:["12 ans","14 ans","16 ans"], ok:1,
+   e:"L'âge minimum légal est de 14 ans. L'application Voi peut imposer un âge minimum plus élevé pour louer."},
+  {q:"Après avoir bu de l'alcool, que dit la règle ?",
+   a:["Les mêmes limites que pour les automobilistes s'appliquent","Il n'y a pas de limite en trottinette","Seul le cannabis est interdit"], ok:0,
+   e:"L'alcool et les stupéfiants sont interdits au guidon comme au volant. Après une soirée, rentrez autrement."},
+  {q:"Avant de démarrer, que vérifiez-vous ?",
+   a:["Rien, le véhicule est forcément en bon état","La batterie uniquement","Les freins, les pneus et l'éclairage"], ok:2,
+   e:"Un rapide coup d'œil suffit. Si quelque chose ne va pas, choisissez un autre véhicule et signalez le problème dans l'application."},
+  {q:"En fin de trajet, où garer votre véhicule ?",
+   a:["Au milieu du trottoir, c'est plus visible","Sur une zone de stationnement autorisée indiquée dans l'app","Devant l'entrée d'un immeuble"], ok:1,
+   e:"Garez-vous uniquement sur les zones autorisées, sans gêner les piétons, les fauteuils roulants ou les poussettes."},
+  {q:"La nuit, comment être vu des autres ?",
+   a:["Allumer les feux et porter un vêtement ou un gilet réfléchissant","Klaxonner régulièrement","Rouler au milieu de la route"], ok:0,
+   e:"Feux allumés et équipement réfléchissant. Hors agglomération, le gilet rétroréfléchissant est obligatoire la nuit."}
+];
+function renderQuiz(){
+  document.title="Quiz sécurité — Voi";
+  let i=0, score=0; const answers=[];
+  const L="ABC";
+  const draw=()=>{
+    if(i>=QUIZ.length) return drawEnd();
+    const Q=QUIZ[i];
+    $app.innerHTML=`
+    <div class="wrap"><section class="quiz">
+      <div class="crumbs" style="padding-top:0"><a href="#securite">Sécurité</a> / Quiz</div>
+      <div class="qtop" style="margin-top:18px"><span>Question ${i+1} sur ${QUIZ.length}</span><span>Score : ${score}</span></div>
+      <div class="qbar"><i style="width:${i/QUIZ.length*100}%"></i></div>
+      <h1>${esc(Q.q)}</h1>
+      <div class="qopts">${Q.a.map((t,k)=>`<button type="button" class="qopt" data-k="${k}"><span class="k">${L[k]}</span>${esc(t)}</button>`).join("")}</div>
+      <div id="qafter"></div>
+    </section></div>`;
+    const btns=[...$app.querySelectorAll(".qopt")];
+    btns.forEach(b=>b.addEventListener("click",()=>{
+      const k=+b.dataset.k, good=k===Q.ok;
+      if(good) score++;
+      answers.push(good);
+      btns.forEach(x=>{ x.disabled=true; if(+x.dataset.k===Q.ok) x.classList.add("ok"); });
+      if(!good) b.classList.add("ko");
+      $app.querySelector(".qtop span:last-child").textContent=`Score : ${score}`;
+      $app.querySelector(".qbar i").style.width=`${(i+1)/QUIZ.length*100}%`;
+      const last=i===QUIZ.length-1;
+      document.getElementById("qafter").innerHTML=`
+        <div class="qexp"><b>${good?"✓ Bonne réponse !":"✗ Pas tout à fait."}</b> ${esc(Q.e)}</div>
+        <button type="button" class="btn qnext" id="qnext">${last?"Voir mon score":"Question suivante →"}</button>`;
+      const nx=document.getElementById("qnext"); nx.focus({preventScroll:true});
+      nx.addEventListener("click",()=>{ i++; draw(); window.scrollTo(0,0); });
+    }));
+  };
+  const drawEnd=()=>{
+    const msg = score===10?"Parfait ! Vous êtes prêt à rouler en toute sécurité."
+              : score>=7?"Très bien ! Revoyez les quelques points manqués avant votre prochain trajet."
+              : "Prenez un moment pour relire les règles : votre sécurité en dépend.";
+    $app.innerHTML=`
+    <div class="wrap"><section class="quiz">
+      <div class="crumbs" style="padding-top:0"><a href="#securite">Sécurité</a> / Quiz</div>
+      <div class="qscore">${score}/${QUIZ.length}</div>
+      <h1>${esc(msg)}</h1>
+      <div class="cta-row" style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap">
+        <button type="button" class="btn coral" id="qagain">Recommencer le quiz</button>
+        <a class="btn ghost" href="#securite">Revoir les règles</a>
+      </div>
+      <ul class="qrecap">${QUIZ.map((Q,k)=>`<li><span class="mk ${answers[k]?"ok":"ko"}">${answers[k]?"✓":"✗"}</span><span>${esc(Q.q)}<small>${esc(Q.a[Q.ok])}</small></span></li>`).join("")}</ul>
+    </section></div>`;
+    document.getElementById("qagain").addEventListener("click",()=>{ i=0; score=0; answers.length=0; draw(); window.scrollTo(0,0); });
+  };
+  draw();
+}
+
+/* ---------------- PAGE FAQ ---------------- */
+const FAQ = [
+  {id:"debuter", title:"Bien démarrer", items:[
+    ["Comment commencer à utiliser Voi ?","Téléchargez l'application Voi sur l'App Store ou Google Play, créez votre compte avec votre numéro de téléphone ou votre e-mail, puis ajoutez un moyen de paiement. Vous pouvez ensuite trouver un véhicule sur la carte et partir."],
+    ["Quel âge faut-il avoir pour louer un véhicule Voi ?","Il faut en général avoir 18 ans. Dans certains pays ou certaines villes, l'âge minimum peut être différent : il est indiqué dans l'application au moment de l'inscription."],
+    ["Faut-il un permis de conduire ?","Non, aucun permis n'est nécessaire pour louer un vélo ou une trottinette Voi. Dans certains pays, une vérification d'identité peut toutefois être demandée dans l'application."],
+    ["Dans quelles villes Voi est-il disponible ?","Voi est présent dans plus de 130 villes de 14 pays européens. Consultez la rubrique « Nos pays » ou ouvrez l'application pour voir les véhicules disponibles autour de vous."]
+  ]},
+  {id:"trajet", title:"Pendant le trajet", items:[
+    ["Comment déverrouiller un vélo ou une trottinette ?","Ouvrez l'application, choisissez un véhicule sur la carte puis scannez le QR code situé sur le guidon. Le véhicule se déverrouille en quelques secondes."],
+    ["Puis-je réserver un véhicule à l'avance ?","Selon la ville, l'application permet de réserver un véhicule pendant quelques minutes, le temps de le rejoindre. L'option s'affiche lorsque vous sélectionnez un véhicule."],
+    ["Puis-je faire une pause pendant mon trajet ?","Dans de nombreuses villes, vous pouvez mettre votre trajet en pause depuis l'application : le véhicule reste verrouillé et réservé pour vous. La pause reste facturée, au tarif indiqué dans l'app."],
+    ["Où ai-je le droit de rouler ?","Sur les pistes et bandes cyclables quand il y en a, sinon sur la chaussée. Le trottoir est interdit. Certaines zones de la ville limitent la vitesse ou interdisent la circulation : elles apparaissent en couleur sur la carte de l'application."],
+    ["Comment terminer mon trajet ?","Garez-vous sur une zone de stationnement autorisée indiquée dans l'application, appuyez sur « Terminer le trajet » puis prenez une photo du véhicule bien garé. Le trajet est alors clôturé et facturé."]
+  ]},
+  {id:"tarifs", title:"Tarifs et paiement", items:[
+    ["Combien coûte un trajet ?","Le prix dépend de la ville : en général des frais de déverrouillage puis un prix à la minute. Le tarif exact s'affiche toujours dans l'application avant que vous ne démarriez."],
+    ["Existe-t-il des pass ou des abonnements ?","Oui, l'application propose selon les villes des pass (à la journée, au mois…) et des forfaits de minutes qui reviennent moins cher si vous roulez souvent. Ils se trouvent dans la rubrique dédiée de l'application."],
+    ["Quels moyens de paiement sont acceptés ?","La carte bancaire et, selon le pays, Apple Pay, Google Pay ou d'autres moyens de paiement locaux. Vous les ajoutez et les gérez dans l'application."],
+    ["Pourquoi ai-je été facturé de frais supplémentaires ?","Des frais peuvent s'appliquer si le véhicule est garé hors d'une zone autorisée ou abandonné en dehors de la zone de service. Le détail de chaque trajet est disponible dans votre historique. En cas de doute, contactez l'assistance depuis l'application."]
+  ]},
+  {id:"securite", title:"Sécurité", items:[
+    ["Le casque est-il obligatoire ?","Il est fortement recommandé à chaque trajet, et obligatoire dans certains cas, par exemple hors agglomération en trottinette en France. Voi ne fournit pas de casque : pensez à prendre le vôtre."],
+    ["Peut-on rouler à deux sur une trottinette ?","Non. Un véhicule Voi ne transporte qu'une seule personne, sans passager ni enfant."],
+    ["Puis-je rouler sous la pluie ou la nuit ?","Oui, mais avec prudence : ralentissez sur sol mouillé, car la distance de freinage s'allonge. La nuit, les feux s'allument automatiquement ; portez si possible un vêtement réfléchissant. <a href=\"#securite\">Revoir les règles de sécurité →</a>"],
+    ["Que faire en cas d'accident ?","Mettez-vous en sécurité et appelez les secours si quelqu'un est blessé (112 partout en Europe). Signalez ensuite l'accident à Voi depuis l'application, dans la rubrique d'aide."]
+  ]},
+  {id:"aide", title:"Problèmes et assistance", items:[
+    ["Le véhicule est abîmé ou ne fonctionne pas, que faire ?","Ne l'utilisez pas. Signalez le problème depuis l'application (fiche du véhicule ou rubrique d'aide), puis choisissez un autre véhicule. Vos signalements aident les équipes Voi à intervenir rapidement."],
+    ["La batterie est presque vide, que se passe-t-il ?","Le niveau de batterie de chaque véhicule s'affiche avant de le déverrouiller. Si elle faiblit pendant le trajet, la vitesse peut être réduite : terminez votre trajet sur une zone autorisée et prenez un autre véhicule."],
+    ["Mon trajet ne se termine pas, que faire ?","Vérifiez que vous êtes bien sur une zone de stationnement autorisée et que le téléphone a du réseau et la localisation activée. Si le problème persiste, contactez l'assistance depuis l'application sans quitter le véhicule."],
+    ["J'ai oublié un objet sur un véhicule ou j'ai besoin d'aide","Contactez l'assistance Voi depuis la rubrique d'aide de l'application, en précisant le trajet concerné."],
+    ["Comment supprimer mon compte ?","Vous pouvez demander la suppression de votre compte depuis les paramètres de l'application ou en contactant l'assistance."]
+  ]}
+];
+let faqCat="all";
+function renderFaq(){
+  document.title="FAQ — Questions fréquentes | Voi";
+  $app.innerHTML=`
+  <div class="wrap">
+    <section class="faq-hero">
+      <span class="eyebrow">Aide</span>
+      <h1>Questions <em>fréquentes</em></h1>
+      <p class="lead">Tout ce qu'il faut savoir avant votre premier trajet Voi : inscription, déverrouillage, tarifs, sécurité et assistance.</p>
+    </section>
+    <div class="faq-cats" role="group" aria-label="Catégories" style="margin-top:30px">
+      <button type="button" data-c="all">Toutes</button>
+      ${FAQ.map(g=>`<button type="button" data-c="${g.id}">${esc(g.title)}</button>`).join("")}
+    </div>
+    <div id="faqlist">${FAQ.map(g=>`
+      <section class="faq-group" data-c="${g.id}">
+        <h2>${esc(g.title)}</h2>
+        ${g.items.map(it=>`<details><summary>${esc(it[0])}</summary><p>${it[1]}</p></details>`).join("")}
+      </section>`).join("")}</div>
+    ${appBand()}
+  </div>`;
+  const apply=()=>{
+    $app.querySelectorAll(".faq-cats button").forEach(b=>b.classList.toggle("on",b.dataset.c===faqCat));
+    $app.querySelectorAll(".faq-group").forEach(gr=>{ gr.style.display=(faqCat==="all" || gr.dataset.c===faqCat)?"":"none"; });
+  };
+  $app.querySelectorAll(".faq-cats button").forEach(b=>b.addEventListener("click",()=>{ faqCat=b.dataset.c; apply(); }));
+  apply();
+}
+
 /* ---------------- ROUTER ---------------- */
 function route(){
   const id=(location.hash||"").slice(1);
   const country=COUNTRIES.find(x=>x.id===id);
   const city=CITIES.find(x=>x.id===id);
-  if(country) renderCountry(country);
+  const welcome=id.startsWith("ville/") ? ALL.find(x=>x.slug===id.slice(6)) : null;
+  const safety = id==="securite" || id==="securite/quiz";
+  const faq = id==="faq";
+  if(faq) renderFaq();
+  else if(id==="securite") renderSafety();
+  else if(id==="securite/quiz") renderQuiz();
+  else if(welcome) renderWelcome(welcome);
+  else if(country) renderCountry(country);
   else if(city) renderCity(city);
   else renderHub();
-  document.getElementById("nav-pays").classList.toggle("on", !city);
-  if(country || city) scrollToMap("auto");
+  document.getElementById("nav-pays").classList.toggle("on", !city && !welcome && !safety && !faq);
+  document.getElementById("nav-secu").classList.toggle("on", safety);
+  document.getElementById("nav-faq").classList.toggle("on", faq);
+  if(welcome || safety || faq) window.scrollTo(0,0);
+  else if(country || city) scrollToMap("auto");
   else window.scrollTo(0,0);
 }
 window.addEventListener("hashchange",route);
