@@ -169,6 +169,12 @@
   table.prices td,table.prices th{padding:14px 18px;text-align:left;border-bottom:1px solid var(--line);font-size:15.5px}
   table.prices th{background:#FBF1EC;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2)}
   table.prices td:last-child{font-weight:700;white-space:nowrap}
+  .kpis{display:flex;flex-wrap:wrap;gap:12px;margin:0 0 16px}
+  .kpi{flex:1 1 220px;display:flex;gap:12px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:12px 16px}
+  .kpi .ic{flex:none;width:42px;height:42px;border-radius:12px;background:var(--coral-l);color:var(--coral-d);display:grid;place-items:center}
+  .kpi .ic svg{width:22px;height:22px}
+  .kpi b{display:block;font-family:"Bricolage Grotesque";font-size:20px;font-weight:800;line-height:1.15}
+  .kpi span{display:block;color:var(--mute);font-size:13px;line-height:1.3}
   .highlights{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
   .hl-item{display:flex;gap:14px;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:20px}
   .hl-item .ic{flex:none;width:42px;height:42px;border-radius:12px;background:var(--coral-l);display:grid;place-items:center;font-size:20px}
@@ -1188,6 +1194,46 @@ const COUNTRY_PASS = {
   "danemark":"179 kr / mois", "finlande":"39 € / 30 jours", "norvege":"249 kr / mois"
 };
 
+/* Chiffres clés par ville (pictogrammes), uniquement quand une source publie le chiffre.
+   trips = trajets / utilisateurs, time = gain de temps, since = opérateur depuis. */
+const CITY_STATS = {
+  "Paris":{since:"1er octobre 2025", src:"Ville de Paris"},
+  "Marseille":{since:"2019", trips:"210 000 trajets en un mois", tripsSub:"record de février 2026", src:"Made in Marseille, Tesla Mag"},
+  "Grenoble":{since:"été 2025"},
+  "Nantes Métropole":{since:"19 octobre 2026", src:"Nantes Métropole"},
+  "Le Havre":{since:"6 janvier 2025", src:"Le Havre Seine Métropole"},
+  "Saint-Quentin-en-Yvelines":{since:"30 janvier 2025", trips:"2,5 millions de trajets", tripsSub:"45 000 utilisateurs, service lancé en 2021", src:"Infos Yvelines (sept. 2026)"},
+  "Grand Paris Seine & Oise":{since:"4 mai 2026", src:"Ville de Meulan"},
+  "Berlin":{trips:"25 millions de trajets", tripsSub:"depuis le lancement"},
+  "Stockholm":{since:"août 2018", tripsSub:"ville natale de Voi", src:"Silicon Canals"},
+  "Göteborg":{time:"89 % des trajets plus rapides", timeSub:"qu'à pied ou en transports en commun", src:"étude KTH"},
+  "Oslo":{since:"mars 2019", trips:"21 millions de trajets", tripsSub:"650 000 utilisateurs (2023)", src:"Voi, Tech.eu"},
+  "Oxford":{trips:"4 millions de trajets", tripsSub:"dont 1,5 million en 2025", src:"Voi via BBC"},
+  "Cambridge":{since:"octobre 2020", trips:"1,15 million de trajets", tripsSub:"90 000 utilisateurs réguliers", src:"Cambridgeshire & Peterborough CA"},
+  "Liverpool":{since:"octobre 2020", trips:"2 millions de trajets", tripsSub:"1 habitant sur 4 a déjà roulé", src:"Zag Daily"},
+  "Northampton":{since:"2020", trips:"4 millions de trajets", tripsSub:"première ville Voi au Royaume-Uni", src:"Voi"},
+  "Bristol":{trips:"10 millions de trajets", tripsSub:"région West of England", src:"Intelligent Transport"},
+  "Portsmouth":{trips:"5,55 millions de trajets", tripsSub:"région Solent", src:"Micromobility Newsletter"},
+  "Southampton":{trips:"5,55 millions de trajets", tripsSub:"région Solent", src:"Micromobility Newsletter"},
+  "Île de Wight":{trips:"5,55 millions de trajets", tripsSub:"région Solent", src:"Micromobility Newsletter"},
+  "Édimbourg":{since:"3 septembre 2025", trips:"près d'1 million de trajets", tripsSub:"juillet 2026", src:"City of Edinburgh Council"},
+  "Glasgow":{since:"fin 2025", trips:"170 000 trajets", tripsSub:"depuis le lancement", src:"The Herald"}
+};
+const ICONS = {
+  trips:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.3-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14.5c2.4 0 4 1.4 4.5 4"/></svg>',
+  time:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9.5 2.5h5M12 2.5V5"/></svg>',
+  since:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>'
+};
+function kpisBlock(name){
+  const k=CITY_STATS[name]; if(!k) return "";
+  const items=[];
+  if(k.trips) items.push(["trips",k.trips,k.tripsSub||"Utilisateurs et trajets"]);
+  if(k.time) items.push(["time",k.time,k.timeSub||"Gain de temps"]);
+  if(k.since) items.push(["since","Depuis "+k.since,"Voi opérateur à "+name]);
+  if(!items.length) return "";
+  return `<div class="kpis">${items.map(i=>`<div class="kpi"><div class="ic" aria-hidden="true">${ICONS[i[0]]}</div><div><b>${esc(i[1])}</b><span>${esc(i[2])}</span></div></div>`).join("")}</div>`;
+}
+
 /* Bloc "Tarifs" : tableau détaillé si la ville a ses tarifs (t.prices), sinon le tarif
    à la minute de la ville, sinon la fourchette relevée dans le pays. */
 function pricesBlock(name, t, country){
@@ -1202,11 +1248,14 @@ function pricesBlock(name, t, country){
     src=ref[1];
     if(!own) scope=` Aucun tarif propre à ${esc(name)} n'est publié : le prix indiqué est celui relevé dans le reste du pays.`;
   }
+  const k=CITY_STATS[name];
+  const ksrc = k && k.src ? ` Chiffres clés : ${esc(k.src)}.` : "";
   return `<section class="block" style="margin-top:0"><h2>Tarifs à ${esc(name)}</h2>
+    ${kpisBlock(name)}
     <table class="prices"><thead><tr><th>Formule</th><th>Détail</th><th>Prix</th></tr></thead><tbody>
     ${rows.map(p=>`<tr><td>${esc(p[0])}</td><td>${esc(p[1])}</td><td>${esc(p[2])}</td></tr>`).join("")}
     </tbody></table>
-    <p class="note">Tarifs relevés en novembre 2026, susceptibles d'évoluer${src?` (source : ${esc(src)})`:""}.${scope}</p></section>`;
+    <p class="note">Tarifs relevés en novembre 2026, susceptibles d'évoluer${src?` (source : ${esc(src)})`:""}.${scope}${ksrc}</p></section>`;
 }
 
 /* ---------------- PAGE "BIENVENUE À <VILLE>" (toutes les villes) ---------------- */
