@@ -296,7 +296,7 @@
   /* city page: street map + trip (shown once a departure address is set) */
   .wright{min-width:0}
   .tripcard{background:var(--card);border:1px solid var(--line);border-radius:24px;overflow:hidden}
-  #streetmap{height:clamp(420px,62vh,640px);background:var(--sea)}
+  #streetmap{height:clamp(420px,62vh,640px);background:#F2EFE9}
   .tripsum{padding:14px 18px 16px;border-top:1px solid var(--line);font-size:14.5px}
   .tripsum .steps{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center}
   .tripsum .st{display:inline-flex;align-items:center;gap:7px;font-weight:600}
@@ -468,6 +468,11 @@
     .afoot .anextart{max-width:100%}
   }
   @media (max-width:720px){ .acard{flex-basis:78%} .anav{display:none} }
+  /* sélecteur Plan / Vélo / Satellite */
+  #streetmap .leaflet-control-layers{border:0;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.18);font:600 13px "DM Sans",sans-serif;padding:6px 10px}
+  #streetmap .leaflet-control-layers-base label{display:inline-block;margin:0 6px;cursor:pointer}
+  #streetmap .leaflet-control-layers-base input{accent-color:var(--coral)}
+  #streetmap .leaflet-control-layers-base{display:flex}
 </style>
 </head>
 <body>
@@ -1615,7 +1620,7 @@ const WMPAGE = f => "https://commons.wikimedia.org/wiki/File:"+encodeURIComponen
 const ARTICLES = {
   "paris":[
     { tag:"En famille", emoji:"👨‍👩‍👧", title:"Les meilleures balades à vélo en famille à Paris", meta:"4 parcours calmes · de 2 à 6 km",
-      photo:"Canal Saint-Martin - Quai de Valmy, Paris 21 July 2013.jpg", credit:"Francisco Anzola",
+      photo:"Children, Les Berges de Seine, Paris 27 June 2013 002.jpg", credit:"Wikimedia Commons",
       q:"Quel trajet à vélo faire avec des enfants à Paris sans danger ?",
       summary:"Trois parcours presque sans voitures, avec des aires de jeux et des coins pique-nique.",
       lead:"Pédaler en famille à Paris sans slalomer entre les voitures ? C'est possible. Voici quatre balades presque sans circulation, avec de quoi jouer, goûter et souffler en chemin.",
@@ -1634,7 +1639,7 @@ const ARTICLES = {
       key:["3 parcours plats et presque sans voitures : la Villette, le lac Daumesnil, les berges de Seine.","Un vélo Voi transporte une seule personne : l'enfant roule sur son propre vélo.","Casque obligatoire pour les moins de 12 ans.","La zone Voi, c'est Paris : garez le vélo dans Paris pour terminer la location.","Sur les berges, les piétons sont prioritaires : roulez au pas.","4e idée : le parc de Bercy, ses jardins et la passerelle Simone-de-Beauvoir."] },
 
     { tag:"Sortie", emoji:"☀️", title:"Que faire un dimanche à vélo quand il fait beau ?", meta:"Paris · 4 idées de sortie",
-      photo:"Marché dAligre 4.jpg", credit:"Jesús Gorriti",
+      photo:"Quai de Seine en piste cyclable DSC 4405.JPG", credit:"Pline",
       q:"Idée de sortie à vélo le dimanche à Paris",
       summary:"Quais sans voitures, marché, brunch et Montmartre au calme : trois dimanches parisiens à vélo.",
       lead:"Le dimanche, Paris respire. Moins de voitures, des quais rendus aux promeneurs, des terrasses qui se remplissent doucement : c'est le meilleur jour pour redécouvrir la ville à vélo. Voici quatre façons de passer un dimanche parisien.",
@@ -1652,7 +1657,7 @@ const ARTICLES = {
         {tip:"Le dimanche, les vélos partent vite près des canaux et des parcs. Ouvrez l'application un peu avant pour repérer le plus proche."}],
       key:["Le canal Saint-Martin sans voitures : ≈ 2,5 km au bord de l'eau.","Le marché d'Aligre le matin, puis pique-nique sur les berges de Seine.","Montmartre au calme, avec l'assistance pour la montée.","Rues fermées et dates : vérifiez sur le site de la Ville de Paris.","Les vélos partent vite le dimanche : anticipez dans l'application.","Le Jardin des Plantes, puis un thé à la menthe à la Grande Mosquée."] },
     { tag:"En amoureux", emoji:"💕", title:"Un rendez-vous original à vélo : itinéraires romantiques", meta:"Paris · 1 h de balade",
-      photo:"Tour Eiffel Wikimedia Commons.jpg", credit:"Wikimedia Commons",
+      photo:"Kissing couple near the Seine river in Paris (19918288173).jpg", credit:"Wikimedia Commons",
       q:"Idée de date originale à Paris",
       summary:"Coucher de soleil, points de vue et une glace en chemin : le rendez-vous qui change.",
       lead:"Oubliez le dîner en tête-à-tête un peu figé. À vélo, on discute en roulant, on s'arrête où on veut, et Paris sert de décor. Voici de quoi transformer un premier rendez-vous en souvenir.",
@@ -1688,7 +1693,7 @@ const ARTICLES = {
         {tip:"Près des monuments, garez le vélo sur un emplacement vélos autorisé indiqué dans l'application avant de visiter à pied."}],
       key:["Un circuit d'≈ 12 km d'est en ouest, en suivant la Seine.","Le matin : Notre-Dame, le Marais, le Louvre. L'après-midi : Orsay, les Invalides, la Tour Eiffel.","Le coin secret : la cour du Commerce-Saint-André.","Terminer au Trocadéro pour la Tour Eiffel illuminée.","Garez le vélo avant chaque visite à pied.","Une heure de plus ? Finir à Montmartre, au-dessus de tout Paris."] },
     { tag:"Photo", emoji:"📸", title:"Les plus beaux spots photo accessibles à vélo", meta:"Paris · boucle d'environ 12 km",
-      photo:"Basilique du Sacré-Cœur.001 - Montmartre.jpg", credit:"Fernando Losada Rodríguez",
+      photo:"Holding iPhone Taking Picture in Paris' Park (Unsplash).jpg", credit:"Lubo Minar",
       q:"Où faire de belles photos à Paris ?",
       summary:"10 lieux reliés en une boucle à vélo, avec le meilleur moment pour la lumière.",
       lead:"Le vélo et la photo vont très bien ensemble : on enchaîne les lieux sans chercher de métro, et on peut revenir quand la lumière est parfaite. Voici notre boucle de dix spots à Paris.",
@@ -1704,7 +1709,7 @@ const ARTICLES = {
       key:["10 spots reliés par une boucle d'environ 12 km.","La meilleure lumière : l'heure dorée, au lever et au coucher du soleil.","Le matin à l'ouest, le soir à l'est et au nord.","Jamais de photo en roulant : on se gare d'abord.","Discrétion dans les rues habitées.","La variante street art : la rue Dénoyez et le parc de Belleville."] },
 
     { tag:"Bien-être", emoji:"💪", title:"Faire du sport sans s'en rendre compte : le vélo au quotidien", meta:"Paris · santé et défis simples",
-      photo:"Voie Cyclable Rue Rivoli - Paris IV (FR75) - 2021-01-03 - 1.jpg", credit:"Chabe01",
+      photo:"Cycliste à place d'Italie-Paris.jpg", credit:"Roman Bonnefoy",
       q:"Combien de calories on brûle en vélo électrique ?",
       summary:"Le vélo électrique fait-il vraiment travailler ? Ce que disent les études, et des défis parisiens pour s'y mettre.",
       lead:"On croit souvent que l'assistance électrique fait tout le travail. En réalité, il faut pédaler pour qu'elle fonctionne : le vélo électrique reste une vraie activité physique. Et à Paris, il remplace facilement le métro sur des trajets de 10 à 20 minutes.",
@@ -1724,7 +1729,7 @@ const ARTICLES = {
         {tip:"Commencez doucement : un ou deux trajets courts la première semaine, puis augmentez. L'important, c'est la régularité."}],
       key:["Le vélo électrique demande de pédaler : c'est une vraie activité physique.","150 minutes par semaine recommandées : 2 trajets de 15 min par jour suffisent.","À Paris, le vélo remplace le métro sur les trajets de 10 à 20 minutes.","Les buttes parisiennes (Montmartre, Belleville) font de bons défis.","La régularité compte plus que l'intensité.","Un programme progressif sur 4 semaines, et une selle bien réglée."] },
     { tag:"Escapade", emoji:"🧺", title:"Pique-nique, guinguette, baignade : les escapades à moins de 30 min à vélo", meta:"Paris · 5 coins au vert",
-      photo:"Bassin de la Villette @ Paris (28339524764).jpg", credit:"Guilhem Vellut",
+      photo:"Pique-nique Parc des Buttes-Chaumont Paris.jpg", credit:"Doalex",
       q:"Où aller se poser au bord de l'eau à Paris ?",
       summary:"Baignade, guinguettes, lacs et pelouses : cinq escapades parisiennes à moins d'une demi-heure de vélo.",
       lead:"Pas besoin de quitter Paris pour se mettre au vert. Bassins, lacs, buttes et bois : la ville cache des coins d'eau et de nature à moins de 30 minutes de vélo du centre. Nappe, maillot ou lunettes de soleil, choisissez votre escapade.",
@@ -1745,7 +1750,7 @@ const ARTICLES = {
         {tip:"Les bois de Vincennes et de Boulogne font partie de Paris : vous pouvez y terminer votre location. Garez-vous à l'entrée des parcs, jamais sur les pelouses ni au bord de l'eau."}],
       key:["Bassin de la Villette : baignade surveillée l'été.","Buttes-Chaumont : pique-nique, cascade et guinguette.","Bois de Vincennes : lac Daumesnil et barques, à 25 min de la Bastille.","Bois de Boulogne : le lac Inférieur et ses îles.","Baignade en Seine l'été : vérifiez horaires et lieux chaque jour.","Parc André-Citroën : grande pelouse, jets d'eau et ballon captif."] },
     { tag:"Soirée", emoji:"🌙", title:"Sortir le soir à vélo : nos conseils pour rentrer sereinement", meta:"Paris · conseils sécurité",
-      photo:"Boulevard Richard-Lenoir (Paris), piste cyclable 01.jpg", credit:"Coyau",
+      photo:"Cycle lane by night in Paris 06.jpg", credit:"Wikimedia Commons",
       q:"Rentrer de soirée à vélo à Paris, bonne idée ?",
       summary:"Itinéraires éclairés, se rendre visible, rentrer à plusieurs : la soirée parisienne finit bien.",
       lead:"Quand le dernier métro est passé, le vélo prend le relais : les rues sont calmes, les monuments illuminés, et on rentre sans attendre un bus de nuit. Mais la nuit, on voit moins et on est moins vu. Quelques réflexes suffisent pour que la soirée finisse bien.",
@@ -1781,7 +1786,7 @@ const ARTICLES = {
       key:["Un parcours de 2 h et 6 km dans le 13e et le 14e.","4 étapes : Butte-aux-Cailles, Cité florale, parc Montsouris, fresques du boulevard Vincent-Auriol.","À garder pour la prochaine fois : les passages couverts et la rue Dénoyez.","Quartiers habités : on roule au pas et on respecte le calme.","2e parcours : la Mouzaïa et Belleville, dans le 19e et le 20e."] },
 
     { tag:"Saisons", emoji:"🍂", title:"Le vélo en toutes saisons : printemps, été, automne, hiver", meta:"Paris · 5 balades au fil de l'année",
-      photo:"Paris, Panthéon -- 2014 -- 1668.jpg", credit:"XRay",
+      photo:"Fallen leaves @ Parc Montsouris @ Paris (30156040735).jpg", credit:"Wikimedia Commons",
       q:"Quelle balade à vélo faire en automne ?",
       summary:"Une balade par saison, comment s'habiller, et les événements à rejoindre à vélo.",
       lead:"Les mêmes rues n'ont pas du tout le même visage en avril et en décembre. Chaque saison a sa balade, sa tenue et ses rendez-vous. Voici notre calendrier du vélo à Paris.",
@@ -1809,14 +1814,13 @@ function articlesBlock(slug, cityName){
       <div class="aimg" data-emoji="${a.emoji}"><img loading="lazy" src="${WM(a.photo)}" alt="${esc(a.title)}" onerror="this.remove()"></div>
       <div class="abody"><span class="atag">${esc(a.tag)}</span><h3>${esc(a.title)}</h3><p>${esc(a.summary)}</p>
         <div class="ameta">${esc(a.meta)}</div><span class="aread">Lire l'article →</span></div>
-      <a class="acredit" href="${WMPAGE(a.photo)}" onclick="event.stopPropagation()">📷 ${esc(a.credit)}</a>
     </article>`;
   return `<section class="articles">
     <div class="ahead"><div><span class="lrules-badge">Le blog</span><h2>Idées de sorties à vélo</h2></div>
       <div class="anav"><button type="button" class="aprev" aria-label="Article précédent">←</button><button type="button" class="anext" aria-label="Article suivant">→</button></div></div>
     <div class="acar-track">${list.map(card).join("")}</div>
     <div class="adots">${list.map((_,i)=>`<button type="button" aria-label="Article ${i+1}" class="${i?"":"on"}" data-i="${i}"></button>`).join("")}</div>
-    <p class="note">Distances et durées indicatives, à vélo électrique. Cliquez sur un article pour le lire. Photos : Wikimedia Commons (licences libres, voir le crédit sur chaque carte).</p>
+    <p class="note">Distances et durées indicatives, à vélo électrique. Cliquez sur un article pour le lire. Photos : Wikimedia Commons (licences libres, auteur indiqué dans chaque article).</p>
   </section>`;
 }
 
@@ -2215,18 +2219,57 @@ function loadLeaflet(){
 }
 const TRIP={map:null, layer:null, dep:null, dst:null, seq:0, city:null};
 function mk(cls,html,size){ return L.divIcon({className:"",html:`<div class="mk ${cls}" style="width:${size}px;height:${size}px">${html||""}</div>`,iconSize:[size,size],iconAnchor:[size/2,size/2]}); }
+/* Fond de carte (rues, trottoirs, parcs, noms des rues).
+   Les tuiles sont téléchargées puis dessinées dans un <canvas> : elles s'affichent
+   aussi dans les aperçus qui bloquent les images externes. Si CARTO ne répond pas,
+   on passe aux tuiles OpenStreetMap, puis aux <img> classiques en dernier recours. */
+/* Fonds de carte : Plan (OpenStreetMap, détaillé comme Google Maps), Vélo (CyclOSM :
+   pistes et bandes cyclables) et Satellite (Esri). Chaque tuile est téléchargée puis
+   dessinée dans un <canvas> ; si un serveur ne répond pas, on essaie le suivant. */
+const OSM_ATTR='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+const ROUTE_ATTR=' · itinéraires <a href="https://routing.openstreetmap.de/">FOSSGIS</a>';
+const BASEMAPS={
+  "Plan":{ src:[(z,x,y)=>`https://tile.openstreetmap.org/${z}/${x}/${y}.png`,
+                (z,x,y,r)=>`https://${"abcd"[(x+y)%4]}.basemaps.cartocdn.com/rastertiles/voyager/${z}/${x}/${y}${r?"@2x":""}.png`],
+           attr:OSM_ATTR+' &copy; <a href="https://carto.com/attributions">CARTO</a>'+ROUTE_ATTR, max:19 },
+  "Vélo":{ src:[(z,x,y)=>`https://${"abc"[(x+y)%3]}.tile-cyclosm.openstreetmap.fr/cyclosm/${z}/${x}/${y}.png`,
+                (z,x,y)=>`https://tile.openstreetmap.org/${z}/${x}/${y}.png`],
+           attr:'<a href="https://www.cyclosm.org">CyclOSM</a> · '+OSM_ATTR+ROUTE_ATTR, max:19 },
+  "Satellite":{ src:[(z,x,y)=>`https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}`],
+           attr:'Imagerie &copy; Esri, Maxar, Earthstar Geographics'+ROUTE_ATTR, max:19 }
+};
+let StreetTiles=null;
+function defineStreetTiles(){
+  if(StreetTiles) return;
+  StreetTiles=L.GridLayer.extend({
+    createTile(c,done){
+      const src=this.options.src, cv=document.createElement("canvas"), r=Math.min(2,window.devicePixelRatio||1), s=this.getTileSize();
+      cv.width=s.x*r; cv.height=s.y*r;
+      const draw=im=>{ cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height); done(null,cv); };
+      const viaImg=()=>{ const im=new Image(); im.crossOrigin="anonymous"; im.onload=()=>draw(im); im.onerror=()=>done(new Error("tile"),cv); im.src=src[0](c.z,c.x,c.y,r>1); };
+      const tryAt=i=>{
+        if(i>=src.length){ viaImg(); return; }
+        fetch(src[i](c.z,c.x,c.y,r>1)).then(res=>{ if(!res.ok) throw 0; return res.blob(); })
+          .then(b=>createImageBitmap(b)).then(draw).catch(()=>tryAt(i+1));
+      };
+      tryAt(0);
+      return cv;
+    }
+  });
+}
 async function ensureStreetMap(){
   const ok=await loadLeaflet();
   const card=document.getElementById("tripcard"), slot=document.getElementById("mapslot");
   if(!ok || !card) return false;
+  defineStreetTiles();
   if(card.hidden){ card.hidden=false; slot.style.display="none"; }
   const el=document.getElementById("streetmap");
   if(!TRIP.map || TRIP.map.getContainer()!==el){
     TRIP.map=L.map(el,{zoomControl:true,scrollWheelZoom:false});
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",{
-      maxZoom:19, subdomains:"abcd",
-      attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a> · itinéraires <a href="https://routing.openstreetmap.de/">FOSSGIS</a>'
-    }).addTo(TRIP.map);
+    const layers={};
+    Object.entries(BASEMAPS).forEach(([k,b])=>{ layers[k]=new StreetTiles({src:b.src, attribution:b.attr, maxZoom:b.max, tileSize:256}); });
+    layers["Plan"].addTo(TRIP.map);
+    L.control.layers(layers,null,{position:"topright",collapsed:false}).addTo(TRIP.map);
     TRIP.layer=L.layerGroup().addTo(TRIP.map);
   }
   setTimeout(()=>TRIP.map.invalidateSize(),0);
