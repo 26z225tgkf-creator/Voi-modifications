@@ -473,6 +473,17 @@
   #streetmap .leaflet-control-layers-base label{display:inline-block;margin:0 6px;cursor:pointer}
   #streetmap .leaflet-control-layers-base input{accent-color:var(--coral)}
   #streetmap .leaflet-control-layers-base{display:flex}
+  /* vélos autour du départ */
+  .mk.bike{cursor:pointer;transition:transform .15s ease}
+  .mk.bike.alt{background:#fff;color:var(--coral-d)}
+  .mk.bike.alt svg{stroke:var(--coral-d)!important}
+  .mk.bike.alt svg *{stroke:var(--coral-d)}
+  .mk.bike.alt:hover{transform:scale(1.15)}
+  .mk.bike.on{box-shadow:0 0 0 3px #fff,0 0 0 6px rgba(242,106,94,.35),0 4px 12px rgba(0,0,0,.25)}
+  .mk.bike.zone{border-radius:9px}
+  .mk .cnt{position:absolute;top:-7px;right:-9px;min-width:17px;height:17px;padding:0 4px;border-radius:999px;background:var(--ink);color:#fff;font:800 10px/17px "DM Sans",sans-serif;text-align:center}
+  .mk.bike{position:relative}
+  .note.pick{margin-top:8px}
 </style>
 </head>
 <body>
@@ -2295,6 +2306,19 @@ const fmtDist = m => m<1000?`${Math.round(m/10)*10} m`:`${(m/1000).toFixed(1).re
 function tripSummary(html){ const el=document.getElementById("tripsum"); if(el) el.innerHTML=html; }
 const EXAMPLE_NOTE = `<p class="note">Vélo et zone de stationnement donnés à titre d'exemple : les vélos libres en temps réel sont dans l'application Voi.</p>`;
 
+/* Vélos Voi autour du départ (positions d'exemple : les vélos libres en temps réel ne sont
+   visibles que dans l'application). Mélange de vélos seuls et de zones Voi avec plusieurs vélos.
+   Triés du plus proche au plus loin ; le premier est sélectionné par défaut. */
+function bikeSpots(dep){
+  const out=[];
+  for(let k=0;k<6;k++){
+    const p=nearby(dep,90+k*55,170+k*75,"bike"+k);
+    const h=Math.abs(Math.round((p.lat*1e5+p.lng*1e5)))%100;
+    const zone = k===1 || k===4;
+    out.push({lat:p.lat,lng:p.lng,zone,n:zone?2+h%5:1,bat:40+h%60});
+  }
+  return out.sort((a,b)=>kmBetween(dep,a)-kmBetween(dep,b));
+}
 async function drawTrip(){
   const my=++TRIP.seq;
   if(!TRIP.dep) return;
@@ -2310,16 +2334,28 @@ async function drawTrip(){
     tripSummary(`<span class="msg">Aucun vélo Voi à proximité de votre position de départ.</span>`);
     return;
   }
-  map.setView([dep.lat,dep.lng],17);
-  tripSummary(`<span class="msg">Recherche du vélo le plus proche…</span>`);
-  const walk1=await routeLeg("foot",dep,nearby(dep,120,300,"bike"));
+  const spots=bikeSpots(dep);
+  if(TRIP.bikeIdx==null || !spots[TRIP.bikeIdx]) TRIP.bikeIdx=0;
+  const sel=spots[TRIP.bikeIdx];
+  if(!TRIP.keepView) map.setView([dep.lat,dep.lng],17);
+  tripSummary(`<span class="msg">Itinéraire vers ${sel.zone?"la zone Voi":"le vélo"} sélectionné…</span>`);
+  const walk1=await routeLeg("foot",dep,sel);
   if(my!==TRIP.seq) return;
-  const bike=walk1.line[walk1.line.length-1];
-  L.polyline(walk1.line,{color:"#4A4240",weight:4,dashArray:"2 9",lineCap:"round"}).addTo(lay);
-  L.marker(bike,{icon:mk("bike",BIKE_ICON,30),zIndexOffset:400}).bindTooltip("Vélo Voi",{direction:"top",offset:[0,-16],className:"tlab",permanent:true}).addTo(lay);
+  const bike=[sel.lat,sel.lng];
+  L.polyline(walk1.line.concat([bike]),{color:"#4A4240",weight:4,dashArray:"2 9",lineCap:"round"}).addTo(lay);
+  spots.forEach((s,k)=>{
+    const on=k===TRIP.bikeIdx, walkMin=Math.max(1,Math.round(kmBetween(dep,s)*1000*1.3/1.35/60));
+    const html=s.zone?`${BIKE_ICON}<b class="cnt">${s.n}</b>`:BIKE_ICON;
+    const tip=on ? (s.zone?`Zone Voi · ${s.n} vélos`:"Vélo Voi sélectionné")
+                 : `${s.zone?`Zone Voi · ${s.n} vélos`:`Vélo Voi · 🔋 ${s.bat} %`} · ${walkMin} min à pied<br><small>Cliquez pour y aller</small>`;
+    L.marker([s.lat,s.lng],{icon:mk("bike"+(on?" on":" alt")+(s.zone?" zone":""),html,on?32:(s.zone?28:24)),zIndexOffset:on?450:380,keyboard:true,title:s.zone?"Zone Voi":"Vélo Voi"})
+      .bindTooltip(tip,{direction:"top",offset:[0,on?-17:-14],className:"tlab",permanent:on})
+      .on("click",()=>{ if(k===TRIP.bikeIdx) return; TRIP.bikeIdx=k; TRIP.keepView=true; drawTrip().finally(()=>TRIP.keepView=false); })
+      .addTo(lay);
+  });
   if(!dst){
-    map.fitBounds(L.latLngBounds([[dep.lat,dep.lng],bike]),{padding:[70,70],maxZoom:17});
-    tripSummary(`<div class="steps"><span class="st"><i></i>🚶 ${fmtMin(walk1.s)} jusqu'au vélo · ${fmtDist(walk1.m)}</span><span class="msg">Ajoutez votre destination pour voir le trajet.</span></div>${EXAMPLE_NOTE}`);
+    map.fitBounds(L.latLngBounds([[dep.lat,dep.lng]].concat(spots.map(s=>[s.lat,s.lng]))),{padding:[60,60],maxZoom:17});
+    tripSummary(`<div class="steps"><span class="st"><i></i>🚶 ${fmtMin(walk1.s)} jusqu'${sel.zone?"à la zone Voi":"au vélo"} · ${fmtDist(walk1.m)}</span><span class="msg">Touchez un autre vélo sur la carte pour changer. Ajoutez votre destination pour voir le trajet.</span></div>${EXAMPLE_NOTE}`);
     return;
   }
   if(kmBetween(dep,dst)>MAX_TRIP_KM){
@@ -2346,17 +2382,17 @@ async function drawTrip(){
       <span class="st"><i class="ride"></i>🚲 ${fmtMin(ride.s)} · ${fmtDist(ride.m)}</span>
       <span class="st"><i></i>🚶 ${fmtMin(walk2.s)}</span>
       <span class="tot">${fmtMin(total)}</span>
-    </div>${(walk1.approx||ride.approx||walk2.approx)?`<p class="note">Itinéraire indisponible : tracé et durée approximatifs.</p>`:""}${EXAMPLE_NOTE}`);
+    </div><p class="note pick">🚲 ${spots.length} vélos Voi autour du départ : touchez-en un sur la carte pour recalculer le trajet depuis celui-ci.</p>${(walk1.approx||ride.approx||walk2.approx)?`<p class="note">Itinéraire indisponible : tracé et durée approximatifs.</p>`:""}${EXAMPLE_NOTE}`);
 }
 
 function setupDeparture(pageCity){
-  TRIP.dep=null; TRIP.dst=null; TRIP.seq++; TRIP.map=null;
+  TRIP.dep=null; TRIP.dst=null; TRIP.bikeIdx=null; TRIP.seq++; TRIP.map=null;
   const inp=document.getElementById("dep");
   const dstInp=document.getElementById("dst");
   addressField(inp,document.getElementById("sugg"),pageCity,{
     onTyping:q=>{ setPill(q.length>=3?"wait":"", q.length>=3?"Vérification…":q?"Continuez à saisir l'adresse…":"Saisissez une adresse de départ"); },
     onTop:p=>{ if(p) pillForPoint(p); else setPill("no","Adresse introuvable"); },
-    onPick:(p)=>{ pillForPoint(p); TRIP.dep=p; drawTrip(); },
+    onPick:(p)=>{ pillForPoint(p); TRIP.dep=p; TRIP.bikeIdx=null; drawTrip(); },
     onFail:q=>pillFromText(q,pageCity)
   });
   addressField(dstInp,document.getElementById("sugg2"),pageCity,{
