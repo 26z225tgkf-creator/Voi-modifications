@@ -419,6 +419,11 @@
   .acredit-l a{color:var(--mute)}
   .aclose{position:absolute;top:12px;right:12px;z-index:2;width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.92);font-size:16px;cursor:pointer}
   @media (max-width:720px){ .acard{flex-basis:78%} .anav{display:none} }
+  /* sélecteur Plan / Vélo / Satellite */
+  #streetmap .leaflet-control-layers{border:0;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.18);font:600 13px "DM Sans",sans-serif;padding:6px 10px}
+  #streetmap .leaflet-control-layers-base label{display:inline-block;margin:0 6px;cursor:pointer}
+  #streetmap .leaflet-control-layers-base input{accent-color:var(--coral)}
+  #streetmap .leaflet-control-layers-base{display:flex}
 </style>
 </head>
 <body>
@@ -2093,26 +2098,34 @@ function mk(cls,html,size){ return L.divIcon({className:"",html:`<div class="mk 
    Les tuiles sont téléchargées puis dessinées dans un <canvas> : elles s'affichent
    aussi dans les aperçus qui bloquent les images externes. Si CARTO ne répond pas,
    on passe aux tuiles OpenStreetMap, puis aux <img> classiques en dernier recours. */
-const TILE_SRC=[
-  (z,x,y,r)=>`https://${"abcd"[(x+y)%4]}.basemaps.cartocdn.com/rastertiles/voyager/${z}/${x}/${y}${r?"@2x":""}.png`,
-  (z,x,y)=>`https://tile.openstreetmap.org/${z}/${x}/${y}.png`
-];
+/* Fonds de carte : Plan (OpenStreetMap, détaillé comme Google Maps), Vélo (CyclOSM :
+   pistes et bandes cyclables) et Satellite (Esri). Chaque tuile est téléchargée puis
+   dessinée dans un <canvas> ; si un serveur ne répond pas, on essaie le suivant. */
+const OSM_ATTR='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+const ROUTE_ATTR=' · itinéraires <a href="https://routing.openstreetmap.de/">FOSSGIS</a>';
+const BASEMAPS={
+  "Plan":{ src:[(z,x,y)=>`https://tile.openstreetmap.org/${z}/${x}/${y}.png`,
+                (z,x,y,r)=>`https://${"abcd"[(x+y)%4]}.basemaps.cartocdn.com/rastertiles/voyager/${z}/${x}/${y}${r?"@2x":""}.png`],
+           attr:OSM_ATTR+' &copy; <a href="https://carto.com/attributions">CARTO</a>'+ROUTE_ATTR, max:19 },
+  "Vélo":{ src:[(z,x,y)=>`https://${"abc"[(x+y)%3]}.tile-cyclosm.openstreetmap.fr/cyclosm/${z}/${x}/${y}.png`,
+                (z,x,y)=>`https://tile.openstreetmap.org/${z}/${x}/${y}.png`],
+           attr:'<a href="https://www.cyclosm.org">CyclOSM</a> · '+OSM_ATTR+ROUTE_ATTR, max:19 },
+  "Satellite":{ src:[(z,x,y)=>`https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}`],
+           attr:'Imagerie &copy; Esri, Maxar, Earthstar Geographics'+ROUTE_ATTR, max:19 }
+};
 let StreetTiles=null;
 function defineStreetTiles(){
   if(StreetTiles) return;
   StreetTiles=L.GridLayer.extend({
     createTile(c,done){
-      const cv=document.createElement("canvas"), r=Math.min(2,window.devicePixelRatio||1), s=this.getTileSize();
+      const src=this.options.src, cv=document.createElement("canvas"), r=Math.min(2,window.devicePixelRatio||1), s=this.getTileSize();
       cv.width=s.x*r; cv.height=s.y*r;
-      const viaImg=()=>{ const im=new Image(); im.crossOrigin="anonymous";
-        im.onload=()=>{ cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height); done(null,cv); };
-        im.onerror=()=>done(new Error("tile"),cv); im.src=TILE_SRC[0](c.z,c.x,c.y,r>1); };
+      const draw=im=>{ cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height); done(null,cv); };
+      const viaImg=()=>{ const im=new Image(); im.crossOrigin="anonymous"; im.onload=()=>draw(im); im.onerror=()=>done(new Error("tile"),cv); im.src=src[0](c.z,c.x,c.y,r>1); };
       const tryAt=i=>{
-        if(i>=TILE_SRC.length){ viaImg(); return; }
-        fetch(TILE_SRC[i](c.z,c.x,c.y,r>1)).then(res=>{ if(!res.ok) throw 0; return res.blob(); })
-          .then(b=>createImageBitmap(b))
-          .then(bmp=>{ cv.getContext("2d").drawImage(bmp,0,0,cv.width,cv.height); done(null,cv); })
-          .catch(()=>tryAt(i+1));
+        if(i>=src.length){ viaImg(); return; }
+        fetch(src[i](c.z,c.x,c.y,r>1)).then(res=>{ if(!res.ok) throw 0; return res.blob(); })
+          .then(b=>createImageBitmap(b)).then(draw).catch(()=>tryAt(i+1));
       };
       tryAt(0);
       return cv;
@@ -2128,10 +2141,10 @@ async function ensureStreetMap(){
   const el=document.getElementById("streetmap");
   if(!TRIP.map || TRIP.map.getContainer()!==el){
     TRIP.map=L.map(el,{zoomControl:true,scrollWheelZoom:false});
-    new StreetTiles({
-      maxZoom:19, tileSize:256,
-      attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a> · itinéraires <a href="https://routing.openstreetmap.de/">FOSSGIS</a>'
-    }).addTo(TRIP.map);
+    const layers={};
+    Object.entries(BASEMAPS).forEach(([k,b])=>{ layers[k]=new StreetTiles({src:b.src, attribution:b.attr, maxZoom:b.max, tileSize:256}); });
+    layers["Plan"].addTo(TRIP.map);
+    L.control.layers(layers,null,{position:"topright",collapsed:false}).addTo(TRIP.map);
     TRIP.layer=L.layerGroup().addTo(TRIP.map);
   }
   setTimeout(()=>TRIP.map.invalidateSize(),0);
