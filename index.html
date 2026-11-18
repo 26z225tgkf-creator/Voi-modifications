@@ -2094,14 +2094,17 @@ function loadLeaflet(){
 }
 const TRIP={map:null, layer:null, dep:null, dst:null, seq:0, city:null};
 function mk(cls,html,size){ return L.divIcon({className:"",html:`<div class="mk ${cls}" style="width:${size}px;height:${size}px">${html||""}</div>`,iconSize:[size,size],iconAnchor:[size/2,size/2]}); }
-/* Fonds de carte : Plan (Esri World Street Map, proche de Google Maps, secours OpenStreetMap), Vélo (CyclOSM :
+/* Fonds de carte : Plan (Esri gris clair épuré + noms des rues), Détaillé (Esri, proche de Google Maps), Vélo (CyclOSM :
    pistes et bandes cyclables) et Satellite (Esri). Tuiles en <img> classiques ;
    si un serveur refuse une tuile, on bascule sur le serveur suivant de la liste. */
 const ROUTE_ATTR=' · itinéraires <a href="https://routing.openstreetmap.de/">FOSSGIS</a>';
 const ESRI=(svc)=>(z,x,y)=>`https://server.arcgisonline.com/ArcGIS/rest/services/${svc}/MapServer/tile/${z}/${y}/${x}`;
 const OSM=(z,x,y)=>`https://tile.openstreetmap.org/${z}/${x}/${y}.png`;   /* CARTO exige maintenant une clé API : retiré */
 const BASEMAPS={
-  "Plan":{ src:[ESRI("World_Street_Map"), OSM],
+  "Plan":{ src:[ESRI("Canvas/World_Light_Gray_Base"), OSM], native:16,
+           labels:ESRI("Canvas/World_Light_Gray_Reference"),
+           attr:'Plan &copy; Esri, HERE, Garmin, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'+ROUTE_ATTR },
+  "Détaillé":{ src:[ESRI("World_Street_Map"), OSM],
            attr:'Plan &copy; Esri, HERE, Garmin, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'+ROUTE_ATTR },
   "Vélo":{ src:[(z,x,y)=>`https://${"abc"[(x+y)%3]}.tile-cyclosm.openstreetmap.fr/cyclosm/${z}/${x}/${y}.png`, OSM],
            attr:'<a href="https://www.cyclosm.org">CyclOSM</a> · &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'+ROUTE_ATTR },
@@ -2133,7 +2136,10 @@ async function ensureStreetMap(){
   if(!TRIP.map || TRIP.map.getContainer()!==el){
     TRIP.map=L.map(el,{zoomControl:true,scrollWheelZoom:false});
     const layers={};
-    Object.entries(BASEMAPS).forEach(([k,b])=>{ layers[k]=new StreetTiles({src:b.src, attribution:b.attr, maxZoom:19, tileSize:256}); });
+    Object.entries(BASEMAPS).forEach(([k,b])=>{
+      const base=new StreetTiles({src:b.src, attribution:b.attr, maxZoom:19, maxNativeZoom:b.native||19, tileSize:256});
+      layers[k]=b.labels ? L.layerGroup([base, new StreetTiles({src:[b.labels], maxZoom:19, maxNativeZoom:b.native||19, tileSize:256, zIndex:2})]) : base;
+    });
     layers["Plan"].addTo(TRIP.map);
     L.control.layers(layers,null,{position:"topright",collapsed:false}).addTo(TRIP.map);
     TRIP.layer=L.layerGroup().addTo(TRIP.map);
