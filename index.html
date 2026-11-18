@@ -484,6 +484,11 @@
   .mk .cnt{position:absolute;top:-7px;right:-9px;min-width:17px;height:17px;padding:0 4px;border-radius:999px;background:var(--ink);color:#fff;font:800 10px/17px "DM Sans",sans-serif;text-align:center}
   .mk.bike{position:relative}
   .note.pick{margin-top:8px}
+  /* prix estimé du trajet */
+  .tprice{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin-top:10px;padding:10px 14px;border-radius:14px;background:var(--coral-l)}
+  .tprice .pv{font:800 20px "Bricolage Grotesque",sans-serif;color:var(--coral-d)}
+  .tprice .pd{font-size:13px;color:var(--ink-2)}
+  .tprice .pp{margin-left:auto;font-size:13px;font-weight:700;color:var(--ink);background:#fff;padding:3px 10px;border-radius:999px}
 </style>
 </head>
 <body>
@@ -2319,6 +2324,37 @@ function bikeSpots(dep){
   }
   return out.sort((a,b)=>kmBetween(dep,a)-kmBetween(dep,b));
 }
+/* ----- prix estimé d'un trajet -----
+   Tarif de la ville du départ : tableau de la page ville (CITIES), sinon CITY_PRICES.
+   Prix = déverrouillage + prix/minute × minutes de vélo commencées (la marche n'est pas payée).
+   Si un pass (30 min, 1 h…) coûte moins cher pour cette durée, on l'indique. */
+const parseNum = s => parseFloat(String(s).replace(/\s/g,"").replace(",","."));
+function cityRate(city){
+  const c=CITIES.find(x=>x.name===city.name);
+  let txt=null, rows=[], label="à la minute";
+  if(c && c.prices){
+    rows=c.prices;
+    const r=rows.find(r=>/minute|course/i.test(r[0]) && /\/ ?min/.test(r[2])) || rows.find(r=>/\/ ?min/.test(r[2]));
+    txt=r && r[2];
+    if(r && !/^à la (minute|course)$/i.test(r[0])) label=r[0].toLowerCase();
+  }
+  if(!txt && CITY_PRICES[city.name]) txt=CITY_PRICES[city.name][0];
+  if(!txt) return null;
+  const cur=(txt.match(/€|£|kr|zł|CHF/)||["€"])[0];
+  const m=txt.match(/(?:([\d,.]+)\s*(?:€|£|kr|zł|CHF)\s*\+\s*)?([\d,.]+)\s*(?:€|£|kr|zł|CHF)\s*\/\s*min/);
+  if(!m) return null;
+  const passes=rows.map(r=>{ const d=r[0].match(/Pass\s*(\d+)\s*(minutes?|min|heures?|h)\b/i); const v=String(r[2]).match(/^([\d,.]+)\s*€$/);
+    return d&&v?{name:r[0], min:+d[1]*(/^h/i.test(d[2])?60:1), price:parseNum(v[1])}:null; }).filter(Boolean);
+  return {unlock:m[1]?parseNum(m[1]):0, perMin:parseNum(m[2]), cur, passes, label};
+}
+const fmtMoney = (v,cur) => cur==="€" ? v.toFixed(2).replace(".",",")+" €" : cur==="£" ? "£"+v.toFixed(2) : v.toFixed(2).replace(".",",")+" "+cur;
+function tripPrice(city,rideSec){
+  const r=city && cityRate(city); if(!r) return "";
+  const mins=Math.max(1,Math.ceil(rideSec/60)), payg=r.unlock+r.perMin*mins;
+  const pass=r.passes.filter(p=>p.min>=mins && p.price<payg).sort((a,b)=>a.price-b.price)[0];
+  const detail=(r.unlock?fmtMoney(r.unlock,r.cur)+" + ":"")+`${mins} min × ${fmtMoney(r.perMin,r.cur)}`;
+  return `<div class="tprice"><span class="pv">≈ ${fmtMoney(payg,r.cur)}</span><span class="pd">Prix estimé ${esc(r.label)} · ${detail}</span>${pass?`<span class="pp">ou ${esc(pass.name)} : ${fmtMoney(pass.price,r.cur)}</span>`:""}</div>`;
+}
 async function drawTrip(){
   const my=++TRIP.seq;
   if(!TRIP.dep) return;
@@ -2382,7 +2418,7 @@ async function drawTrip(){
       <span class="st"><i class="ride"></i>🚲 ${fmtMin(ride.s)} · ${fmtDist(ride.m)}</span>
       <span class="st"><i></i>🚶 ${fmtMin(walk2.s)}</span>
       <span class="tot">${fmtMin(total)}</span>
-    </div><p class="note pick">🚲 ${spots.length} vélos Voi autour du départ : touchez-en un sur la carte pour recalculer le trajet depuis celui-ci.</p>${(walk1.approx||ride.approx||walk2.approx)?`<p class="note">Itinéraire indisponible : tracé et durée approximatifs.</p>`:""}${EXAMPLE_NOTE}`);
+    </div>${tripPrice(city,ride.s)}<p class="note pick">🚲 ${spots.length} vélos Voi autour du départ : touchez-en un sur la carte pour recalculer le trajet depuis celui-ci.</p>${(walk1.approx||ride.approx||walk2.approx)?`<p class="note">Itinéraire indisponible : tracé et durée approximatifs.</p>`:""}${EXAMPLE_NOTE}`);
 }
 
 function setupDeparture(pageCity){
