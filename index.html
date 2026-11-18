@@ -306,6 +306,18 @@
   .zgroup+.zgroup{margin-top:16px}
   .zgroup h4{margin:0 0 8px;font-size:14px;text-transform:uppercase;letter-spacing:.06em;color:var(--coral-d)}
   .zones .note,.block .note{margin-top:14px}
+  .zchip{font:inherit;font-size:14.5px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer;color:var(--ink);transition:border-color .15s,background .15s}
+  .zchip:hover{border-color:var(--coral);color:var(--coral-d)}
+  .zchip.on{background:var(--coral);border-color:var(--coral);color:#fff}
+  .zhint{margin:0 0 12px;font-size:14px;color:var(--mute)}
+  .zdetail{margin-top:16px;background:var(--cream);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+  .zdetail b{font-size:17px}
+  .zdetail p{margin:6px 0 0;color:var(--ink-2)}
+  .zd-actions a{color:var(--coral-d);font-weight:700}
+  .mappin{position:absolute;left:50%;top:50%;transform:translate(-50%,-100%);z-index:5;pointer-events:none;display:flex;flex-direction:column;align-items:center}
+  .mappin[hidden]{display:none}
+  .mappin-lbl{background:#B8372C;color:#fff;font-weight:700;font-size:14px;padding:6px 12px;border-radius:8px;white-space:nowrap;box-shadow:0 6px 14px -6px rgba(94,26,20,.6)}
+  .mappin-dot{width:16px;height:16px;border-radius:50%;background:#B8372C;border:3px solid #fff;box-shadow:0 0 0 2px #B8372C;margin-top:6px;transform:translateY(50%)}
 </style>
 </head>
 <body>
@@ -709,7 +721,7 @@ const CITY_SCALE=30;
 const legend = `<div class="maplegend"><span><span class="dot"></span>Ville desservie par Voi</span><span><span class="dot" style="background:#B8372C;border-color:#5E1A14;box-shadow:none"></span>Ville sélectionnée</span></div>`;
 const MAPCARD=document.createElement("div");
 MAPCARD.className="mapcard";
-MAPCARD.innerHTML=`<div id="map" class="map"></div>${legend}<div class="maplabels" id="maplabels"></div>`;
+MAPCARD.innerHTML=`<div id="map" class="map"></div>${legend}<div class="maplabels" id="maplabels"></div><div class="mappin" id="mappin" hidden><span class="mappin-lbl"></span><span class="mappin-dot"></span></div>`;
 const MAPEL=MAPCARD.querySelector("#map");
 const LABELS=MAPCARD.querySelector("#maplabels");
 
@@ -735,7 +747,7 @@ function createMap(){
   try{
     currentMap=new jsVectorMap({
       selector: MAPEL, map:"world", backgroundColor:"transparent",
-      zoomButtons:true, zoomOnScroll:false, zoomMax:80, zoomAnimate:true,
+      zoomButtons:true, zoomOnScroll:false, zoomMax:200, zoomAnimate:true,
       regionsSelectable:false, markersSelectable:false,
       selectedRegions: COUNTRIES.map(c=>c.code),
       regionStyle:{
@@ -771,17 +783,22 @@ function applyView(animate){
   if(fallbackMode){ drawFallback(); return placeLabels(); }
   paintSelection();
   const t=VIEW.target;
-  const cfg = t.type==="city" ? {coords:t.coords, scale:CITY_SCALE}
+  const pin=MAPCARD.querySelector("#mappin");
+  if(pin){ pin.hidden=true; if(t.type==="spot") pin.querySelector(".mappin-lbl").textContent=t.label; }
+  const showPin=()=>{ if(pin && VIEW.target.type==="spot") pin.hidden=false; };
+  const cfg = t.type==="spot" ? {coords:t.coords, scale:SPOT_SCALE}
+            : t.type==="city" ? {coords:t.coords, scale:CITY_SCALE}
             : t.type==="country" ? (countryCfg(VIEW.country) || {regions:[t.code]})
             : {regions: EUROPE};
   LABELS.classList.add("hide");
   clearTimeout(__lblTimer);
-  const showLabels=()=>{ clearTimeout(__lblTimer); __lblTimer=setTimeout(()=>{ placeLabels(); LABELS.classList.remove("hide"); }, 40); };
+  const showLabels=()=>{ clearTimeout(__lblTimer); __lblTimer=setTimeout(()=>{ placeLabels(); LABELS.classList.remove("hide"); showPin(); }, 40); };
   if(animate && glideTo(cfg, showLabels)) return;
   try{ currentMap.setFocus(Object.assign(cfg,{animate:!!animate})); }
   catch(e){ try{ currentMap.setFocus(cfg); }catch(_){} }
-  __lblTimer=setTimeout(()=>{ placeLabels(); LABELS.classList.remove("hide"); }, animate?700:80);
+  __lblTimer=setTimeout(()=>{ placeLabels(); LABELS.classList.remove("hide"); showPin(); }, animate?700:80);
 }
+const SPOT_SCALE=90;
 
 /* Frame a country on its Voi cities (not on its whole territory: the "FR" shape
    also contains overseas departments, which pulled the view far to the side). */
@@ -1096,7 +1113,7 @@ function renderCity(c){
       <div class="highlights">${c.highlights.map(h=>`<div class="hl-item"><div class="ic">${h[0]}</div><div><b>${esc(h[1])}</b><p>${esc(h[2])}</p></div></div>`).join("")}</div>
     </section>
     <section class="block" style="margin-top:0"><h2>Zone desservie</h2>
-      ${(()=>{ const mm=ALL.find(x=>x.link==="#"+c.id), z=mm&&ZONES[mm.slug]; return z ? zoneList(z) : `<div class="communes">${c.zone.map((z,i)=>`<span class="${(c.zoneHL&&i<c.zoneHL)?"hl":""}">${esc(z)}</span>`).join("")}</div>${c.zoneNote?`<p class="note">${esc(c.zoneNote)}</p>`:""}`; })()}
+      ${(()=>{ const mm=ALL.find(x=>x.link==="#"+c.id), z=mm&&ZONES[mm.slug]; return z ? zoneList(z,mm.slug) : `<div class="communes">${c.zone.map((z,i)=>`<span class="${(c.zoneHL&&i<c.zoneHL)?"hl":""}">${esc(z)}</span>`).join("")}</div>${c.zoneNote?`<p class="note">${esc(c.zoneNote)}</p>`:""}`; })()}
       ${c.soon?`<p class="note" style="margin-top:18px"><span class="tag soon">En concertation</span> ${c.soon.map(esc).join(", ")}</p>`:""}
     </section>
     ${(()=>{ const mm=ALL.find(x=>x.link==="#"+c.id); return mm?rulesBox(mm):""; })()}
@@ -1271,8 +1288,8 @@ function rulesBox(m){
 
 /* ---------------- ZONES DESSERVIES (communes où l'on trouve les véhicules) ---------------- */
 const ZONES = {
-  "paris":{ groups:[["",["Paris (les 20 arrondissements)"]]], note:"Les vélos sont disponibles dans toute la commune de Paris." },
-  "marseille":{ groups:[["",["Marseille (les 16 arrondissements)"]]], note:"Les véhicules sont disponibles dans toute la commune de Marseille." },
+  "paris":{ groups:[["Les 20 arrondissements",["1er · Louvre","2e · Bourse","3e · Temple","4e · Hôtel-de-Ville","5e · Panthéon","6e · Luxembourg","7e · Palais-Bourbon","8e · Élysée","9e · Opéra","10e · Entrepôt","11e · Popincourt","12e · Reuilly","13e · Gobelins","14e · Observatoire","15e · Vaugirard","16e · Passy","17e · Batignolles-Monceau","18e · Butte-Montmartre","19e · Buttes-Chaumont","20e · Ménilmontant"]]], note:"Les vélos sont disponibles dans toute la commune de Paris, dans les 20 arrondissements." },
+  "marseille":{ groups:[["Les 16 arrondissements",["1er · Canebière, Noailles, Belsunce","2e · Le Panier, La Joliette","3e · Belle de Mai, Saint-Lazare","4e · Les Chartreux, Cinq-Avenues","5e · Baille, La Conception","6e · Cours Julien, Notre-Dame-du-Mont, Préfecture","7e · Endoume, Saint-Victor, Le Pharo","8e · Prado, Pointe-Rouge, Bonneveine","9e · Mazargues, Sainte-Marguerite","10e · La Capelette, Saint-Loup","11e · La Valentine, Saint-Marcel","12e · Saint-Barnabé, Les Trois-Lucs","13e · Château-Gombert, Saint-Just","14e · Le Merlan, Sainte-Marthe","15e · Saint-Louis, Saint-Antoine","16e · L'Estaque, Saint-Henri"]]], note:"Les véhicules sont disponibles dans toute la commune de Marseille, dans les 16 arrondissements. Les quartiers cités sont des repères, pas une liste complète." },
   "le-havre":{ groups:[["",["Le Havre","Octeville-sur-Mer"]]] },
   "saint-quentin-en-yvelines":{ groups:[["Les 12 communes de l'agglomération",["Coignières","Élancourt","Guyancourt","La Verrière","Les Clayes-sous-Bois","Magny-les-Hameaux","Maurepas","Montigny-le-Bretonneux","Plaisir","Trappes","Villepreux","Voisins-le-Bretonneux"]]] },
   "nantes-metropole":{ groups:[["Communes du lancement",["Nantes","Rezé","Carquefou","La Chapelle-sur-Erdre","Sainte-Luce-sur-Loire","Thouaré-sur-Loire"]]], note:"Le service s'étend progressivement aux autres communes de Nantes Métropole." },
@@ -1284,15 +1301,34 @@ const ZONES = {
   "grenoble":{ groups:[["17 communes de la métropole",["Corenc","Échirolles","Eybens","Fontaine","Gières","Grenoble","La Tronche","Le Pont-de-Claix","Meylan","Montbonnot-Saint-Martin","Poisat","Saint-Égrève","Saint-Martin-d'Hères","Saint-Martin-le-Vinoux","Sassenage","Seyssinet-Pariset","Seyssins"]]],
     note:"Liste des communes du contrat précédent de la métropole (2022). La carte de l'application indique la zone exacte." }
 };
-function zoneList(z){
-  return z.groups.map(g=>`<div class="zgroup">${g[0]?`<h4>${esc(g[0])}</h4>`:""}<div class="communes">${g[1].map(x=>`<span>${esc(x)}</span>`).join("")}</div></div>`).join("")
+function zoneList(z,slug){
+  return `<p class="zhint">👆 Cliquez sur ${z.groups[0][1][0].includes(" · ")?"un arrondissement":"une commune"} pour zoomer dessus sur la carte.</p>`
+    + z.groups.map(g=>`<div class="zgroup">${g[0]?`<h4>${esc(g[0])}</h4>`:""}<div class="communes">${g[1].map(x=>{ const k=spotKey(slug,x); return k?`<button type="button" class="zchip" data-spot="${esc(k)}">${esc(x)}</button>`:`<span>${esc(x)}</span>`; }).join("")}</div></div>`).join("")
+    + `<div class="zdetail" hidden></div>`
     + (z.note?`<p class="note">${esc(z.note)}</p>`:"");
 }
 function zonesBlock(m){
   const z=ZONES[m.slug]; if(!z) return "";
   const what = m.m==="b" ? "les vélos" : m.m==="s" ? "les trottinettes" : "les véhicules";
-  return `<section class="zones"><h2>Où trouver ${what} Voi à ${esc(m.name)} ?</h2>${zoneList(z)}</section>`;
+  return `<section class="zones"><h2>Où trouver ${what} Voi à ${esc(m.name)} ?</h2>${zoneList(z,m.slug)}</section>`;
 }
+
+/* ---------------- LIEUX PRÉCIS (clic sur un arrondissement ou une commune) ---------------- */
+const SPOTS = {"paris|1er": [48.8625, 2.3363, ["Musée du Louvre", "Palais-Royal", "Châtelet-Les Halles"], "Paris 1er"], "paris|2e": [48.8683, 2.3428, ["Bourse", "Grands Boulevards", "Sentier"], "Paris 2e"], "paris|3e": [48.863, 2.36, ["Haut-Marais", "Arts et Métiers", "Square du Temple"], "Paris 3e"], "paris|4e": [48.8543, 2.3576, ["Hôtel de Ville", "Notre-Dame", "Île Saint-Louis"], "Paris 4e"], "paris|5e": [48.8445, 2.3507, ["Panthéon", "Jardin des Plantes", "Quartier latin"], "Paris 5e"], "paris|6e": [48.8491, 2.3328, ["Jardin du Luxembourg", "Saint-Germain-des-Prés", "Odéon"], "Paris 6e"], "paris|7e": [48.8562, 2.3121, ["Tour Eiffel", "Invalides", "Musée d'Orsay"], "Paris 7e"], "paris|8e": [48.8727, 2.3125, ["Champs-Élysées", "Gare Saint-Lazare", "Madeleine"], "Paris 8e"], "paris|9e": [48.8771, 2.3375, ["Opéra Garnier", "Grands Magasins", "Saint-Georges"], "Paris 9e"], "paris|10e": [48.8761, 2.3607, ["Gare du Nord", "Gare de l'Est", "Canal Saint-Martin"], "Paris 10e"], "paris|11e": [48.859, 2.38, ["Oberkampf", "Bastille", "Parmentier"], "Paris 11e"], "paris|12e": [48.84, 2.388, ["Gare de Lyon", "Bercy", "Nation"], "Paris 12e"], "paris|13e": [48.8283, 2.3622, ["Place d'Italie", "Bibliothèque François-Mitterrand", "Butte-aux-Cailles"], "Paris 13e"], "paris|14e": [48.8331, 2.3264, ["Denfert-Rochereau", "Parc Montsouris", "Alésia"], "Paris 14e"], "paris|15e": [48.8412, 2.3003, ["Vaugirard", "Beaugrenelle", "Porte de Versailles"], "Paris 15e"], "paris|16e": [48.8603, 2.262, ["Trocadéro", "Passy", "Auteuil"], "Paris 16e"], "paris|17e": [48.8873, 2.3067, ["Batignolles", "Parc Monceau", "Porte Maillot"], "Paris 17e"], "paris|18e": [48.8925, 2.3484, ["Montmartre", "Sacré-Cœur", "La Chapelle"], "Paris 18e"], "paris|19e": [48.8871, 2.3848, ["Buttes-Chaumont", "La Villette", "Bassin de la Villette"], "Paris 19e"], "paris|20e": [48.8635, 2.401, ["Ménilmontant", "Belleville", "Père-Lachaise"], "Paris 20e"], "marseille|1er": [43.2999, 5.3844, ["La Canebière", "Noailles", "Belsunce"], "Marseille 1er"], "marseille|2e": [43.305, 5.366, ["Le Panier", "La Joliette", "Les Docks"], "Marseille 2e"], "marseille|3e": [43.312, 5.388, ["Belle de Mai", "Saint-Lazare", "La Friche"], "Marseille 3e"], "marseille|4e": [43.306, 5.402, ["Les Chartreux", "Cinq-Avenues", "Palais Longchamp"], "Marseille 4e"], "marseille|5e": [43.293, 5.399, ["Baille", "La Conception", "Saint-Pierre"], "Marseille 5e"], "marseille|6e": [43.287, 5.381, ["Cours Julien", "Notre-Dame-du-Mont", "Préfecture"], "Marseille 6e"], "marseille|7e": [43.282, 5.36, ["Endoume", "Saint-Victor", "Le Pharo"], "Marseille 7e"], "marseille|8e": [43.25, 5.378, ["Prado", "Pointe-Rouge", "Bonneveine"], "Marseille 8e"], "marseille|9e": [43.25, 5.415, ["Mazargues", "Sainte-Marguerite", "Luminy"], "Marseille 9e"], "marseille|10e": [43.277, 5.425, ["La Capelette", "Saint-Loup", "Pont-de-Vivaux"], "Marseille 10e"], "marseille|11e": [43.29, 5.48, ["La Valentine", "Saint-Marcel", "Les Camoins"], "Marseille 11e"], "marseille|12e": [43.308, 5.44, ["Saint-Barnabé", "Les Trois-Lucs", "Saint-Julien"], "Marseille 12e"], "marseille|13e": [43.348, 5.43, ["Château-Gombert", "Saint-Just", "Saint-Jérôme"], "Marseille 13e"], "marseille|14e": [43.342, 5.395, ["Le Merlan", "Sainte-Marthe", "Saint-Barthélémy"], "Marseille 14e"], "marseille|15e": [43.353, 5.36, ["Saint-Louis", "Saint-Antoine", "La Cabucelle"], "Marseille 15e"], "marseille|16e": [43.36, 5.317, ["L'Estaque", "Saint-Henri", "Saint-André"], "Marseille 16e"], "Le Havre": [49.4944, 0.1079, [], "Le Havre"], "Octeville-sur-Mer": [49.5531, 0.1153, [], "Octeville-sur-Mer"], "Coignières": [48.75, 1.92, [], "Coignières"], "Élancourt": [48.784, 1.955, [], "Élancourt"], "Guyancourt": [48.773, 2.074, [], "Guyancourt"], "La Verrière": [48.755, 1.943, [], "La Verrière"], "Les Clayes-sous-Bois": [48.822, 1.986, [], "Les Clayes-sous-Bois"], "Magny-les-Hameaux": [48.742, 2.062, [], "Magny-les-Hameaux"], "Maurepas": [48.764, 1.92, [], "Maurepas"], "Montigny-le-Bretonneux": [48.7712, 2.0333, [], "Montigny-le-Bretonneux"], "Plaisir": [48.823, 1.948, [], "Plaisir"], "Trappes": [48.777, 2.001, [], "Trappes"], "Villepreux": [48.829, 2.003, [], "Villepreux"], "Voisins-le-Bretonneux": [48.758, 2.051, [], "Voisins-le-Bretonneux"], "Nantes": [47.2184, -1.5536, [], "Nantes"], "Rezé": [47.191, -1.569, [], "Rezé"], "Carquefou": [47.297, -1.492, [], "Carquefou"], "La Chapelle-sur-Erdre": [47.299, -1.552, [], "La Chapelle-sur-Erdre"], "Sainte-Luce-sur-Loire": [47.25, -1.487, [], "Sainte-Luce-sur-Loire"], "Thouaré-sur-Loire": [47.268, -1.44, [], "Thouaré-sur-Loire"], "Buchelay": [48.984, 1.67, [], "Buchelay"], "Limay": [48.994, 1.735, [], "Limay"], "Mantes-la-Jolie": [48.9908, 1.7172, [], "Mantes-la-Jolie"], "Mantes-la-Ville": [48.975, 1.712, [], "Mantes-la-Ville"], "Hardricourt": [49.008, 1.894, [], "Hardricourt"], "Les Mureaux": [48.9913, 1.9097, [], "Les Mureaux"], "Meulan-en-Yvelines": [49.006, 1.907, [], "Meulan-en-Yvelines"], "Tessancourt-sur-Aubette": [49.025, 1.92, [], "Tessancourt-sur-Aubette"], "Andrésy": [48.981, 2.058, [], "Andrésy"], "Carrières-sous-Poissy": [48.947, 2.04, [], "Carrières-sous-Poissy"], "Conflans-Sainte-Honorine": [48.999, 2.098, [], "Conflans-Sainte-Honorine"], "Poissy": [48.929, 2.046, [], "Poissy"], "Corenc": [45.212, 5.765, [], "Corenc"], "Échirolles": [45.146, 5.718, [], "Échirolles"], "Eybens": [45.148, 5.75, [], "Eybens"], "Fontaine": [45.193, 5.686, [], "Fontaine"], "Gières": [45.182, 5.792, [], "Gières"], "Grenoble": [45.1885, 5.7245, [], "Grenoble"], "La Tronche": [45.205, 5.74, [], "La Tronche"], "Le Pont-de-Claix": [45.123, 5.698, [], "Le Pont-de-Claix"], "Meylan": [45.209, 5.779, [], "Meylan"], "Montbonnot-Saint-Martin": [45.2278, 5.8033, [], "Montbonnot-Saint-Martin"], "Poisat": [45.158, 5.76, [], "Poisat"], "Saint-Égrève": [45.233, 5.683, [], "Saint-Égrève"], "Saint-Martin-d'Hères": [45.167, 5.765, [], "Saint-Martin-d'Hères"], "Saint-Martin-le-Vinoux": [45.203, 5.718, [], "Saint-Martin-le-Vinoux"], "Sassenage": [45.205, 5.664, [], "Sassenage"], "Seyssinet-Pariset": [45.179, 5.689, [], "Seyssinet-Pariset"], "Seyssins": [45.164, 5.687, [], "Seyssins"]};
+function spotKey(slug,chip){ const a=chip.split(" · ")[0]; return SPOTS[slug+"|"+a] ? slug+"|"+a : (SPOTS[chip] ? chip : null); }
+function zonePick(btn){
+  const box=btn.closest(".zones,.block"), key=btn.dataset.spot, s=SPOTS[key]; if(!s) return;
+  box.querySelectorAll(".zchip").forEach(b=>b.classList.toggle("on",b===btn));
+  const d=box.querySelector(".zdetail");
+  const osm=`https://www.openstreetmap.org/?mlat=${s[0]}&mlon=${s[1]}#map=15/${s[0]}/${s[1]}`;
+  if(d){ d.hidden=false; d.innerHTML=`<b>📍 ${esc(s[3])}</b>
+      ${s[2].length?`<p>Repères du secteur : ${s[2].map(esc).join(" · ")}</p>`:`<p>Centre de la commune.</p>`}
+      <p class="zd-actions"><a href="${osm}">Voir le plan détaillé (rues) →</a></p>
+      <p class="note">Les véhicules disponibles et les zones de stationnement exactes s'affichent en temps réel dans l'application Voi.</p>`; }
+  const go=()=>goTo({type:"spot", coords:[s[0],s[1]], label:s[3]}, VIEW.sel, VIEW.country, true);
+  if(mapOnScreen()) go(); else { scrollToMap(); setTimeout(go,420); }
+}
+document.addEventListener("click",e=>{ const b=e.target.closest(".zchip"); if(b){ e.preventDefault(); zonePick(b); } });
 /* ---------------- MINI FAQ (sur chaque page ville, générée à partir des données) ---------------- */
 function miniFaq(m){
   const c=m.country, cr=COUNTRY_RULES[c.id]||{items:[]}, lr=CITY_RULES[m.slug]||{items:[]};
@@ -1306,7 +1342,7 @@ function miniFaq(m){
   if(lr.alert) qa.push([`Voi est-il toujours disponible à ${m.name} ?`, lr.alert]);
   qa.push([`Quels véhicules Voi trouve-t-on à ${m.name} ?`, `Voi propose ${veh} à ${m.name}.${m.note?" "+m.note:""} La carte de l'application affiche en temps réel les véhicules disponibles autour de vous.`]);
   const zz=ZONES[m.slug];
-  if(zz){ const list=zz.groups.map(g=>(g[0]?g[0]+" : ":"")+g[1].join(", ")).join(" · "); qa.push([`Dans quelles communes peut-on utiliser Voi ?`, list+"."+(zz.note?" "+zz.note:"")]); }
+  if(zz){ const list=zz.groups.map(g=>(g[0]?g[0]+" : ":"")+g[1].map(x=>x.split(" · ")[0]).join(", ")).join(" · "); qa.push([`Dans quelles communes peut-on utiliser Voi ?`, list+"."+(zz.note?" "+zz.note:"")]); }
   const park=find(["🅿️"]);
   qa.push([`Où garer ${one} à ${m.name} ?`, park ? `${park[1]} : ${park[2].charAt(0).toLowerCase()+park[2].slice(1)}` : `Garez-vous uniquement dans les zones de stationnement autorisées affichées sur la carte de l'application, sans gêner les piétons. Prenez une photo pour terminer la location.`]);
   const age=find(["🎂","🪪"]);
