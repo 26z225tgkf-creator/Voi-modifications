@@ -1720,14 +1720,13 @@ function articlesBlock(slug, cityName){
       <div class="aimg" data-emoji="${a.emoji}"><img loading="lazy" src="${WM(a.photo)}" alt="${esc(a.title)}" onerror="this.remove()"></div>
       <div class="abody"><span class="atag">${esc(a.tag)}</span><h3>${esc(a.title)}</h3><p>${esc(a.summary)}</p>
         <div class="ameta">${esc(a.meta)}</div><span class="aread">Lire l'article →</span></div>
-      <a class="acredit" href="${WMPAGE(a.photo)}" onclick="event.stopPropagation()">📷 ${esc(a.credit)}</a>
     </article>`;
   return `<section class="articles">
     <div class="ahead"><div><span class="lrules-badge">Le blog</span><h2>Idées de sorties à vélo</h2></div>
       <div class="anav"><button type="button" class="aprev" aria-label="Article précédent">←</button><button type="button" class="anext" aria-label="Article suivant">→</button></div></div>
     <div class="acar-track">${list.map(card).join("")}</div>
     <div class="adots">${list.map((_,i)=>`<button type="button" aria-label="Article ${i+1}" class="${i?"":"on"}" data-i="${i}"></button>`).join("")}</div>
-    <p class="note">Distances et durées indicatives, à vélo électrique. Cliquez sur un article pour le lire. Photos : Wikimedia Commons (licences libres, voir le crédit sur chaque carte).</p>
+    <p class="note">Distances et durées indicatives, à vélo électrique. Cliquez sur un article pour le lire. Photos : Wikimedia Commons (licences libres, auteur indiqué dans chaque article).</p>
   </section>`;
 }
 
