@@ -401,23 +401,72 @@
   .adots{display:flex;justify-content:center;gap:7px;margin-top:4px}
   .adots button{width:8px;height:8px;border-radius:999px;border:0;background:var(--line);cursor:pointer;padding:0;transition:width .25s ease,background .25s ease}
   .adots button.on{width:24px;background:var(--coral)}
-  .amodal{position:fixed;inset:0;z-index:100;background:rgba(27,23,22,.55);display:grid;place-items:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s ease}
+  .articles{scroll-margin-top:84px}
+  /* ---- article reader : editorial blog layout ---- */
+  .amodal{position:fixed;inset:0;z-index:100;background:#fff;display:block;padding:0;opacity:0;pointer-events:none;transition:opacity .2s ease}
   .amodal.open{opacity:1;pointer-events:auto}
-  .apanel{position:relative;background:#fff;border-radius:22px;max-width:640px;width:100%;max-height:88vh;overflow:auto;transform:translateY(12px);transition:transform .25s ease}
-  .amodal.open .apanel{transform:none}
-  .aimg.big{aspect-ratio:16/9;flex:none}
-  .apad{padding:22px 26px 26px}
-  .apad h2{font-size:clamp(24px,3.4vw,32px);font-weight:800;margin:10px 0 4px}
-  .apad p{color:var(--ink-2);line-height:1.6}
-  .apad .aq{font-style:italic;color:var(--coral-d);font-weight:600;margin:12px 0 4px}
-  .apad h3{font-size:19px;font-weight:800;margin:22px 0 6px}
-  .apad .alist{margin:6px 0 10px;padding-left:20px;color:var(--ink-2);line-height:1.6}
-  .apad .alist li{margin:5px 0}
-  .apad .atip{margin:22px 0 6px;padding:14px 16px;border-radius:14px;background:var(--mint);color:var(--mint-ink);line-height:1.55;font-size:14.5px}
-  .apad .atip b{display:block;margin-bottom:4px}
-  .acredit-l{font-size:12.5px;color:var(--mute)!important}
+  .awrap{position:relative;width:100%;height:100%;transform:translateY(14px);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+  .amodal.open .awrap{transform:none}
+  .apanel{position:relative;background:#fff;width:100%;height:100%;overflow:auto;overscroll-behavior:contain}
+  .aprog{position:sticky;top:0;z-index:4;height:3px}
+  .aprog i{display:block;height:100%;width:0;background:var(--coral);transition:width .1s linear}
+  .aclose{position:absolute;top:18px;right:22px;z-index:5;display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 16px;border-radius:999px;border:0;background:rgba(255,255,255,.95);color:var(--ink);font:700 14.5px "DM Sans",sans-serif;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.15)}
+  .aclose:hover{color:var(--coral-d)}
+  .acover{position:relative;height:min(56vh,560px);background:linear-gradient(135deg,var(--coral) 0%,#F7A097 100%);overflow:hidden}
+  .acover::before{content:attr(data-emoji);position:absolute;inset:0;display:grid;place-items:center;font-size:72px}
+  .acover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .acol{max-width:720px;margin:0 auto;padding:44px 28px 70px}
+  .akicker{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:13px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:.07em}
+  .akicker .k1{color:var(--coral-d)}
+  .akicker i{width:4px;height:4px;border-radius:50%;background:var(--line);display:inline-block}
+  .acol h1{font-family:"Bricolage Grotesque",sans-serif;font-size:clamp(32px,5vw,56px);font-weight:800;line-height:1.06;letter-spacing:-.025em;margin:14px 0 10px;text-wrap:balance}
+  .asub{font-size:17px;font-style:italic;color:var(--mute);margin:0 0 22px}
+  .alead{font-size:20px;line-height:1.6;color:var(--ink);font-weight:500;margin:0 0 8px;padding-bottom:26px;border-bottom:1px solid var(--line)}
+  .alead::first-letter{float:left;font-family:"Bricolage Grotesque",sans-serif;font-size:62px;line-height:.86;font-weight:800;color:var(--coral);margin:6px 10px 0 0}
+  .acol p{font-size:17px;line-height:1.8;color:var(--ink-2);margin:18px 0}
+  .acol h2.ah{font-family:"Bricolage Grotesque",sans-serif;font-size:26px;font-weight:800;letter-spacing:-.015em;line-height:1.15;margin:44px 0 6px}
+  .acol ul.alist{margin:14px 0 18px;padding-left:22px;font-size:17px;line-height:1.75;color:var(--ink-2)}
+  .acol ul.alist li{margin:6px 0;padding-left:4px}
+  .acol ul.alist li::marker{color:var(--coral)}
+  .acol ol.alist{margin:14px 0 18px;padding-left:0;list-style:none;counter-reset:st;font-size:16.5px;line-height:1.65;color:var(--ink-2)}
+  .acol ol.alist li{position:relative;padding:4px 0 12px 44px;counter-increment:st}
+  .acol ol.alist li::before{content:counter(st);position:absolute;left:0;top:2px;width:28px;height:28px;border-radius:50%;background:var(--coral-l);color:var(--coral-d);display:grid;place-items:center;font-weight:800;font-size:13px}
+  .acol ol.alist li .tm{font-weight:800;color:var(--ink);margin-right:6px}
+  .acol ol.alist li b{color:var(--ink)}
+  /* route = one itinerary: key facts first, then the story */
+  .aroute{margin:46px 0 10px}
+  .aroute h2{display:flex;align-items:baseline;gap:12px;font-family:"Bricolage Grotesque",sans-serif;font-size:26px;font-weight:800;letter-spacing:-.015em;line-height:1.15;margin:0 0 16px}
+  .aroute h2 .rn{flex:none;font-size:15px;font-weight:800;color:#fff;background:var(--coral);border-radius:999px;padding:3px 11px;transform:translateY(-3px)}
+  .afacts{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin:0}
+  .afacts div{background:var(--cream);padding:12px 14px}
+  .afacts dt{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);display:flex;gap:6px;align-items:center}
+  .afacts dd{margin:4px 0 0;font-weight:800;color:var(--ink);font-size:15px;line-height:1.3}
+  .aroute .astory{margin-top:16px}
+  .aquote{margin:34px 0;padding:4px 0 4px 22px;border-left:4px solid var(--coral)}
+  .aquote p{font-family:"Bricolage Grotesque",sans-serif;font-size:22px!important;line-height:1.4!important;color:var(--ink)!important;font-weight:600;margin:0!important}
+  .aquote cite{display:block;margin-top:8px;font-style:normal;font-size:13.5px;color:var(--mute)}
+  .anote{margin:28px 0;font-size:15.5px;line-height:1.65;color:var(--ink-2)}
+  .anote b{color:var(--coral-d)}
+  .akey{margin:48px 0 0;background:var(--cream);border:1.5px solid var(--coral);border-radius:22px;padding:24px 26px}
+  .akey h2{font-family:"Bricolage Grotesque",sans-serif;font-size:22px;font-weight:800;margin:0 0 12px;display:flex;align-items:center;gap:10px}
+  .akey h2 span{width:30px;height:30px;border-radius:50%;background:var(--coral);color:#fff;display:grid;place-items:center;font-size:15px}
+  .akey ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+  .akey li{position:relative;padding-left:30px;font-size:15.5px;line-height:1.55;color:var(--ink);font-weight:500}
+  .akey li::before{content:"✓";position:absolute;left:0;top:0;width:20px;height:20px;border-radius:50%;background:var(--mint);color:var(--mint-ink);display:grid;place-items:center;font-size:12px;font-weight:800}
+  .afoot{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-top:30px}
+  .afoot .anextart{display:flex;flex-direction:column;align-items:flex-start;gap:2px;background:none;border:0;padding:0;cursor:pointer;font:inherit;text-align:left;max-width:62%}
+  .afoot .anextart small{font-size:12px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:.06em}
+  .afoot .anextart span{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;color:var(--ink);font-size:18px;line-height:1.2}
+  .afoot .anextart:hover span{color:var(--coral-d)}
+  .acol p.acredit-l{margin:26px 0 0;font-size:12.5px;line-height:1.5;color:var(--mute)}
   .acredit-l a{color:var(--mute)}
-  .aclose{position:absolute;top:12px;right:12px;z-index:2;width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.92);font-size:16px;cursor:pointer}
+  @media (max-width:640px){
+    .acover{height:42vh}
+    .aclose{top:12px;right:12px;padding:0 14px}
+    .acol{padding:26px 20px 34px}
+    .alead{font-size:18px}
+    .afoot .anextart{max-width:100%}
+  }
   @media (max-width:720px){ .acard{flex-basis:78%} .anav{display:none} }
 </style>
 </head>
@@ -1565,152 +1614,192 @@ const WM = f => "https://commons.wikimedia.org/wiki/Special:FilePath/"+encodeURI
 const WMPAGE = f => "https://commons.wikimedia.org/wiki/File:"+encodeURIComponent(f.replace(/ /g,"_"));
 const ARTICLES = {
   "paris":[
-    { tag:"En famille", emoji:"👨‍👩‍👧", title:"Les meilleures balades à vélo en famille à Paris", meta:"3 parcours calmes · de 2 à 6 km",
+    { tag:"En famille", emoji:"👨‍👩‍👧", title:"Les meilleures balades à vélo en famille à Paris", meta:"4 parcours calmes · de 2 à 6 km",
       photo:"Canal Saint-Martin - Quai de Valmy, Paris 21 July 2013.jpg", credit:"Francisco Anzola",
       q:"Quel trajet à vélo faire avec des enfants à Paris sans danger ?",
       summary:"Trois parcours presque sans voitures, avec des aires de jeux et des coins pique-nique.",
-      body:["Avec des enfants, le bon parcours est court, plat, à l'écart des voitures et ponctué de pauses. Voici trois balades qui cochent toutes les cases, dans Paris.",
-        {h:"1. Le bassin de la Villette et le parc de la Villette"},
-        {ul:["Distance : environ 2,5 km de Stalingrad au parc de la Villette, aller simple.","Niveau : très facile, tout plat.","Le plus : les quais du bassin sont fermés aux voitures, et le parc a de grands jardins de jeux, dont le célèbre toboggan du Dragon."]},
-        "Pour aller plus loin, la piste cyclable continue le long du canal de l'Ourcq vers Pantin. Attention : la zone Voi de Paris s'arrête aux limites de la ville. Revenez garer le vélo dans Paris pour terminer la location.",
-        {h:"2. Le tour du lac Daumesnil, bois de Vincennes"},
-        {ul:["Distance : environ 2 km pour la boucle du lac, jusqu'à 6 km en prolongeant dans le bois.","Niveau : facile.","Le plus : location de barques sur le lac, grandes pelouses pour pique-niquer, et le Parc floral tout proche."]},
-        {h:"3. Les berges de Seine piétonnes"},
-        {ul:["Distance : environ 2 km rive gauche (du musée d'Orsay au pont de l'Alma), 3 km rive droite (des Tuileries vers l'Hôtel de Ville).","Niveau : facile, mais très fréquenté le week-end.","Le plus : vue sur les monuments, sans aucune voiture. Roulez au pas : les piétons sont prioritaires."]},
+      lead:"Pédaler en famille à Paris sans slalomer entre les voitures ? C'est possible. Voici quatre balades presque sans circulation, avec de quoi jouer, goûter et souffler en chemin.",
+      body:[
+        {route:{name:"Le bassin et le parc de la Villette", facts:[["📏","Distance","≈ 2,5 km (aller)"],["🟢","Niveau","Très facile, tout plat"],["⏱️","Durée","15 min, sans les pauses"],["🎈","Idéal pour","Les plus petits"]],
+          text:"On démarre place de Stalingrad, au pied de la rotonde, et on file le long de l'eau. Les péniches glissent, les joueurs de pétanque s'installent sur les quais, et au bout, le parc de la Villette déroule ses pelouses immenses. Les enfants foncent vers le toboggan du Dragon pendant que les parents étalent la nappe. Pour les plus motivés, la piste continue le long du canal de l'Ourcq : gardez en tête que la zone Voi s'arrête aux limites de Paris."}},
+        {route:{name:"Le tour du lac Daumesnil, bois de Vincennes", facts:[["📏","Distance","≈ 2 km la boucle, jusqu'à 6 km"],["🟢","Niveau","Facile"],["⏱️","Durée","30 min à 1 h"],["🧺","Idéal pour","Un pique-nique"]],
+          text:"Ici, on oublie qu'on est en ville. Le lac s'étire entre les arbres, ses petites îles reliées par des ponts, et les barques à louer font rêver les enfants. On fait le tour sans se presser, on s'arrête sur une pelouse à l'ombre, et si l'envie prend de prolonger, le Parc floral est à deux coups de pédale."}},
+        {route:{name:"Les berges de Seine piétonnes", facts:[["📏","Distance","≈ 2 km rive gauche, 3 km rive droite"],["🟡","Niveau","Facile, mais très fréquenté le week-end"],["⏱️","Durée","20 à 30 min"],["🗼","Idéal pour","Voir les monuments"]],
+          text:"Rouler au bord de la Seine, la Tour Eiffel d'un côté, le Louvre de l'autre, sans une seule voiture : c'est la balade carte postale. Rive gauche, du musée d'Orsay au pont de l'Alma, des espaces de jeux et des gradins au bord de l'eau ponctuent le chemin. Le seul secret : rouler au pas, car ici les piétons sont rois."}},
+        {route:{name:"Le parc de Bercy et ses jardins", facts:[["📏","Distance","≈ 2 km"],["🟢","Niveau","Très facile"],["⏱️","Durée","30 min à 1 h"],["🌻","Idéal pour","Découvrir le potager et les vignes"]],
+          text:"Au bord de la Seine, le parc de Bercy cache une série de petits jardins : un potager, un verger, une vigne, des bassins où nagent les canards. On roule sur les grandes allées, puis on pose le vélo pour explorer les jardins à pied. Au bout, la passerelle Simone-de-Beauvoir, toute en courbes, invite à traverser la Seine vers la Bibliothèque François-Mitterrand : les enfants adorent son effet de vague."}},
         {h:"À quel âge un enfant peut-il suivre sur son vélo ?"},
-        "Il n'y a pas d'âge officiel. En général, un enfant à l'aise sur son vélo, qui sait freiner et s'arrêter à la demande, peut suivre sur une voie séparée vers 6 ou 7 ans, et en ville, sur piste cyclable, plutôt vers 9 ou 10 ans. Placez-le devant vous pour le garder à l'œil.",
-        {tip:"Le casque est obligatoire à vélo pour les moins de 12 ans, qu'ils pédalent ou soient passagers. Un vélo Voi ne transporte qu'une personne : l'enfant roule donc sur son propre vélo. L'âge minimum pour louer un vélo Voi est indiqué dans l'application."}] },
+        "Il n'y a pas d'âge officiel. Un enfant à l'aise sur son vélo, qui sait freiner et s'arrêter quand on le lui demande, peut suivre sur une voie séparée vers 6 ou 7 ans. En ville, sur piste cyclable, on attend plutôt 9 ou 10 ans. Dans tous les cas, placez-le devant vous pour le garder à l'œil.",
+        {tip:"Le casque est obligatoire à vélo pour les moins de 12 ans, qu'ils pédalent ou soient passagers."}],
+      key:["3 parcours plats et presque sans voitures : la Villette, le lac Daumesnil, les berges de Seine.","Un vélo Voi transporte une seule personne : l'enfant roule sur son propre vélo.","Casque obligatoire pour les moins de 12 ans.","La zone Voi, c'est Paris : garez le vélo dans Paris pour terminer la location.","Sur les berges, les piétons sont prioritaires : roulez au pas.","4e idée : le parc de Bercy, ses jardins et la passerelle Simone-de-Beauvoir."] },
 
-    { tag:"Sortie", emoji:"☀️", title:"Que faire un dimanche à vélo quand il fait beau ?", meta:"1 idée par ville Voi en France",
-      photo:"Nantes - Erdre.jpg", credit:"Wikimedia Commons",
-      q:"Idée de sortie à vélo le dimanche près de chez moi",
-      summary:"Bords de l'eau, marchés, brunchs et rues sans voitures : nos idées ville par ville.",
-      body:["Le dimanche, la ville est plus calme et c'est le meilleur moment pour la redécouvrir à vélo. Voici une idée de sortie dans chaque ville où Voi est présent en France.",
-        {h:"Une idée par ville"},
-        {ul:["Paris : le dimanche, certaines rues et certains quartiers sont réservés aux piétons et aux vélos (opération « Paris Respire »). Idéal pour flâner du canal Saint-Martin à Montmartre.",
-             "Nantes : remontez l'Erdre depuis le centre jusqu'à l'île de Versailles et son jardin japonais, puis longez la rivière vers le nord.",
-             "Marseille : la corniche Kennedy, du Vieux-Port aux plages du Prado, avec arrêt au vallon des Auffes.",
-             "Grenoble : les quais de l'Isère au pied de la Bastille, puis le parc Paul-Mistral.",
-             "Le Havre : le front de mer, de la plage jusqu'à Sainte-Adresse, face à la mer.",
-             "Saint-Quentin-en-Yvelines : le tour de l'île de loisirs et de son étang."]},
-        {h:"Marchés, guinguettes et brunchs"},
-        "Le dimanche matin, la plupart des quartiers ont leur marché : c'est l'occasion de remplir un panier pour un pique-nique. À midi, cherchez une terrasse au bord de l'eau ; l'été, les guinguettes rouvrent le long des canaux et des fleuves.",
-        {h:"Les rues sans voitures"},
-        "Beaucoup de villes ferment certaines rues aux voitures le dimanche ou organisent une « journée sans voiture » une fois par an. Les dates changent chaque année : consultez le site de votre mairie avant de partir.",
-        {tip:"Le dimanche, les vélos partent vite près des parcs et des berges. Ouvrez l'application un peu avant pour repérer le plus proche."}] },
-
+    { tag:"Sortie", emoji:"☀️", title:"Que faire un dimanche à vélo quand il fait beau ?", meta:"Paris · 4 idées de sortie",
+      photo:"Marché dAligre 4.jpg", credit:"Jesús Gorriti",
+      q:"Idée de sortie à vélo le dimanche à Paris",
+      summary:"Quais sans voitures, marché, brunch et Montmartre au calme : trois dimanches parisiens à vélo.",
+      lead:"Le dimanche, Paris respire. Moins de voitures, des quais rendus aux promeneurs, des terrasses qui se remplissent doucement : c'est le meilleur jour pour redécouvrir la ville à vélo. Voici quatre façons de passer un dimanche parisien.",
+      body:[
+        {route:{name:"Le canal Saint-Martin sans voitures", facts:[["🚗","Sans voitures","Les quais du canal, le dimanche"],["📏","Distance","≈ 2,5 km de la République à Stalingrad"],["🟢","Niveau","Très facile"],["☕","Pause idéale","Une terrasse au bord de l'eau"]],
+          text:"Le dimanche, les quais de Valmy et de Jemmapes sont réservés aux piétons et aux vélos : on roule au milieu de la chaussée, entre les platanes et les passerelles en fer. Les écluses s'ouvrent pour laisser passer un bateau, on s'arrête pour regarder, puis on remonte jusqu'au bassin de la Villette où les terrasses se remplissent à l'heure du brunch."}},
+        {route:{name:"Du marché d'Aligre aux berges de Seine", facts:[["📏","Distance","≈ 3 km"],["⏰","Quand","Dimanche matin"],["🟢","Niveau","Facile"],["🧺","Idéal pour","Remplir le panier du pique-nique"]],
+          text:"On commence par le marché d'Aligre, l'un des plus vivants de Paris : fruits empilés, fromages, fleurs et brocante sur la place. Panier rempli, on descend vers la Bastille, on longe le port de l'Arsenal et ses bateaux, puis on rejoint les berges de Seine rive droite pour pique-niquer face à l'île Saint-Louis."}},
+        {route:{name:"Montmartre au calme", facts:[["🚗","Sans voitures","Certaines rues, le dimanche"],["📏","Distance","≈ 3 km depuis Pigalle"],["🟡","Niveau","Ça monte : l'assistance aide"],["🎨","Idéal pour","Flâner dans le village"]],
+          text:"Le dimanche, plusieurs rues de Montmartre sont réservées aux piétons et aux vélos. On grimpe tranquillement depuis Pigalle, l'assistance électrique faisant le gros du travail, on passe devant les vignes et les maisons à volets, et on termine sur une petite place, un café à la main, à l'écart de la foule du Sacré-Cœur."}},
+        {route:{name:"Le Jardin des Plantes et un thé à la menthe", facts:[["📏","Distance","≈ 2 km depuis Notre-Dame"],["🟢","Niveau","Facile"],["🌿","Ambiance","Serres et allées fleuries"],["🫖","Pause idéale","Le salon de thé de la Grande Mosquée"]],
+          text:"On longe les quais rive gauche jusqu'au Jardin des Plantes, on gare le vélo à l'entrée et on se promène entre les grandes allées fleuries, les serres et les vieux arbres. À la sortie, juste en face, le salon de thé de la Grande Mosquée de Paris sert le thé à la menthe et les pâtisseries dans un patio couvert de mosaïques. Un dimanche qui a des airs de voyage."}},
+        {h:"Bon à savoir sur les rues sans voitures"},
+        "Paris ferme régulièrement certaines rues à la circulation le dimanche et les jours fériés, et organise une « journée sans voiture » une fois par an. Les quartiers et les dates changent : consultez le site de la Ville de Paris avant de partir.",
+        {tip:"Le dimanche, les vélos partent vite près des canaux et des parcs. Ouvrez l'application un peu avant pour repérer le plus proche."}],
+      key:["Le canal Saint-Martin sans voitures : ≈ 2,5 km au bord de l'eau.","Le marché d'Aligre le matin, puis pique-nique sur les berges de Seine.","Montmartre au calme, avec l'assistance pour la montée.","Rues fermées et dates : vérifiez sur le site de la Ville de Paris.","Les vélos partent vite le dimanche : anticipez dans l'application.","Le Jardin des Plantes, puis un thé à la menthe à la Grande Mosquée."] },
     { tag:"En amoureux", emoji:"💕", title:"Un rendez-vous original à vélo : itinéraires romantiques", meta:"Paris · 1 h de balade",
       photo:"Tour Eiffel Wikimedia Commons.jpg", credit:"Wikimedia Commons",
       q:"Idée de date originale à Paris",
       summary:"Coucher de soleil, points de vue et une glace en chemin : le rendez-vous qui change.",
-      body:["Un rendez-vous à vélo, c'est plus détendu qu'un dîner en tête-à-tête : on discute en roulant, on s'arrête où on veut, et la ville sert de décor.",
+      lead:"Oubliez le dîner en tête-à-tête un peu figé. À vélo, on discute en roulant, on s'arrête où on veut, et Paris sert de décor. Voici de quoi transformer un premier rendez-vous en souvenir.",
+      body:[
+        {route:{name:"La formule « 1 heure, 1 balade, 1 glace »", facts:[["📏","Distance","≈ 6 km en boucle"],["⏱️","Durée","1 h, pauses comprises"],["🟢","Niveau","Facile, tout plat"],["🌇","Moment idéal","Fin d'après-midi"]],
+          text:"Rendez-vous au jardin des Tuileries. On longe les quais rive droite jusqu'à l'Hôtel de Ville, la Seine scintillant à côté, puis on traverse vers l'île Saint-Louis, réputée pour ses glaciers. Cornet à la main, on s'assoit sur le quai, les pieds au-dessus de l'eau. Le retour se fait tranquillement par la rive gauche, quand la lumière devient dorée sur le musée d'Orsay."}},
+        {route:{name:"Le Champ-de-Mars à la nuit tombée", facts:[["📏","Distance","≈ 3 km depuis le pont Alexandre-III"],["⏱️","Durée","30 min, puis pique-nique"],["🟢","Niveau","Facile"],["✨","Le moment magique","La Tour qui scintille"]],
+          text:"On part du pont Alexandre-III au coucher du soleil, on longe les quais rive gauche, et on arrive au Champ-de-Mars quand le ciel devient bleu nuit. Nappe sur la pelouse, pique-nique sorti du sac, et à la tombée de la nuit, la Tour Eiffel se met à scintiller quelques minutes à chaque heure. Difficile de faire plus romantique."}},
+        {route:{name:"Le canal Saint-Martin au crépuscule", facts:[["📏","Distance","≈ 2,5 km"],["🟢","Niveau","Très facile"],["🍷","Pour","Un verre au bord de l'eau"],["🌙","Moment idéal","Après 19 h"]],
+          text:"Le soir, le canal Saint-Martin prend des airs de Venise discrète : les réverbères se reflètent dans l'eau, les passerelles en fer se découpent dans la lumière, et les terrasses s'animent. On roule doucement de la République jusqu'aux écluses, puis on s'assoit au bord du quai, les jambes au-dessus de l'eau."}},
         {h:"Les plus beaux couchers de soleil"},
-        {ul:["Le square du Vert-Galant, à la pointe de l'île de la Cité, au ras de l'eau.","Le pont Alexandre-III, avec la Tour Eiffel et les Invalides de chaque côté.","Le parc de Belleville, l'un des plus beaux panoramas sur tout Paris.","Le Sacré-Cœur : la montée est raide, mais l'assistance électrique fait le travail."]},
+        {ul:["Le square du Vert-Galant : la pointe de l'île de la Cité, au ras de l'eau.","Le pont Alexandre-III : la Tour Eiffel et les Invalides de chaque côté.","Le parc de Belleville : un panorama sur tout Paris.","Le Sacré-Cœur : la montée est raide, l'assistance électrique fait le travail."]},
         {h:"Où s'arrêter"},
-        "Pour un verre, les quais du canal Saint-Martin et du bassin de la Villette sont animés jusqu'au soir. Pour un pique-nique, prévoyez une nappe et posez-vous sur les berges de Seine ou au Champ-de-Mars.",
-        {h:"La formule « 1 heure, 1 balade, 1 glace »"},
-        {ul:["Départ du jardin des Tuileries.","Les quais rive droite jusqu'à l'Hôtel de Ville, environ 15 minutes.","Traversée vers l'île Saint-Louis, réputée pour ses glaciers.","Retour tranquille par les quais rive gauche, jusqu'au musée d'Orsay."]},
-        {tip:"Garez les vélos avant de vous installer : sur les quais et les îles, utilisez les emplacements vélos autorisés indiqués dans l'application."}] },
+        "Pour un verre, les quais du canal Saint-Martin et du bassin de la Villette sont animés jusqu'au soir. Pour un pique-nique, glissez une nappe dans le sac et posez-vous sur les berges de Seine ou au Champ-de-Mars.",
+        {tip:"Garez les vélos avant de vous installer : sur les quais et les îles, utilisez les emplacements vélos autorisés indiqués dans l'application."}],
+      key:["La formule clé : 1 heure, 6 km, une glace sur l'île Saint-Louis.","4 points de vue pour le coucher du soleil : Vert-Galant, Alexandre-III, Belleville, Sacré-Cœur.","Un verre au bord du canal, ou un pique-nique sur les berges.","Chacun son vélo : un vélo Voi, une personne.","Garez-vous sur un emplacement autorisé avant de vous poser.","2 idées en plus : le pique-nique du Champ-de-Mars quand la Tour scintille, et le canal Saint-Martin au crépuscule."] },
 
-    { tag:"City trip", emoji:"🗺️", title:"Visiter une ville en vélo quand on n'a qu'une journée", meta:"Exemple : Marseille en 1 jour",
-      photo:"Vieux-Port de Marseille, France.jpg", credit:"Clément Bardot",
-      q:"Que voir à Marseille en 1 jour ?",
-      summary:"Les incontournables, un coin méconnu, et le bon ordre pour éviter les montées et la foule.",
-      body:["Une journée suffit pour voir l'essentiel d'une ville à vélo, à condition de bien choisir l'ordre des visites. Exemple à Marseille, où Voi propose vélos et trottinettes.",
-        {h:"Le circuit"},
-        {ul:["9 h · Le Vieux-Port, avant la foule : le marché aux poissons du quai.","10 h · Le Mucem et le fort Saint-Jean, en longeant le port.","11 h · Le Panier, le plus vieux quartier de la ville. Ses ruelles sont en pente et souvent en escalier : garez le vélo en bas et visitez à pied.","14 h · La corniche Kennedy, en bord de mer, jusqu'au vallon des Auffes.","16 h · Les plages du Prado et le parc Borély pour finir au calme."]},
-        {h:"Le coin méconnu"},
-        "Le vallon des Auffes, un petit port de pêcheurs caché sous la corniche, avec ses cabanons et ses barques colorées. On y descend par un escalier : laissez le vélo sur la corniche.",
-        {h:"L'ordre qui évite les montées et la foule"},
-        "Commencez par le centre tôt le matin, quand il fait frais et qu'il y a peu de monde, puis suivez la mer vers le sud : la corniche est presque plate. Notre-Dame-de-la-Garde est la seule vraie montée ; avec l'assistance électrique, c'est faisable, mais gardez-la pour la fin de matinée, avant la chaleur.",
-        {h:"Où manger"},
-        "Autour du Vieux-Port pour le déjeuner, ou un pique-nique face à la mer sur la corniche. Au vallon des Auffes, on trouve des restaurants de poisson.",
-        {tip:"À Marseille, les trottinettes se garent en station. Ne laissez jamais un véhicule près de l'eau, sur le Vieux-Port ou la corniche."}] },
-
+    { tag:"City trip", emoji:"🗺️", title:"Visiter Paris à vélo quand on n'a qu'une journée", meta:"Paris en 1 jour · ≈ 12 km",
+      photo:"Paris Arc de Triomphe.jpg", credit:"Didier Devèze",
+      q:"Que voir à Paris en 1 jour ?",
+      summary:"Les incontournables, un coin méconnu, et le bon ordre pour éviter la foule.",
+      lead:"Une seule journée pour voir Paris ? À vélo, c'est possible. On suit la Seine d'est en ouest, presque tout à plat, et on enchaîne les monuments sans perdre une minute dans les couloirs du métro.",
+      body:[
+        {route:{name:"Le circuit de la journée", facts:[["⏱️","Horaires","De 9 h à 19 h"],["📏","Distance","≈ 12 km au total"],["🟢","Niveau","Facile, presque plat"],["🌤️","Saison idéale","Printemps et automne"]],
+          text:"Paris se lit comme un livre ouvert le long de la Seine. On commence sur l'île de la Cité, berceau de la ville, on traverse le Marais et ses hôtels particuliers, puis on file vers le Louvre et les Tuileries. L'après-midi, la rive gauche déroule ses quais jusqu'à la Tour Eiffel, et la journée se termine au Trocadéro, quand la Dame de fer s'illumine."}},
+        {ul:["9 h · Notre-Dame et l'île Saint-Louis, avant la foule.","10 h · Le Marais et la place des Vosges.","11 h 30 · Le Louvre et le jardin des Tuileries, par la piste cyclable de la rue de Rivoli.","13 h · Pique-nique aux Tuileries ou déjeuner à Saint-Germain-des-Prés.","15 h · Le musée d'Orsay, le pont Alexandre-III et les Invalides.","17 h · La Tour Eiffel et le Champ-de-Mars.","19 h · Le Trocadéro, pour voir la Tour Eiffel s'illuminer."]},
+        {route:{name:"Le coin méconnu : la cour du Commerce-Saint-André", facts:[["📍","Où","Saint-Germain-des-Prés (6e)"],["🚶","Accès","Passage pavé : à pied"],["☕","Pour","Une pause hors du temps"]],
+          text:"À deux pas du boulevard Saint-Germain, ce passage pavé semble figé au XVIIIe siècle : vieilles façades, enseignes d'un autre temps et l'un des plus anciens cafés de Paris. On laisse le vélo à l'entrée et on remonte le temps en quelques pas."}},
+        {route:{name:"Si vous avez une heure de plus : Montmartre", facts:[["📏","Distance","≈ 4 km depuis l'Opéra"],["🟡","Niveau","Ça monte : l'assistance aide"],["⏱️","Durée","1 h, visite comprise"],["🌅","Moment idéal","Le coucher du soleil"]],
+          text:"Si l'énergie est encore là, remontez vers le nord par les Grands Boulevards jusqu'à Montmartre. L'assistance électrique avale la pente, et là-haut, devant le Sacré-Cœur, tout Paris s'étend à vos pieds. Les petites rues du village, la place du Tertre et ses peintres, les vignes : la journée se termine comme dans un film."}},
+        {h:"Le bon ordre pour éviter la foule"},
+        "Commencez par l'est, tôt le matin : Notre-Dame et le Marais sont encore calmes. Suivez ensuite la Seine vers l'ouest, ce qui évite toute montée. Gardez la Tour Eiffel et le Trocadéro pour la fin de journée : la lumière y est plus belle, et la Tour scintille quelques minutes à chaque heure une fois la nuit tombée.",
+        {tip:"Près des monuments, garez le vélo sur un emplacement vélos autorisé indiqué dans l'application avant de visiter à pied."}],
+      key:["Un circuit d'≈ 12 km d'est en ouest, en suivant la Seine.","Le matin : Notre-Dame, le Marais, le Louvre. L'après-midi : Orsay, les Invalides, la Tour Eiffel.","Le coin secret : la cour du Commerce-Saint-André.","Terminer au Trocadéro pour la Tour Eiffel illuminée.","Garez le vélo avant chaque visite à pied.","Une heure de plus ? Finir à Montmartre, au-dessus de tout Paris."] },
     { tag:"Photo", emoji:"📸", title:"Les plus beaux spots photo accessibles à vélo", meta:"Paris · boucle d'environ 12 km",
       photo:"Basilique du Sacré-Cœur.001 - Montmartre.jpg", credit:"Fernando Losada Rodríguez",
       q:"Où faire de belles photos à Paris ?",
       summary:"10 lieux reliés en une boucle à vélo, avec le meilleur moment pour la lumière.",
-      body:["Le vélo est idéal pour la photo : on enchaîne les lieux sans chercher de métro, et on peut revenir quand la lumière est meilleure.",
-        {h:"La boucle, dans l'ordre"},
-        {ul:["Le Trocadéro, au lever du soleil, pour la Tour Eiffel sans la foule.","Le pont de Bir-Hakeim et son allée de colonnes, le matin.","Le pont Alexandre-III, en lumière douce de fin de matinée.","La pyramide du Louvre, tôt ou tard pour les reflets.","Le square du Vert-Galant, à la pointe de l'île de la Cité.","La place des Vosges et ses arcades, à midi à l'ombre.","Le canal Saint-Martin, ses passerelles et ses écluses, l'après-midi.","Le parc de Belleville, vue sur tout Paris en fin de journée.","Les escaliers de Montmartre, à l'heure dorée.","Le Sacré-Cœur, au coucher du soleil."]},
-        {h:"Conseils"},
-        {ul:["L'« heure dorée », environ une heure après le lever et avant le coucher du soleil, donne la plus belle lumière.","Garez le vélo avant de sortir l'appareil : jamais de photo en roulant.","Dans les rues habitées et très photographiées, restez discret et respectez les riverains."]},
-        {tip:"Faites la boucle en deux fois : le matin à l'ouest (Trocadéro, ponts, Louvre), le soir à l'est et au nord (canal, Belleville, Montmartre)."}] },
+      lead:"Le vélo et la photo vont très bien ensemble : on enchaîne les lieux sans chercher de métro, et on peut revenir quand la lumière est parfaite. Voici notre boucle de dix spots à Paris.",
+      body:[
+        {route:{name:"La boucle photo", facts:[["📏","Distance","≈ 12 km"],["⏱️","Durée","Une demi-journée, ou 2 sorties"],["🟡","Niveau","Moyen (montée de Montmartre)"],["🌅","Meilleur moment","Lever et coucher du soleil"]],
+          text:"Au petit matin, Paris appartient aux photographes : le Trocadéro est désert, la Tour Eiffel se découpe dans une lumière rose, et les ponts reflètent le ciel. Le soir, on passe à l'est et au nord, quand le soleil couchant dore le canal Saint-Martin et embrase les toits depuis Montmartre."}},
+        {ul:["Le Trocadéro, au lever du soleil, pour la Tour Eiffel sans la foule.","Le pont de Bir-Hakeim et son allée de colonnes.","Le pont Alexandre-III, en lumière douce de fin de matinée.","La pyramide du Louvre, tôt ou tard pour les reflets.","Le square du Vert-Galant, à la pointe de l'île de la Cité.","La place des Vosges et ses arcades.","Le canal Saint-Martin, ses passerelles et ses écluses.","Le parc de Belleville, vue sur tout Paris.","Les escaliers de Montmartre, à l'heure dorée.","Le Sacré-Cœur, au coucher du soleil."]},
+        {route:{name:"La variante street art : Belleville", facts:[["📏","Distance","≈ 3 km"],["⏱️","Durée","1 h"],["🟡","Niveau","Ça monte un peu"],["🎨","Pour","Murs peints et graffitis"]],
+          text:"Pour des photos plus brutes et colorées, cap sur Belleville. La rue Dénoyez et ses murs entièrement couverts de graffitis changent de visage chaque semaine. On remonte ensuite vers le parc de Belleville, où la vue sur Paris offre la plus belle photo de fin de journée. Un quartier vivant, populaire et photogénique à chaque coin de rue."}},
+        {h:"Trois réflexes de photographe à vélo"},
+        "L'« heure dorée », environ une heure après le lever et avant le coucher du soleil, donne la plus belle lumière. Garez toujours le vélo avant de sortir l'appareil : jamais de photo en roulant. Et dans les rues habitées très photographiées, restez discret et respectez les riverains.",
+        {tip:"Faites la boucle en deux fois : le matin à l'ouest (Trocadéro, ponts, Louvre), le soir à l'est et au nord (canal, Belleville, Montmartre)."}],
+      key:["10 spots reliés par une boucle d'environ 12 km.","La meilleure lumière : l'heure dorée, au lever et au coucher du soleil.","Le matin à l'ouest, le soir à l'est et au nord.","Jamais de photo en roulant : on se gare d'abord.","Discrétion dans les rues habitées.","La variante street art : la rue Dénoyez et le parc de Belleville."] },
 
-    { tag:"Bien-être", emoji:"💪", title:"Faire du sport sans s'en rendre compte : le vélo au quotidien", meta:"Défis simples · 5 min de lecture",
+    { tag:"Bien-être", emoji:"💪", title:"Faire du sport sans s'en rendre compte : le vélo au quotidien", meta:"Paris · santé et défis simples",
       photo:"Voie Cyclable Rue Rivoli - Paris IV (FR75) - 2021-01-03 - 1.jpg", credit:"Chabe01",
       q:"Combien de calories on brûle en vélo électrique ?",
-      summary:"Le vélo électrique fait-il vraiment travailler ? Ce que disent les études, et comment s'y mettre.",
-      body:["On pense souvent que l'assistance électrique fait tout le travail. En réalité, il faut pédaler pour qu'elle fonctionne : le vélo électrique reste une activité physique.",
+      summary:"Le vélo électrique fait-il vraiment travailler ? Ce que disent les études, et des défis parisiens pour s'y mettre.",
+      lead:"On croit souvent que l'assistance électrique fait tout le travail. En réalité, il faut pédaler pour qu'elle fonctionne : le vélo électrique reste une vraie activité physique. Et à Paris, il remplace facilement le métro sur des trajets de 10 à 20 minutes.",
+      body:[
         {h:"Ce que disent les études"},
-        "Les études européennes sur la mobilité montrent que les utilisateurs de vélo électrique font des trajets plus longs et plus fréquents que les cyclistes classiques. Au total, leur activité physique de la semaine est comparable. L'effort par minute est plus léger, mais on roule plus souvent.",
-        "Côté calories, tout dépend du niveau d'assistance, du poids et du relief : comptez en ordre de grandeur quelques centaines de kilocalories par heure, moins qu'à vélo classique, beaucoup plus qu'assis dans le métro.",
+        "Les études européennes sur la mobilité montrent que les utilisateurs de vélo électrique font des trajets plus longs et plus fréquents que les cyclistes classiques. Résultat : leur activité physique de la semaine est comparable. L'effort par minute est plus léger, mais on roule plus souvent.",
+        "Côté calories, tout dépend du niveau d'assistance, du poids et du relief : comptez en ordre de grandeur quelques centaines de kilocalories par heure. Moins qu'à vélo classique, beaucoup plus qu'assis dans le métro.",
         "L'Organisation mondiale de la santé recommande au moins 150 minutes d'activité modérée par semaine. Deux trajets de 15 minutes par jour de travail suffisent à les atteindre.",
-        {h:"Des défis simples"},
-        {ul:["Remplacer 2 trajets par semaine par le vélo, par exemple le lundi et le vendredi.","Descendre un arrêt plus tôt et finir à vélo.","Monter une colline en baissant l'assistance : Montmartre, la Bastille à Grenoble, Notre-Dame-de-la-Garde à Marseille.","Noter ses trajets pendant un mois pour voir les kilomètres s'accumuler."]},
-        {h:"Exemple (fictif)"},
-        "« Je faisais Bastille – Canal Saint-Martin en métro. Maintenant je le fais à vélo : 11 minutes, et je n'attends plus sur le quai. » — Camille, 29 ans. Ce témoignage est un exemple inventé pour illustrer l'article.",
-        {tip:"Commencez doucement : un ou deux trajets courts la première semaine, puis augmentez. L'important, c'est la régularité."}] },
-
-    { tag:"Escapade", emoji:"🧺", title:"Pique-nique, guinguette, baignade : les escapades à moins de 30 min à vélo", meta:"Grenoble, Paris, Nantes, Marseille",
-      photo:"La Bastille de Grenoble.JPG", credit:"Vinicius Gama Pinheiro",
-      q:"Où aller se poser au bord de l'eau près de Grenoble ?",
-      summary:"Parcs, berges et points d'eau à moins d'une demi-heure de vélo, ville par ville.",
-      body:["Pas besoin de partir loin pour se mettre au vert : dans chaque ville Voi, il y a un coin d'eau ou de nature à moins de 30 minutes de vélo.",
-        {h:"Par ville"},
-        {ul:["Grenoble : les berges de l'Isère et le parc Paul-Mistral pour pique-niquer face aux montagnes ; le jardin de ville au pied de la Bastille.",
-             "Paris : le bassin de la Villette, avec baignade surveillée l'été ; depuis 2025, des sites de baignade ouvrent aussi en Seine en été. Le bois de Vincennes et ses lacs pour le pique-nique.",
-             "Nantes : les bords de l'Erdre et l'île de Versailles ; au bord de la Loire, les terrasses et guinguettes de l'île de Nantes.",
-             "Marseille : les plages du Prado et des Catalans, à quelques minutes du centre ; le parc Borély pour l'ombre."]},
-        {h:"Ce qu'il faut emporter"},
-        {ul:["Un sac à dos : les vélos Voi n'ont pas de siège enfant ni de remorque.","De l'eau, de la crème solaire, une nappe.","Un sac pour repartir avec ses déchets."]},
-        {h:"Où laisser le vélo sur place"},
-        "Avant de partir, vérifiez dans l'application que votre lieu d'arrivée est dans la zone Voi et repérez la zone de stationnement la plus proche. Garez-vous à l'entrée du parc ou de la plage, jamais sur le sable ni au bord de l'eau.",
-        {tip:"Les horaires et lieux de baignade surveillée changent chaque été : vérifiez sur le site de la mairie avant de vous déplacer."}] },
-
-    { tag:"Soirée", emoji:"🌙", title:"Sortir le soir à vélo : nos conseils pour rentrer sereinement", meta:"Conseils · 4 min de lecture",
+        {h:"Des défis parisiens pour s'y mettre"},
+        {ul:["Remplacer 2 trajets de métro par semaine par le vélo, par exemple le lundi et le vendredi.","Descendre une station plus tôt et finir à vélo.","Monter une butte en baissant l'assistance : Montmartre, Belleville ou les Buttes-Chaumont.","Rejoindre le travail par la piste cyclable de la rue de Rivoli ou du boulevard de Sébastopol plutôt que par la ligne 1 ou la ligne 4."]},
+        {h:"Un programme sur 4 semaines"},
+        {ul:["Semaine 1 : un trajet aller-retour à vélo, par exemple le vendredi.","Semaine 2 : deux trajets, en gardant l'assistance au maximum.","Semaine 3 : trois trajets, et une montée en baissant l'assistance.","Semaine 4 : quatre trajets, et une balade le week-end pour le plaisir."]},
+        "Au bout d'un mois, le vélo n'est plus un effort mais une habitude. Beaucoup de cyclistes le disent : ils arrivent au travail plus réveillés, et rentrent le soir plus détendus qu'après un trajet en métro bondé.",
+        {h:"Bien régler son vélo"},
+        "Avant de partir, réglez la selle à votre taille : jambe presque tendue quand la pédale est en bas. Une selle trop basse fatigue les genoux, une selle trop haute fait mal au dos. Ça prend dix secondes, et ça change tout.",
+        {quote:"Je faisais Bastille – Canal Saint-Martin en métro. Maintenant je le fais à vélo : 11 minutes, et je n'attends plus sur le quai.", who:"Camille, 29 ans — exemple inventé pour illustrer l'article"},
+        {tip:"Commencez doucement : un ou deux trajets courts la première semaine, puis augmentez. L'important, c'est la régularité."}],
+      key:["Le vélo électrique demande de pédaler : c'est une vraie activité physique.","150 minutes par semaine recommandées : 2 trajets de 15 min par jour suffisent.","À Paris, le vélo remplace le métro sur les trajets de 10 à 20 minutes.","Les buttes parisiennes (Montmartre, Belleville) font de bons défis.","La régularité compte plus que l'intensité.","Un programme progressif sur 4 semaines, et une selle bien réglée."] },
+    { tag:"Escapade", emoji:"🧺", title:"Pique-nique, guinguette, baignade : les escapades à moins de 30 min à vélo", meta:"Paris · 5 coins au vert",
+      photo:"Bassin de la Villette @ Paris (28339524764).jpg", credit:"Guilhem Vellut",
+      q:"Où aller se poser au bord de l'eau à Paris ?",
+      summary:"Baignade, guinguettes, lacs et pelouses : cinq escapades parisiennes à moins d'une demi-heure de vélo.",
+      lead:"Pas besoin de quitter Paris pour se mettre au vert. Bassins, lacs, buttes et bois : la ville cache des coins d'eau et de nature à moins de 30 minutes de vélo du centre. Nappe, maillot ou lunettes de soleil, choisissez votre escapade.",
+      body:[
+        {route:{name:"Le bassin de la Villette", facts:[["🏊","Baignade","Surveillée, l'été"],["⏱️","Depuis Châtelet","≈ 20 min"],["🟢","Niveau","Très facile"],["🍹","Ambiance","Terrasses et pétanque"]],
+          text:"L'été, le plus grand plan d'eau de Paris se transforme en piscine à ciel ouvert : des bassins surveillés s'installent sur l'eau, les transats s'alignent sur les quais, et les parties de pétanque s'enchaînent jusqu'au soir. On termine avec un verre en terrasse, les pieds presque dans l'eau."}},
+        {route:{name:"Les Buttes-Chaumont", facts:[["⏱️","Depuis Châtelet","≈ 20 min"],["🟡","Niveau","Ça grimpe un peu"],["🧺","Pour","Pique-nique et guinguette"],["🌅","Moment idéal","Fin d'après-midi"]],
+          text:"Falaises, cascade, pont suspendu et temple perché au-dessus d'un lac : les Buttes-Chaumont ont des airs de décor de cinéma. On étale la nappe sur les pelouses en pente, et quand le soleil baisse, on rejoint l'une des guinguettes du parc pour un verre avec vue sur tout l'est parisien."}},
+        {route:{name:"Les lacs du bois de Vincennes", facts:[["⏱️","Depuis la Bastille","≈ 25 min"],["🟢","Niveau","Facile"],["🚣","Pour","Barques et pique-nique"],["🌳","Ombre","Beaucoup"]],
+          text:"Au bout de l'avenue Daumesnil, Paris s'efface derrière les arbres. Le lac Daumesnil et ses barques, les pelouses à perte de vue, l'ombre des grands chênes : c'est la campagne à 25 minutes de la Bastille."}},
+        {route:{name:"Le bois de Boulogne", facts:[["⏱️","Depuis l'Arc de Triomphe","≈ 15 min"],["🟢","Niveau","Facile"],["🚣","Pour","Le lac Inférieur et ses îles"],["🌳","Ambiance","Grande nature"]],
+          text:"À l'ouest, le bois de Boulogne déroule ses allées forestières et ses lacs. Sur le lac Inférieur, on peut louer une barque pour rejoindre les îles et leur chalet, le temps d'une parenthèse hors de la ville."}},
+        {route:{name:"Le parc André-Citroën et la Seine", facts:[["⏱️","Depuis la Tour Eiffel","≈ 15 min"],["🟢","Niveau","Facile, tout plat"],["🌿","Pour","Pelouses et jardins à thème"],["🎈","Le plus","Le ballon captif"]],
+          text:"Au sud-ouest de Paris, le parc André-Citroën déroule une immense pelouse face à la Seine, entourée de serres et de petits jardins de couleur. Les enfants courent entre les jets d'eau l'été, et au milieu du parc, un grand ballon captif s'élève dans le ciel pour offrir une vue étonnante sur la ville."}},
+        {h:"Le sac de l'escapade"},
+        {ul:["Un sac à dos : les vélos Voi n'ont ni siège enfant ni remorque.","De l'eau, de la crème solaire et une nappe.","Un sac pour repartir avec ses déchets."]},
+        "Depuis 2025, des sites de baignade ouvrent aussi en Seine pendant l'été. Les horaires, les lieux et la qualité de l'eau sont affichés chaque jour : vérifiez sur le site de la Ville de Paris avant de vous déplacer.",
+        {tip:"Les bois de Vincennes et de Boulogne font partie de Paris : vous pouvez y terminer votre location. Garez-vous à l'entrée des parcs, jamais sur les pelouses ni au bord de l'eau."}],
+      key:["Bassin de la Villette : baignade surveillée l'été.","Buttes-Chaumont : pique-nique, cascade et guinguette.","Bois de Vincennes : lac Daumesnil et barques, à 25 min de la Bastille.","Bois de Boulogne : le lac Inférieur et ses îles.","Baignade en Seine l'été : vérifiez horaires et lieux chaque jour.","Parc André-Citroën : grande pelouse, jets d'eau et ballon captif."] },
+    { tag:"Soirée", emoji:"🌙", title:"Sortir le soir à vélo : nos conseils pour rentrer sereinement", meta:"Paris · conseils sécurité",
       photo:"Boulevard Richard-Lenoir (Paris), piste cyclable 01.jpg", credit:"Coyau",
-      q:"Rentrer de soirée à vélo, bonne idée ?",
-      summary:"Itinéraires éclairés, se rendre visible, rentrer à plusieurs : la soirée finit bien.",
-      body:["Le vélo, c'est pratique pour rentrer quand les transports se font rares. Mais la nuit, on voit moins et on est moins vu. Quelques réflexes suffisent.",
-        {h:"Choisir le bon itinéraire"},
-        {ul:["Préférez les grands axes équipés de pistes cyclables, mieux éclairés, même si c'est un peu plus long.","Évitez les parcs et les berges la nuit : peu éclairés, et parfois fermés.","Repérez votre trajet avant de partir de la soirée, pas en roulant."]},
+      q:"Rentrer de soirée à vélo à Paris, bonne idée ?",
+      summary:"Itinéraires éclairés, se rendre visible, rentrer à plusieurs : la soirée parisienne finit bien.",
+      lead:"Quand le dernier métro est passé, le vélo prend le relais : les rues sont calmes, les monuments illuminés, et on rentre sans attendre un bus de nuit. Mais la nuit, on voit moins et on est moins vu. Quelques réflexes suffisent pour que la soirée finisse bien.",
+      body:[
+        {route:{name:"Les grands axes à privilégier la nuit", facts:[["💡","Éclairage","Bon sur les grands axes"],["🛣️","Exemples","Rue de Rivoli, boulevard de Sébastopol, boulevard Richard-Lenoir"],["🚫","À éviter","Parcs, berges et petites rues sombres"]],
+          text:"La nuit, Paris a un charme particulier : les façades haussmanniennes s'éclairent, la circulation retombe et les grandes pistes cyclables deviennent presque désertes. Rivoli, Sébastopol, Richard-Lenoir : ces axes larges et bien éclairés traversent la ville d'un bout à l'autre. C'est parfois un peu plus long, mais c'est plus sûr que les raccourcis."}},
         {h:"Se rendre visible"},
-        "Les vélos Voi ont des feux avant et arrière : vérifiez qu'ils fonctionnent avant de démarrer. Un vêtement clair ou un brassard réfléchissant change tout. Hors agglomération, la nuit, le gilet réfléchissant est obligatoire à vélo.",
+        "Les vélos Voi ont des feux avant et arrière : vérifiez qu'ils fonctionnent avant de démarrer. Un vêtement clair ou un brassard réfléchissant change tout, surtout aux carrefours.",
         {h:"Rentrer à plusieurs"},
-        "Prenez chacun un vélo et roulez en file, l'un derrière l'autre. Prévenez quelqu'un quand vous êtes arrivé.",
+        "Prenez chacun un vélo et roulez en file, l'un derrière l'autre. Et envoyez un message quand vous êtes arrivé.",
+        {route:{name:"Bonus : la balade des monuments illuminés", facts:[["📏","Distance","≈ 6 km"],["⏱️","Durée","40 min"],["🟢","Niveau","Facile, tout plat"],["✨","Le plus","Paris de nuit, sans la foule"]],
+          text:"Et si le trajet du retour devenait le meilleur moment de la soirée ? Depuis l'Hôtel de Ville illuminé, longez les quais jusqu'à la pyramide du Louvre, traversez la Concorde et ses fontaines, puis remontez vers la Tour Eiffel qui scintille. À cette heure, les grandes avenues sont calmes : Paris semble vous appartenir."}},
+        {h:"En cas de problème"},
+        "Un pneu qui semble crevé, un feu qui ne marche plus, un frein mou ? Ne prenez pas de risque : terminez la location dans une zone autorisée, signalez le problème dans l'application et prenez un autre vélo.",
         {h:"Ce qu'il ne faut pas faire"},
-        {ul:["Rouler après avoir bu : à vélo aussi, l'alcool est sanctionné, et surtout il ralentit les réflexes. Si vous avez bu, rentrez à pied, en taxi ou en transports.","Téléphoner ou regarder son écran en roulant.","Rouler avec des écouteurs : c'est interdit, et on n'entend plus ce qui arrive.","Monter à deux sur un vélo : un vélo, une personne."]},
-        {tip:"La meilleure soirée est celle dont on se souvient. Si vous hésitez à prendre le vélo, c'est que ce n'est pas le bon soir."}] },
-
-    { tag:"Curiosités", emoji:"🧭", title:"Découvrir sa ville autrement : les quartiers qu'on ne voit jamais en métro", meta:"Paris · parcours de 2 h",
+        {ul:["Rouler après avoir bu : à vélo aussi, l'alcool est sanctionné. Si vous avez bu, rentrez à pied, en taxi ou en bus de nuit.","Téléphoner ou regarder son écran en roulant.","Rouler avec des écouteurs : c'est interdit.","Monter à deux sur un vélo : un vélo, une personne."]},
+        {tip:"La meilleure soirée est celle dont on se souvient. Si vous hésitez à prendre le vélo, c'est que ce n'est pas le bon soir : les bus de nuit Noctilien circulent toute la nuit."}],
+      key:["La nuit, les grands axes éclairés : Rivoli, Sébastopol, Richard-Lenoir.","Feux allumés et vêtement clair ou réfléchissant.","Rentrer à plusieurs, chacun sur son vélo.","Jamais d'alcool, de téléphone ou d'écouteurs au guidon.","Un doute ? Taxi, marche ou bus de nuit.","Bonus : rentrer par les monuments illuminés, de l'Hôtel de Ville à la Tour Eiffel."] },
+    { tag:"Curiosités", emoji:"🧭", title:"Découvrir Paris autrement : les quartiers qu'on ne voit jamais en métro", meta:"Paris · 2 parcours",
       photo:"Paris Rue Butte-aux-Cailles depuis R Bobillot 2014b.jpg", credit:"JLPC",
       q:"Quartiers méconnus de Paris à visiter",
       summary:"Villages cachés, cités fleuries et street art : un parcours curiosités dans le sud-est de Paris.",
-      body:["En métro, on passe sous les quartiers sans les voir. À vélo, on découvre des rues pavées, des maisons à jardin et des murs peints qu'aucun guide ne montre.",
-        {h:"Le parcours « curiosités » (environ 2 h, 13e et 14e)"},
-        {ul:["La Butte-aux-Cailles : un vrai village, avec ses petites rues, ses façades basses et ses œuvres de street art.","La Cité florale : quelques rues aux noms de fleurs (rue des Glycines, rue des Orchidées), bordées de maisons à jardin. Descendez du vélo, c'est minuscule.","Le parc Montsouris : pause dans un grand parc à l'anglaise, avec lac et cascade.","Le boulevard Vincent-Auriol : une galerie de fresques murales géantes en plein air, sur les façades des immeubles."]},
+      lead:"En métro, on passe sous les quartiers sans les voir. À vélo, on découvre des rues pavées, des maisons à jardin et des murs peints qu'aucun guide ne montre. Suivez nos deux parcours curiosités.",
+      body:[
+        {route:{name:"Le parcours curiosités", facts:[["⏱️","Durée","≈ 2 h avec les pauses"],["📏","Distance","≈ 6 km"],["📍","Quartiers","13e et 14e"],["🟢","Niveau","Facile, une petite butte"]],
+          text:"Ici, Paris a des airs de village. On grimpe la Butte-aux-Cailles, ses façades basses et ses fresques au détour des ruelles. On se perd dans la Cité florale, où les rues portent des noms de fleurs. On souffle au bord du lac du parc Montsouris, avant de finir devant les fresques géantes du boulevard Vincent-Auriol, un vrai musée à ciel ouvert."}},
+        {ul:["La Butte-aux-Cailles : petites rues, façades basses et street art.","La Cité florale : rue des Glycines, rue des Orchidées, maisons à jardin. Descendez du vélo, c'est minuscule.","Le parc Montsouris : lac, cascade et grandes pelouses.","Le boulevard Vincent-Auriol : des fresques murales géantes sur les façades."]},
+        {route:{name:"Le nord-est secret : la Mouzaïa et Belleville", facts:[["⏱️","Durée","≈ 1 h 30"],["📏","Distance","≈ 5 km"],["📍","Quartiers","19e et 20e"],["🟡","Niveau","Quelques montées"]],
+          text:"Derrière les Buttes-Chaumont, la Mouzaïa est un secret bien gardé : des ruelles pavées bordées de petites maisons, de glycines et de jardinets, comme un village de province en plein Paris. On redescend ensuite vers Belleville, ses ateliers d'artistes et ses murs peints, avant de finir au parc de Belleville pour la vue."}},
         {h:"Pour une prochaine fois"},
-        {ul:["La Mouzaïa (19e) : des villas pavées et fleuries, au calme.","Les passages couverts du 2e (galerie Vivienne, passage des Panoramas) : à visiter à pied, vélo garé à l'entrée.","La rue Dénoyez (20e) : murs couverts de graffitis, qui changent sans cesse."]},
-        {tip:"Ces quartiers sont habités : roulez au pas, parlez doucement, et garez le vélo sur un emplacement autorisé avant de vous balader à pied."}] },
+        "Les passages couverts du 2e, comme la galerie Vivienne ou le passage des Panoramas, à visiter à pied ; et la rue Dénoyez (20e), dont les murs couverts de graffitis changent sans cesse.",
+        {tip:"Ces quartiers sont habités : roulez au pas, parlez doucement, et garez le vélo sur un emplacement autorisé avant de vous balader à pied."}],
+      key:["Un parcours de 2 h et 6 km dans le 13e et le 14e.","4 étapes : Butte-aux-Cailles, Cité florale, parc Montsouris, fresques du boulevard Vincent-Auriol.","À garder pour la prochaine fois : les passages couverts et la rue Dénoyez.","Quartiers habités : on roule au pas et on respecte le calme.","2e parcours : la Mouzaïa et Belleville, dans le 19e et le 20e."] },
 
-    { tag:"Saisons", emoji:"🍂", title:"Le vélo en toutes saisons : printemps, été, automne, hiver", meta:"Série de 4 balades · Paris",
+    { tag:"Saisons", emoji:"🍂", title:"Le vélo en toutes saisons : printemps, été, automne, hiver", meta:"Paris · 5 balades au fil de l'année",
       photo:"Paris, Panthéon -- 2014 -- 1668.jpg", credit:"XRay",
       q:"Quelle balade à vélo faire en automne ?",
       summary:"Une balade par saison, comment s'habiller, et les événements à rejoindre à vélo.",
-      body:["Chaque saison change la ville : les mêmes rues ont un tout autre visage en avril et en décembre. Voici une balade par saison.",
-        {h:"🌸 Printemps : les arbres en fleurs"},
-        "Le Jardin des Plantes et ses cerisiers, puis le square Jean-XXIII, derrière Notre-Dame. Le printemps est la saison idéale : ni trop chaud ni trop froid. Une veste légère suffit.",
-        {h:"☀️ Été : rouler à l'ombre"},
-        "Partez tôt le matin ou après 18 h. Privilégiez les bois de Vincennes et de Boulogne, et les quais ombragés. Prévoyez de l'eau, une casquette et de la crème solaire. En juillet-août, les bords de Seine se transforment en plages.",
-        {h:"🍁 Automne : les couleurs"},
-        "Les Buttes-Chaumont et le bois de Vincennes sont superbes en octobre. Le jardin du Luxembourg aussi, mais les vélos n'y entrent pas : garez-le à l'entrée. Prévoyez une couche de plus, et attention aux feuilles mouillées qui glissent.",
-        {h:"🎄 Hiver : les lumières"},
-        "Les illuminations des Champs-Élysées et les vitrines des grands magasins du boulevard Haussmann. Gants, bonnet sous la capuche et feux allumés : la nuit tombe tôt.",
-        {h:"Les événements de saison"},
-        {ul:["Juin : la Fête de la musique, le 21 juin. Le vélo permet de passer d'un concert à l'autre, mais certaines rues sont bondées.","Été : Paris Plages et les cinémas en plein air.","Automne : la Nuit Blanche, avec des œuvres à voir dans toute la ville.","Hiver : les marchés de Noël et les illuminations."]},
-        {tip:"Par temps de pluie, freinez plus tôt et évitez les marquages au sol et les pavés, très glissants. Les dates des événements changent chaque année : vérifiez-les avant de partir."}] }
+      lead:"Les mêmes rues n'ont pas du tout le même visage en avril et en décembre. Chaque saison a sa balade, sa tenue et ses rendez-vous. Voici notre calendrier du vélo à Paris.",
+      body:[
+        {route:{name:"🌸 Printemps : les arbres en fleurs", facts:[["📍","Où","Jardin des Plantes, square Jean-XXIII"],["👕","Tenue","Une veste légère"],["⭐","Pourquoi","Ni trop chaud, ni trop froid"]],
+          text:"Au printemps, Paris se couvre de rose et de blanc. Les cerisiers du Jardin des Plantes éclatent, puis on file derrière Notre-Dame, au square Jean-XXIII, où les branches fleuries encadrent la cathédrale. La meilleure saison pour rouler."}},
+        {route:{name:"☀️ Été : rouler à l'ombre", facts:[["📍","Où","Bois de Vincennes et de Boulogne, quais ombragés"],["⏰","Quand","Tôt le matin ou après 18 h"],["👕","Tenue","Casquette, eau, crème solaire"]],
+          text:"L'été, on vit à contretemps : on sort au petit matin ou en soirée, quand la chaleur retombe. Les bois offrent leur fraîcheur, et en juillet-août les bords de Seine se transforment en plages."}},
+        {route:{name:"🍁 Automne : les couleurs", facts:[["📍","Où","Buttes-Chaumont, bois de Vincennes"],["👕","Tenue","Une couche de plus"],["⚠️","Attention","Feuilles mouillées glissantes"]],
+          text:"En octobre, les Buttes-Chaumont et le bois de Vincennes prennent des teintes de cuivre et d'or. On roule sur un tapis de feuilles, on s'arrête pour un chocolat chaud. Le jardin du Luxembourg aussi est superbe, mais les vélos n'y entrent pas : garez-le à l'entrée."}},
+        {route:{name:"🎄 Hiver : les lumières", facts:[["📍","Où","Champs-Élysées, boulevard Haussmann"],["👕","Tenue","Gants, bonnet sous la capuche"],["💡","Important","Feux allumés : la nuit tombe tôt"]],
+          text:"Quand la nuit tombe à 17 h, Paris s'illumine. On remonte les Champs-Élysées sous les guirlandes, puis on longe les vitrines animées des grands magasins du boulevard Haussmann. Une balade qui a un parfum de fête."}},
+        {route:{name:"🌧️ Les jours de pluie : les passages couverts", facts:[["📍","Où","Galerie Vivienne, passage des Panoramas (2e)"],["🚶","Accès","Vélo garé à l'entrée, visite à pied"],["☕","Pour","Un chocolat chaud à l'abri"]],
+          text:"Il pleut ? Profitez d'une éclaircie pour rejoindre les passages couverts du 2e arrondissement. Sous leurs verrières du XIXe siècle, on flâne au sec entre librairies anciennes, boutiques de jouets et salons de thé. Quand l'averse est passée, on reprend le vélo, les pavés encore brillants de pluie."}},
+        {h:"Les rendez-vous de l'année"},
+        {ul:["21 juin : la Fête de la musique, pour passer d'un concert à l'autre.","Été : Paris Plages et les cinémas en plein air.","Automne : la Nuit Blanche et ses œuvres dans toute la ville.","Hiver : les marchés de Noël et les illuminations."]},
+        {tip:"Par temps de pluie, freinez plus tôt et évitez les marquages au sol et les pavés, très glissants. Les dates des événements changent chaque année : vérifiez-les avant de partir."}],
+      key:["Printemps : les cerisiers du Jardin des Plantes.","Été : les bois et les quais, tôt le matin ou le soir.","Automne : les couleurs des Buttes-Chaumont et de Vincennes.","Hiver : les illuminations, feux toujours allumés.","Pluie : freiner plus tôt, éviter pavés et marquages.","Jour de pluie : les passages couverts du 2e, à visiter à pied."] }
   ],
 };
 
@@ -1763,26 +1852,62 @@ document.addEventListener("pointerdown",e=>{
 
 /* lecture d'un article */
 function openArticle(key){
-  const [slug,i]=key.split("|"), a=(ARTICLES[slug]||[])[+i]; if(!a) return;
+  const [slug,i]=key.split("|"), list=ARTICLES[slug]||[], a=list[+i]; if(!a) return;
   let m=document.getElementById("amodal");
   if(!m){ m=document.createElement("div"); m.id="amodal"; m.className="amodal"; document.body.appendChild(m);
-    m.addEventListener("click",e=>{ if(e.target===m || e.target.closest(".aclose")) closeArticle(); }); }
-  m.innerHTML=`<div class="apanel" role="dialog" aria-modal="true" aria-label="${esc(a.title)}">
-    <button type="button" class="aclose" aria-label="Fermer">✕</button>
-    <div class="aimg big" data-emoji="${a.emoji}"><img src="${WM(a.photo)}" alt="" onerror="this.remove()"></div>
-    <div class="apad"><span class="atag">${esc(a.tag)}</span><h2>${esc(a.title)}</h2><div class="ameta">${esc(a.meta)}</div>
-      ${a.q?`<p class="aq">« ${esc(a.q)} »</p>`:""}
-      ${a.body.map(articlePart).join("")}
-      <p class="acredit-l">Photo : <a href="${WMPAGE(a.photo)}">${esc(a.credit)}, via Wikimedia Commons</a></p></div></div>`;
+    m.addEventListener("click",e=>{
+      if(e.target===m || e.target.closest(".aclose")) closeArticle();
+      if(e.target.closest(".aback")){ closeArticle(); const sec=document.querySelector(".articles"); if(sec) sec.scrollIntoView({behavior:"smooth",block:"start"}); }
+      const nx=e.target.closest(".anextart"); if(nx) openArticle(nx.dataset.a);
+    }); }
+  const txt=[a.lead||"",...a.body.map(p=>typeof p==="string"?p:p.route?p.route.text:(p.h||p.tip||p.quote||(p.ul||[]).join(" ")))].join(" ");
+  const mins=Math.max(1,Math.ceil(txt.split(/\s+/).length/200));
+  const nIdx=(+i+1)%list.length, next=list[nIdx];
+  const nRoutes=a.body.filter(p=>p&&p.route).length; let rNum=0;
+  const part=(p,idx,arr)=>{
+    if(typeof p==="string") return `<p>${esc(p)}</p>`;
+    if(p.h) return `<h2 class="ah">${esc(p.h)}</h2>`;
+    if(p.route){ const r=p.route; rNum++;
+      return `<section class="aroute"><h2>${nRoutes>1?`<span class="rn">${rNum}</span>`:""}${esc(r.name)}</h2>
+        <dl class="afacts">${r.facts.map(f=>`<div><dt>${f[0]} ${esc(f[1])}</dt><dd>${esc(f[2])}</dd></div>`).join("")}</dl>
+        <p class="astory">${esc(r.text)}</p></section>`; }
+    if(p.quote) return `<blockquote class="aquote"><p>« ${esc(p.quote)} »</p>${p.who?`<cite>${esc(p.who)}</cite>`:""}</blockquote>`;
+    if(p.tip) return `<p class="anote"><b>Notre conseil · </b>${esc(p.tip)}</p>`;
+    if(p.ul){
+      const prev=arr[idx-1], ordered=prev && prev.route;          /* a list right after an itinerary = its stops, numbered */
+      const item=x=>{
+        const t=x.match(/^(\d{1,2}\s?h)\s·\s(.*)$/); if(t) return `<li><span class="tm">${esc(t[1])}</span>${esc(t[2])}</li>`;
+        const k=x.indexOf(" : "); if(k>0 && k<40) return `<li><b>${esc(x.slice(0,k))}</b> : ${esc(x.slice(k+3))}</li>`;
+        return `<li>${esc(x)}</li>`;
+      };
+      return ordered ? `<ol class="alist">${p.ul.map(item).join("")}</ol>` : `<ul class="alist">${p.ul.map(item).join("")}</ul>`;
+    }
+    return "";
+  };
+  m.innerHTML=`<div class="awrap"><button type="button" class="aclose" aria-label="Fermer l'article">← Retour</button>
+    <article class="apanel" role="dialog" aria-modal="true" aria-label="${esc(a.title)}">
+    <div class="aprog" aria-hidden="true"><i></i></div>
+    <div class="acover" data-emoji="${a.emoji}"><img src="${WM(a.photo)}" alt="" onerror="this.remove()"></div>
+    <div class="acol">
+      <div class="akicker"><span class="k1">${esc(a.tag)}</span><i></i><span class="amins">${mins} min de lecture</span><i></i><span>${esc(a.meta)}</span></div>
+      <h1>${esc(a.title)}</h1>
+      ${a.q?`<p class="asub">« ${esc(a.q)} »</p>`:""}
+      ${a.lead?`<p class="alead">${esc(a.lead)}</p>`:""}
+      ${a.body.map(part).join("")}
+      ${a.key?`<aside class="akey"><h2><span>✓</span>L'essentiel à retenir</h2><ul>${a.key.map(k=>`<li>${esc(k)}</li>`).join("")}</ul></aside>`:""}
+      <div class="afoot">
+        <button type="button" class="anextart" data-a="${slug}|${nIdx}"><small>Article suivant →</small><span>${esc(next.title)}</span></button>
+        <button type="button" class="btn coral aback">← Voir tous les articles</button>
+      </div>
+      <p class="acredit-l">Photo : <a href="${WMPAGE(a.photo)}">${esc(a.credit)}, via Wikimedia Commons</a></p>
+    </div></article></div>`;
+  /* reading time from the text actually shown (≈ 220 words per minute) */
+  const shown=m.querySelector(".acol").innerText.split(/\s+/).length;
+  m.querySelector(".amins").textContent=Math.max(1,Math.round(shown/220))+" min de lecture";
+  const panel=m.querySelector(".apanel"), bar=m.querySelector(".aprog i");
+  panel.addEventListener("scroll",()=>{ const h=panel.scrollHeight-panel.clientHeight; bar.style.width=(h>0?panel.scrollTop/h*100:0)+"%"; });
   m.classList.add("open"); document.body.style.overflow="hidden";
-}
-/* a body part is a paragraph (string), a heading {h}, a list {ul} or a tip box {tip} */
-function articlePart(p){
-  if(typeof p==="string") return `<p>${esc(p)}</p>`;
-  if(p.h) return `<h3>${esc(p.h)}</h3>`;
-  if(p.ul) return `<ul class="alist">${p.ul.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`;
-  if(p.tip) return `<div class="atip"><b>💡 Bon à savoir</b>${esc(p.tip)}</div>`;
-  return "";
+  panel.scrollTop=0; panel.setAttribute("tabindex","-1"); panel.focus({preventScroll:true});
 }
 function closeArticle(){ const m=document.getElementById("amodal"); if(m){ m.classList.remove("open"); document.body.style.overflow=""; } }
 
