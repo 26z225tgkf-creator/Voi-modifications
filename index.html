@@ -375,6 +375,44 @@
   .mappin-dot{width:16px;height:16px;border-radius:50%;background:#B8372C;border:3px solid #fff;box-shadow:0 0 0 2px #B8372C;margin-top:6px;transform:translateY(50%)}
   .mlabel.spot{transform:translate(8px,-50%);font:700 11.5px "DM Sans",system-ui,sans-serif;color:#5E1A14;background:rgba(255,255,255,.88);padding:1px 5px;border-radius:5px;white-space:nowrap}
   .mlabel.spot.on{background:#B8372C;color:#fff;font-size:13px;padding:4px 9px;transform:translate(12px,-50%)}
+  /* mini-articles */
+  .articles{margin:34px 0 10px}
+  .ahead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:14px}
+  .ahead h2{font-size:clamp(24px,3vw,32px);font-weight:800}
+  .anav{display:flex;gap:8px}
+  .anav button{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);background:#fff;font-size:18px;cursor:pointer;transition:background .15s,border-color .15s,opacity .15s}
+  .anav button:hover:not(:disabled){border-color:var(--coral);color:var(--coral-d)}
+  .anav button:disabled{opacity:.35;cursor:default}
+  .acar-track{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:4px 2px 14px;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+  .acar-track::-webkit-scrollbar{display:none}
+  .acar-track.drag{scroll-snap-type:none;scroll-behavior:auto;cursor:grabbing;user-select:none}
+  .acard{position:relative;flex:0 0 clamp(240px,30%,320px);scroll-snap-align:start;background:#fff;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;cursor:pointer;display:flex;flex-direction:column;transition:transform .2s ease,box-shadow .2s ease}
+  .acard:hover{transform:translateY(-3px);box-shadow:0 16px 30px -20px rgba(70,30,20,.45)}
+  .aimg{position:relative;aspect-ratio:2/1;background:linear-gradient(135deg,var(--coral) 0%,#F7A097 100%);overflow:hidden}
+  .aimg::before{content:attr(data-emoji);position:absolute;inset:0;display:grid;place-items:center;font-size:40px}
+  .aimg img{position:relative;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+  .abody{padding:10px 14px 12px;display:flex;flex-direction:column;flex:1;min-width:0}
+  .atag{align-self:flex-start;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--coral-d);background:var(--coral-l);padding:4px 9px;border-radius:999px}
+  .abody h3{font-size:16px;font-weight:800;margin:6px 0 4px;line-height:1.2}
+  .abody p{margin:0;color:var(--ink-2);font-size:13px;line-height:1.35;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .ameta{margin-top:6px;font-size:12.5px;font-weight:700;color:var(--ink)}
+  .aread{margin-top:4px;font-size:13px;font-weight:700;color:var(--coral-d)}
+  .acredit{position:absolute;top:6px;right:6px;max-width:calc(100% - 12px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;color:#fff;background:rgba(0,0,0,.45);padding:2px 7px;border-radius:999px;text-decoration:none}
+  .adots{display:flex;justify-content:center;gap:7px;margin-top:4px}
+  .adots button{width:8px;height:8px;border-radius:999px;border:0;background:var(--line);cursor:pointer;padding:0;transition:width .25s ease,background .25s ease}
+  .adots button.on{width:24px;background:var(--coral)}
+  .amodal{position:fixed;inset:0;z-index:100;background:rgba(27,23,22,.55);display:grid;place-items:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s ease}
+  .amodal.open{opacity:1;pointer-events:auto}
+  .apanel{position:relative;background:#fff;border-radius:22px;max-width:640px;width:100%;max-height:88vh;overflow:auto;transform:translateY(12px);transition:transform .25s ease}
+  .amodal.open .apanel{transform:none}
+  .aimg.big{aspect-ratio:16/9;flex:none}
+  .apad{padding:22px 26px 26px}
+  .apad h2{font-size:clamp(24px,3.4vw,32px);font-weight:800;margin:10px 0 4px}
+  .apad p{color:var(--ink-2);line-height:1.6}
+  .acredit-l{font-size:12.5px;color:var(--mute)!important}
+  .acredit-l a{color:var(--mute)}
+  .aclose{position:absolute;top:12px;right:12px;z-index:2;width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.92);font-size:16px;cursor:pointer}
+  @media (max-width:720px){ .acard{flex-basis:78%} .anav{display:none} }
 </style>
 </head>
 <body>
@@ -1303,6 +1341,7 @@ function renderCity(c){
       ${c.soon?`<p class="note" style="margin-top:18px"><span class="tag soon">En concertation</span> ${c.soon.map(esc).join(", ")}</p>`:""}
     </section>
     ${(()=>{ const mm=ALL.find(x=>x.link==="#"+c.id); return mm?rulesBox(mm):""; })()}
+    ${(()=>{ const mm=ALL.find(x=>x.link==="#"+c.id); return mm?articlesBlock(mm.slug, c.name):""; })()}
     ${pricesBlock(c.name, c)}
     ${howBlock()}
     <section class="block" style="margin-top:0"><h2>Questions fréquentes</h2>
@@ -1512,6 +1551,140 @@ function zonePick(btn){
   if(mapOnScreen()) go(); else { scrollToMap(); setTimeout(go,420); }
 }
 document.addEventListener("click",e=>{ const b=e.target.closest(".zchip"); if(b){ e.preventDefault(); zonePick(b); } });
+
+/* ---------------- MINI-ARTICLES (carrousel sur la page d'une ville) ----------------
+   Photos : Wikimedia Commons (licences libres), créditées sur chaque carte.
+   Durées : estimations à vélo électrique (~15 km/h en ville, détours compris). */
+const WM = f => "https://commons.wikimedia.org/wiki/Special:FilePath/"+encodeURIComponent(f.replace(/ /g,"_"))+"?width=720";
+const WMPAGE = f => "https://commons.wikimedia.org/wiki/File:"+encodeURIComponent(f.replace(/ /g,"_"));
+const ARTICLES = {
+  "paris":[
+    { tag:"Trajet", emoji:"🚉", title:"Gare du Nord → Gare de Lyon", meta:"≈ 5,5 km · ≈ 22 min à vélo",
+      photo:"Gare du Nord à Paris le 17 juillet 2015 - 35.jpg", credit:"Lionel Allorge",
+      summary:"Relier les deux grandes gares sans changer trois fois de métro.",
+      body:["Le trajet le plus simple descend le boulevard de Magenta jusqu'à République, longe le boulevard Richard-Lenoir jusqu'à la Bastille, puis rejoint la gare de Lyon.",
+            "Ces axes sont largement équipés de pistes cyclables, ce qui permet de rouler en continu. Comptez une vingtaine de minutes selon les feux et la circulation.",
+            "Astuce : en arrivant, garez votre vélo sur un emplacement vélos autorisé autour de la gare, puis terminez à pied jusqu'au quai."] },
+    { tag:"Trajet", emoji:"🗼", title:"Tour Eiffel → Louvre", meta:"≈ 4 km · ≈ 16 min à vélo",
+      photo:"Tour Eiffel Wikimedia Commons.jpg", credit:"Wikimedia Commons",
+      summary:"Le trajet le plus agréable de Paris : tout droit le long de la Seine.",
+      body:["Depuis le pied de la Tour Eiffel, traversez le pont d'Iéna puis suivez les quais rive droite en direction de la Concorde.",
+            "Après la place de la Concorde, longez le jardin des Tuileries jusqu'au Louvre. Le parcours est presque plat et offre une vue continue sur la Seine.",
+            "Comptez environ un quart d'heure, un peu plus aux heures de pointe ou le week-end, quand les quais sont très fréquentés."] },
+    { tag:"Trajet", emoji:"⛪", title:"Sacré-Cœur → Hôtel de Ville", meta:"≈ 4,4 km · ≈ 18 min à vélo",
+      photo:"Basilique du Sacré-Cœur.001 - Montmartre.jpg", credit:"Fernando Losada Rodríguez",
+      summary:"De la butte Montmartre au cœur de Paris, en descente presque tout du long.",
+      body:["Depuis Montmartre, la descente vers les Grands Boulevards se fait sans effort. Rejoignez ensuite le boulevard de Sébastopol, équipé de pistes cyclables, jusqu'à Châtelet et l'Hôtel de Ville.",
+            "Dans l'autre sens, la montée vers le Sacré-Cœur est raide : c'est là que l'assistance électrique fait toute la différence.",
+            "Prudence dans les rues pavées et très touristiques de la butte : roulez doucement et laissez la priorité aux piétons."] },
+    { tag:"Trajet", emoji:"🌊", title:"Bastille → Canal Saint-Martin", meta:"≈ 2,7 km · ≈ 11 min à vélo",
+      photo:"Canal Saint-Martin - Quai de Valmy, Paris 21 July 2013.jpg", credit:"Francisco Anzola",
+      summary:"Un trajet tout droit, au-dessus du canal souterrain.",
+      body:["Depuis la place de la Bastille, remontez le boulevard Richard-Lenoir : le canal Saint-Martin coule en dessous, dans une voûte souterraine.",
+            "Au bout du boulevard, le canal réapparaît à l'air libre. Continuez sur le quai de Valmy jusqu'aux écluses et aux passerelles.",
+            "C'est l'un des trajets les plus simples de l'est parisien, idéal pour un apéro au bord de l'eau."] },
+    { tag:"Trajet", emoji:"🏛️", title:"Panthéon → Montparnasse", meta:"≈ 2,6 km · ≈ 10 min à vélo",
+      photo:"Paris, Panthéon -- 2014 -- 1668.jpg", credit:"XRay",
+      summary:"Du Quartier latin à la gare Montparnasse en dix minutes.",
+      body:["Descendez la rue Soufflot vers le jardin du Luxembourg, contournez-le par le sud, puis rejoignez le boulevard du Montparnasse jusqu'à la gare.",
+            "Le trajet est court et plutôt plat. En transports en commun, ce parcours impose souvent une correspondance.",
+            "Pensez à vous garer avant le parvis de la gare, très fréquenté par les piétons."] },
+    { tag:"Trajet", emoji:"🎭", title:"Opéra → Arc de Triomphe", meta:"≈ 3,5 km · ≈ 14 min à vélo",
+      photo:"Paris Arc de Triomphe.jpg", credit:"Didier Devèze",
+      summary:"Des Grands Magasins à l'Étoile, en évitant le rond-point.",
+      body:["Depuis l'Opéra Garnier, prenez le boulevard Haussmann vers l'ouest jusqu'aux abords de la place Charles-de-Gaulle.",
+            "Le rond-point de l'Étoile est l'un des carrefours les plus chargés de Paris : garez votre vélo avant d'y entrer et finissez les derniers mètres à pied.",
+            "On accède à l'Arc de Triomphe par un passage souterrain, jamais en traversant le rond-point."] },
+    { tag:"Pourquoi Voi", emoji:"⚡", title:"Pourquoi le vélo électrique pour se déplacer à Paris ?", meta:"6 000 vélos Voi dans Paris",
+      photo:"Voie Cyclable Rue Rivoli - Paris IV (FR75) - 2021-01-03 - 1.jpg", credit:"Chabe01",
+      summary:"Rapide, sans transpirer et sans chercher de place pour se garer.",
+      body:["Sur les trajets de 2 à 6 km, le vélo est souvent compétitif face au métro, porte à porte : pas de couloirs, pas de correspondances, pas d'attente.",
+            "L'assistance électrique gomme les montées (Montmartre, Belleville, la montagne Sainte-Geneviève) : vous arrivez frais au bureau ou à votre rendez-vous.",
+            "Depuis le 1er octobre 2025, Voi met 6 000 vélos électriques à disposition dans Paris. Pas d'antivol à prévoir, pas de vélo à entretenir : vous payez seulement le trajet."] },
+    { tag:"Pratique", emoji:"🅿️", title:"Bien garer son vélo Voi à Paris", meta:"Règles en vigueur depuis octobre 2025",
+      photo:"Arceaux stationnement vélo provisoire.jpg", credit:"Wikimedia Commons",
+      summary:"Où a-t-on le droit de laisser un vélo en libre-service ?",
+      body:["À Paris, les vélos en libre-service ne se garent que sur les emplacements vélos sans arceaux, ou sur les arceaux regroupés par 4 au minimum.",
+            "Jamais sur un trottoir libre, devant une porte, un passage piéton ou un arrêt de bus : vous gêneriez les piétons et la location pourrait ne pas se terminer.",
+            "L'application indique les emplacements autorisés autour de vous. Une fois garé, prenez une photo pour clôturer votre trajet."] },
+    { tag:"Astuce", emoji:"🚇", title:"Métro + Voi : le duo gagnant", meta:"Le dernier kilomètre en 5 minutes",
+      photo:"Metro station entrance (édicule Guimard) Porte Dauphine Paris 16e 002.jpg", credit:"Moonik",
+      summary:"Combinez le métro pour la grande distance et le vélo pour finir.",
+      body:["Pour les longs trajets, le métro ou le RER reste imbattable. Mais la station est rarement devant votre destination.",
+            "En sortant, prenez un vélo Voi garé près de la station : le dernier kilomètre se fait en quelques minutes au lieu d'un quart d'heure à pied.",
+            "Ça marche aussi dans l'autre sens : rejoignez une gare RER rapide en vélo plutôt que par une ligne de métro lente avec correspondance."] },
+    { tag:"Sécurité", emoji:"⛑️", title:"Rouler en sécurité à Paris", meta:"Les 4 réflexes à avoir",
+      photo:"Boulevard Richard-Lenoir (Paris), piste cyclable 01.jpg", credit:"Coyau",
+      summary:"Pistes cyclables, écouteurs, casque : l'essentiel avant de partir.",
+      body:["Utilisez les pistes et bandes cyclables dès qu'elles existent. De nombreux grands axes parisiens en sont équipés.",
+            "Pas d'écouteurs ni de téléphone tenu en main en roulant : c'est interdit et dangereux. Un vélo, une personne.",
+            "Le casque n'est obligatoire que pour les moins de 12 ans à vélo, mais il est fortement recommandé pour tous. La nuit, restez visible avec des vêtements clairs ou réfléchissants."] }
+  ]
+};
+
+function articlesBlock(slug, cityName){
+  const list=ARTICLES[slug]; if(!list) return "";
+  const card=(a,i)=>`<article class="acard" data-a="${slug}|${i}" tabindex="0" role="button" aria-label="Lire : ${esc(a.title)}">
+      <div class="aimg" data-emoji="${a.emoji}"><img loading="lazy" src="${WM(a.photo)}" alt="${esc(a.title)}" onerror="this.remove()"></div>
+      <div class="abody"><span class="atag">${esc(a.tag)}</span><h3>${esc(a.title)}</h3><p>${esc(a.summary)}</p>
+        <div class="ameta">${esc(a.meta)}</div><span class="aread">Lire l'article →</span></div>
+      <a class="acredit" href="${WMPAGE(a.photo)}" onclick="event.stopPropagation()">📷 ${esc(a.credit)}</a>
+    </article>`;
+  return `<section class="articles">
+    <div class="ahead"><div><span class="lrules-badge">À lire</span><h2>Bouger à ${esc(cityName)} avec Voi</h2></div>
+      <div class="anav"><button type="button" class="aprev" aria-label="Article précédent">←</button><button type="button" class="anext" aria-label="Article suivant">→</button></div></div>
+    <div class="acar-track">${list.map(card).join("")}</div>
+    <div class="adots">${list.map((_,i)=>`<button type="button" aria-label="Article ${i+1}" class="${i?"":"on"}" data-i="${i}"></button>`).join("")}</div>
+    <p class="note">Durées estimées à vélo électrique, selon la circulation. Photos : Wikimedia Commons (licences libres, voir le crédit sur chaque carte).</p>
+  </section>`;
+}
+
+/* carrousel : boutons, points, glisser à la souris, défilement fluide */
+function acarStep(track){ const c=track.querySelector(".acard"); return c ? c.getBoundingClientRect().width+16 : 300; }
+function acarDots(track){
+  const sec=track.closest(".articles"); if(!sec) return;
+  const i=Math.round(track.scrollLeft/acarStep(track));
+  sec.querySelectorAll(".adots button").forEach((b,k)=>b.classList.toggle("on",k===i));
+  const max=track.scrollWidth-track.clientWidth-4;
+  sec.querySelector(".aprev").disabled = track.scrollLeft<=4;
+  sec.querySelector(".anext").disabled = track.scrollLeft>=max;
+}
+document.addEventListener("click",e=>{
+  const sec=e.target.closest(".articles"); if(!sec) return;
+  const track=sec.querySelector(".acar-track");
+  if(e.target.closest(".aprev")) track.scrollBy({left:-acarStep(track),behavior:"smooth"});
+  else if(e.target.closest(".anext")) track.scrollBy({left:acarStep(track),behavior:"smooth"});
+  else if(e.target.closest(".adots button")) track.scrollTo({left:+e.target.dataset.i*acarStep(track),behavior:"smooth"});
+  else { const c=e.target.closest(".acard"); if(c && !track.__dragged) openArticle(c.dataset.a); }
+});
+document.addEventListener("keydown",e=>{ const c=e.target.closest && e.target.closest(".acard"); if(c && (e.key==="Enter"||e.key===" ")){ e.preventDefault(); openArticle(c.dataset.a); } if(e.key==="Escape") closeArticle(); });
+document.addEventListener("scroll",e=>{ if(e.target.classList && e.target.classList.contains("acar-track")) acarDots(e.target); }, true);
+/* glisser à la souris (le tactile défile nativement) */
+document.addEventListener("pointerdown",e=>{
+  const track=e.target.closest && e.target.closest(".acar-track"); if(!track || e.pointerType!=="mouse") return;
+  const x0=e.clientX, s0=track.scrollLeft; track.__dragged=false; track.classList.add("drag");
+  const move=ev=>{ const dx=ev.clientX-x0; if(Math.abs(dx)>5) track.__dragged=true; track.scrollLeft=s0-dx; };
+  const up=()=>{ document.removeEventListener("pointermove",move); document.removeEventListener("pointerup",up); track.classList.remove("drag");
+    const step=acarStep(track); track.scrollTo({left:Math.round(track.scrollLeft/step)*step,behavior:"smooth"}); setTimeout(()=>track.__dragged=false,50); };
+  document.addEventListener("pointermove",move); document.addEventListener("pointerup",up);
+});
+
+/* lecture d'un article */
+function openArticle(key){
+  const [slug,i]=key.split("|"), a=(ARTICLES[slug]||[])[+i]; if(!a) return;
+  let m=document.getElementById("amodal");
+  if(!m){ m=document.createElement("div"); m.id="amodal"; m.className="amodal"; document.body.appendChild(m);
+    m.addEventListener("click",e=>{ if(e.target===m || e.target.closest(".aclose")) closeArticle(); }); }
+  m.innerHTML=`<div class="apanel" role="dialog" aria-modal="true" aria-label="${esc(a.title)}">
+    <button type="button" class="aclose" aria-label="Fermer">✕</button>
+    <div class="aimg big" data-emoji="${a.emoji}"><img src="${WM(a.photo)}" alt="" onerror="this.remove()"></div>
+    <div class="apad"><span class="atag">${esc(a.tag)}</span><h2>${esc(a.title)}</h2><div class="ameta">${esc(a.meta)}</div>
+      ${a.body.map(p=>`<p>${esc(p)}</p>`).join("")}
+      <p class="acredit-l">Photo : <a href="${WMPAGE(a.photo)}">${esc(a.credit)}, via Wikimedia Commons</a></p></div></div>`;
+  m.classList.add("open"); document.body.style.overflow="hidden";
+}
+function closeArticle(){ const m=document.getElementById("amodal"); if(m){ m.classList.remove("open"); document.body.style.overflow=""; } }
+
 /* ---------------- MINI FAQ (sur chaque page ville, générée à partir des données) ---------------- */
 function miniFaq(m){
   const c=m.country, cr=COUNTRY_RULES[c.id]||{items:[]}, lr=CITY_RULES[m.slug]||{items:[]};
@@ -1686,6 +1859,7 @@ function renderWelcome(m){
     ${zonesBlock(m)}
     ${rulesBox(m)}
     ${miniFaq(m)}
+    ${articlesBlock(m.slug, m.name)}
     ${howBlock()}
     ${appBand("à "+m.name)}
   </div>`;
@@ -2134,6 +2308,7 @@ function onNav(e){
 document.addEventListener("click",onNav,true);
 document.addEventListener("keydown",onNav,true);
 const syncFromUrl=()=>{ const id=(location.hash||"").slice(1); if(id!==CURRENT){ CURRENT=id; route(); } };
+function initCarousels(){ document.querySelectorAll(".acar-track").forEach(acarDots); }
 function route(){
   const id=CURRENT;
   VIEW.spotsFor=null;
@@ -2155,6 +2330,7 @@ function route(){
   if(welcome || safety || faq) window.scrollTo(0,0);
   else if(country || city) scrollToMap("auto");
   else window.scrollTo(0,0);
+  closeArticle(); requestAnimationFrame(initCarousels);
 }
 window.addEventListener("hashchange",syncFromUrl);
 window.addEventListener("popstate",syncFromUrl);
