@@ -318,6 +318,15 @@ const CITIES = [
     lead:"Depuis le 1er octobre 2025, Voi fait partie des trois opérateurs de vélos en libre-service retenus par la Ville de Paris. Un vélo électrique de dernière génération, à quelques pas de chez vous.",
     figures:[["6 000","vélos électriques"],["20","arrondissements"]],
     zone:["Paris intra-muros (75001 → 75020)"], zoneNote:"À Paris, les trottinettes en libre-service ne sont pas autorisées : Voi y propose uniquement des vélos électriques.",
+    prices:[
+      ["À la minute","Sans frais de déverrouillage","0,25 € / min"],
+      ["Pass 30 minutes","","2,99 €"],
+      ["Pass 1 heure","","5,49 €"],
+      ["Forfait 200 minutes","","16,99 €"],
+      ["Forfait 400 minutes","","31,99 €"],
+      ["Abonnement mensuel","Le prix à la minute le plus bas","dès 0,08 € / min"]
+    ],
+    pricesSrc:"Voi (lancement d'octobre 2025) et presse parisienne",
     highlights:[
       ["🚲","Une flotte toute neuve","6 000 vélos électriques déployés dans la capitale pour le lancement."],
       ["🅿️","Stationnement encadré","Garez-vous sur les emplacements autorisés indiqués dans l'application, en respectant les règles de stationnement fixées par la Ville."],
@@ -438,6 +447,17 @@ const CITIES = [
     zone:["Les Mureaux","Poissy","Meulan-en-Yvelines","Conflans-Sainte-Honorine","Andrésy","Mantes-la-Jolie","Mantes-la-Ville","Hardricourt","Carrières-sous-Poissy","…"],
     zoneNote:"12 communes desservies au total. Verneuil-sur-Seine et Vernouillet ont consulté leurs habitants en novembre 2026 sur l'arrivée du service.",
     soon:["Verneuil-sur-Seine","Vernouillet"],
+    prices:[
+      ["À la course","Déverrouillage + prix à la minute","0,49 € + 0,23 € / min"],
+      ["Déverrouillages gratuits","Pendant 30 jours","2,99 €"],
+      ["Pass 1 jour","30 minutes comprises","3,99 €"],
+      ["Pass 3 jours","60 minutes comprises","6,99 €"],
+      ["Pass hebdomadaire","120 minutes comprises","12,99 €"],
+      ["Pass mensuel","300 minutes comprises","29,99 €"],
+      ["Pass mensuel","500 minutes comprises","41,99 €"],
+      ["Forfait longs trajets","30 jours, puis 1 € par trajet de 30 minutes","9,99 € / mois"]
+    ],
+    pricesSrc:"Communauté urbaine GPS&O (mai 2026)",
     highlights:[
       ["🚆","Vers les gares","Un service conçu en complément des transports en commun, pour les trajets courts et les rabattements vers les gares."],
       ["🛴","700 trottinettes","Pour les trajets rapides en centre-ville."],
@@ -1074,11 +1094,7 @@ function renderCity(c){
       ${c.soon?`<p class="note" style="margin-top:18px"><span class="tag soon">En concertation</span> ${c.soon.map(esc).join(", ")}</p>`:""}
       ${c.zoneNote?`<p class="note">${esc(c.zoneNote)}</p>`:""}
     </section>
-    ${c.prices?`<section class="block" style="margin-top:0"><h2>Tarifs à ${esc(c.name)}</h2>
-      <table class="prices"><thead><tr><th>Formule</th><th>Détail</th><th>Prix</th></tr></thead><tbody>
-      ${c.prices.map(p=>`<tr><td>${esc(p[0])}</td><td>${esc(p[1])}</td><td>${esc(p[2])}</td></tr>`).join("")}
-      </tbody></table><p class="note">Tarifs indicatifs, susceptibles d'évoluer. Le prix exact s'affiche dans l'application avant chaque trajet.</p></section>`
-    :`<section class="block" style="margin-top:0"><h2>Tarifs</h2><p style="color:var(--ink-2);max-width:60ch">Paiement à la minute, pass journaliers ou abonnements mensuels : les formules disponibles à ${esc(c.name)} et leur prix s'affichent dans l'application avant chaque trajet.</p></section>`}
+    ${pricesBlock(c.name, c)}
     ${howBlock()}
     <section class="block" style="margin-top:0"><h2>Questions fréquentes</h2>
       ${c.faq.map(f=>`<details><summary>${esc(f[0])}</summary><p>${esc(f[1])}</p></details>`).join("")}
@@ -1092,6 +1108,25 @@ function renderCity(c){
   VIEW.onCountryPick=null;
   mountMap(document.getElementById("mapslot"));
   goTo({type:"city", coords:[ct.lat,ct.lng]}, ct.g, FR, true);
+}
+
+/* Bloc "Tarifs" : tableau détaillé si la ville a des tarifs connus (t.prices),
+   sinon les formules habituelles, avec renvoi vers l'application pour le prix exact. */
+function pricesBlock(name, t){
+  const known = t && t.prices;
+  const rows = known ? t.prices : [
+    ["À la minute","Déverrouillage éventuel + prix à la minute","Voir l'application"],
+    ["Pass","À la journée ou à la semaine, minutes comprises","Voir l'application"],
+    ["Forfaits de minutes","Minutes prépayées, moins chères à l'usage","Voir l'application"],
+    ["Abonnement mensuel","Pour rouler souvent","Voir l'application"]
+  ];
+  return `<section class="block" style="margin-top:0"><h2>Tarifs à ${esc(name)}</h2>
+    <table class="prices"><thead><tr><th>Formule</th><th>Détail</th><th>Prix</th></tr></thead><tbody>
+    ${rows.map(p=>`<tr><td>${esc(p[0])}</td><td>${esc(p[1])}</td><td>${esc(p[2])}</td></tr>`).join("")}
+    </tbody></table>
+    <p class="note">${known
+      ? `Tarifs indicatifs, susceptibles d'évoluer${t.pricesSrc?` (source : ${esc(t.pricesSrc)})`:""}. Le prix exact s'affiche dans l'application avant chaque trajet.`
+      : `Les tarifs de Voi varient d'une ville à l'autre. Les formules disponibles à ${esc(name)} et leur prix exact s'affichent dans l'application avant chaque trajet.`}</p></section>`;
 }
 
 /* ---------------- PAGE "BIENVENUE À <VILLE>" (toutes les villes) ---------------- */
@@ -1122,6 +1157,7 @@ function renderWelcome(m){
       </div>
       <div id="mapslot"></div>
     </section>
+    ${pricesBlock(m.name, m.link ? CITIES.find(x=>"#"+x.id===m.link) : null)}
     ${howBlock()}
     ${appBand("à "+m.name)}
   </div>`;
