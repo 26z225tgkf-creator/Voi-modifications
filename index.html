@@ -2108,7 +2108,7 @@ function renderWelcome(m){
      user types.
    - The pill next to "Trouver un véhicule" says whether Voi bikes are offered
      within AVAIL_RADIUS_KM of the departure (list of served cities above).
-   - Once a departure is set, a street map (Leaflet + OpenStreetMap/CARTO tiles)
+   - Once a departure is set, a street map (Leaflet + Esri / CyclOSM / OpenStreetMap tiles)
      replaces the Europe map and zooms on it. With a destination, the trip is
      drawn: walk to the bike → ride → walk from the parking spot to the
      destination (routes from routing.openstreetmap.de).
@@ -2219,41 +2219,35 @@ function loadLeaflet(){
 }
 const TRIP={map:null, layer:null, dep:null, dst:null, seq:0, city:null};
 function mk(cls,html,size){ return L.divIcon({className:"",html:`<div class="mk ${cls}" style="width:${size}px;height:${size}px">${html||""}</div>`,iconSize:[size,size],iconAnchor:[size/2,size/2]}); }
-/* Fond de carte (rues, trottoirs, parcs, noms des rues).
-   Les tuiles sont téléchargées puis dessinées dans un <canvas> : elles s'affichent
-   aussi dans les aperçus qui bloquent les images externes. Si CARTO ne répond pas,
-   on passe aux tuiles OpenStreetMap, puis aux <img> classiques en dernier recours. */
-/* Fonds de carte : Plan (OpenStreetMap, détaillé comme Google Maps), Vélo (CyclOSM :
-   pistes et bandes cyclables) et Satellite (Esri). Chaque tuile est téléchargée puis
-   dessinée dans un <canvas> ; si un serveur ne répond pas, on essaie le suivant. */
-const OSM_ATTR='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+/* Fonds de carte : Plan (Esri gris clair épuré + noms des rues), Détaillé (Esri, proche de Google Maps), Vélo (CyclOSM :
+   pistes et bandes cyclables) et Satellite (Esri). Tuiles en <img> classiques ;
+   si un serveur refuse une tuile, on bascule sur le serveur suivant de la liste. */
 const ROUTE_ATTR=' · itinéraires <a href="https://routing.openstreetmap.de/">FOSSGIS</a>';
+const ESRI=(svc)=>(z,x,y)=>`https://server.arcgisonline.com/ArcGIS/rest/services/${svc}/MapServer/tile/${z}/${y}/${x}`;
+const OSM=(z,x,y)=>`https://tile.openstreetmap.org/${z}/${x}/${y}.png`;   /* CARTO exige maintenant une clé API : retiré */
 const BASEMAPS={
-  "Plan":{ src:[(z,x,y)=>`https://tile.openstreetmap.org/${z}/${x}/${y}.png`,
-                (z,x,y,r)=>`https://${"abcd"[(x+y)%4]}.basemaps.cartocdn.com/rastertiles/voyager/${z}/${x}/${y}${r?"@2x":""}.png`],
-           attr:OSM_ATTR+' &copy; <a href="https://carto.com/attributions">CARTO</a>'+ROUTE_ATTR, max:19 },
-  "Vélo":{ src:[(z,x,y)=>`https://${"abc"[(x+y)%3]}.tile-cyclosm.openstreetmap.fr/cyclosm/${z}/${x}/${y}.png`,
-                (z,x,y)=>`https://tile.openstreetmap.org/${z}/${x}/${y}.png`],
-           attr:'<a href="https://www.cyclosm.org">CyclOSM</a> · '+OSM_ATTR+ROUTE_ATTR, max:19 },
-  "Satellite":{ src:[(z,x,y)=>`https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}`],
-           attr:'Imagerie &copy; Esri, Maxar, Earthstar Geographics'+ROUTE_ATTR, max:19 }
+  "Plan":{ src:[ESRI("Canvas/World_Light_Gray_Base"), OSM], native:16,
+           labels:ESRI("Canvas/World_Light_Gray_Reference"),
+           attr:'Plan &copy; Esri, HERE, Garmin, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'+ROUTE_ATTR },
+  "Détaillé":{ src:[ESRI("World_Street_Map"), OSM],
+           attr:'Plan &copy; Esri, HERE, Garmin, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'+ROUTE_ATTR },
+  "Vélo":{ src:[(z,x,y)=>`https://${"abc"[(x+y)%3]}.tile-cyclosm.openstreetmap.fr/cyclosm/${z}/${x}/${y}.png`, OSM],
+           attr:'<a href="https://www.cyclosm.org">CyclOSM</a> · &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'+ROUTE_ATTR },
+  "Satellite":{ src:[ESRI("World_Imagery"), ESRI("World_Street_Map")],
+           attr:'Imagerie &copy; Esri, Maxar, Earthstar Geographics'+ROUTE_ATTR }
 };
 let StreetTiles=null;
 function defineStreetTiles(){
   if(StreetTiles) return;
   StreetTiles=L.GridLayer.extend({
     createTile(c,done){
-      const src=this.options.src, cv=document.createElement("canvas"), r=Math.min(2,window.devicePixelRatio||1), s=this.getTileSize();
-      cv.width=s.x*r; cv.height=s.y*r;
-      const draw=im=>{ cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height); done(null,cv); };
-      const viaImg=()=>{ const im=new Image(); im.crossOrigin="anonymous"; im.onload=()=>draw(im); im.onerror=()=>done(new Error("tile"),cv); im.src=src[0](c.z,c.x,c.y,r>1); };
-      const tryAt=i=>{
-        if(i>=src.length){ viaImg(); return; }
-        fetch(src[i](c.z,c.x,c.y,r>1)).then(res=>{ if(!res.ok) throw 0; return res.blob(); })
-          .then(b=>createImageBitmap(b)).then(draw).catch(()=>tryAt(i+1));
-      };
-      tryAt(0);
-      return cv;
+      const src=this.options.src, r=(window.devicePixelRatio||1)>1, img=document.createElement("img");
+      let i=0;
+      img.alt=""; img.setAttribute("role","presentation"); img.decoding="async";
+      img.onload=()=>done(null,img);
+      img.onerror=()=>{ if(++i<src.length) img.src=src[i](c.z,c.x,c.y,r); else done(new Error("tile"),img); };
+      img.src=src[0](c.z,c.x,c.y,r);
+      return img;
     }
   });
 }
@@ -2267,7 +2261,10 @@ async function ensureStreetMap(){
   if(!TRIP.map || TRIP.map.getContainer()!==el){
     TRIP.map=L.map(el,{zoomControl:true,scrollWheelZoom:false});
     const layers={};
-    Object.entries(BASEMAPS).forEach(([k,b])=>{ layers[k]=new StreetTiles({src:b.src, attribution:b.attr, maxZoom:b.max, tileSize:256}); });
+    Object.entries(BASEMAPS).forEach(([k,b])=>{
+      const base=new StreetTiles({src:b.src, attribution:b.attr, maxZoom:19, maxNativeZoom:b.native||19, tileSize:256});
+      layers[k]=b.labels ? L.layerGroup([base, new StreetTiles({src:[b.labels], maxZoom:19, maxNativeZoom:b.native||19, tileSize:256, zIndex:2})]) : base;
+    });
     layers["Plan"].addTo(TRIP.map);
     L.control.layers(layers,null,{position:"topright",collapsed:false}).addTo(TRIP.map);
     TRIP.layer=L.layerGroup().addTo(TRIP.map);
