@@ -318,6 +318,8 @@
   .mappin[hidden]{display:none}
   .mappin-lbl{background:#B8372C;color:#fff;font-weight:700;font-size:14px;padding:6px 12px;border-radius:8px;white-space:nowrap;box-shadow:0 6px 14px -6px rgba(94,26,20,.6)}
   .mappin-dot{width:16px;height:16px;border-radius:50%;background:#B8372C;border:3px solid #fff;box-shadow:0 0 0 2px #B8372C;margin-top:6px;transform:translateY(50%)}
+  .mlabel.spot{transform:translate(8px,-50%);font:700 11.5px "DM Sans",system-ui,sans-serif;color:#5E1A14;background:rgba(255,255,255,.88);padding:1px 5px;border-radius:5px;white-space:nowrap}
+  .mlabel.spot.on{background:#B8372C;color:#fff;font-size:13px;padding:4px 9px;transform:translate(12px,-50%)}
 </style>
 </head>
 <body>
@@ -718,7 +720,7 @@ COUNTRIES.forEach(c=>c.cities.forEach((ct,j)=>{ ct.g=ALL.length; ALL.push(Object
 const EUROPE=["PT","FI","GB","IT","NO","AT"];
 const CITY_SCALE=30;
 
-const legend = `<div class="maplegend"><span><span class="dot"></span>Ville desservie par Voi</span><span><span class="dot" style="background:#B8372C;border-color:#5E1A14;box-shadow:none"></span>Ville sélectionnée</span></div>`;
+const legend = `<div class="maplegend"><span><span class="dot"></span>Ville desservie par Voi</span><span class="lg-spot"><span class="dot" style="background:#fff;border-color:#D9564B;box-shadow:none;width:9px;height:9px"></span>Arrondissement / commune</span><span><span class="dot" style="background:#B8372C;border-color:#5E1A14;box-shadow:none"></span>Ville sélectionnée</span></div>`;
 const MAPCARD=document.createElement("div");
 MAPCARD.className="mapcard";
 MAPCARD.innerHTML=`<div id="map" class="map"></div>${legend}<div class="maplabels" id="maplabels"></div><div class="mappin" id="mappin" hidden><span class="mappin-lbl"></span><span class="mappin-dot"></span></div>`;
@@ -729,6 +731,16 @@ MAPEL.addEventListener("mouseout",()=>requestAnimationFrame(paintSelection));
 const VIEW={ target:{type:"europe"}, sel:-1, country:null, onCountryPick:null };
 let mapStarted=false, mapReady=false, fallbackMode=false;
 
+/* small rounds for arrondissements / communes: extra markers after the cities */
+let SPOT_ARR=null;
+function spotArr(){
+  if(SPOT_ARR) return SPOT_ARR;
+  SPOT_ARR=[];
+  try{ Object.entries(ZONES).forEach(([slug,z])=>z.groups.forEach(g=>g[1].forEach(chip=>{
+    const k=spotKey(slug,chip); if(k && !SPOT_ARR.some(s=>s.key===k)){ const s=SPOTS[k]; SPOT_ARR.push({key:k, city:slug, lat:s[0], lng:s[1], label:s[3], short:chip.split(" · ")[0]}); }
+  }))); }catch(e){}
+  return SPOT_ARR;
+}
 function mountMap(slot){ slot.appendChild(MAPCARD); if(!mapStarted){ mapStarted=true; initMap(); } else fitMapToBox(); }
 
 async function initMap(){
@@ -755,7 +767,7 @@ function createMap(){
         hover:{fillOpacity:.85, cursor:"pointer"},
         selected:{fill:"#FFC9C0"}
       },
-      markers: ALL.map(m=>({name:m.name, coords:[m.lat,m.lng]})),
+      markers: ALL.map(m=>({name:m.name, coords:[m.lat,m.lng]})).concat(spotArr().map(s=>({name:s.label, coords:[s.lat,s.lng]}))),
       markerStyle:{
         initial:{fill:"#F26A5E", stroke:"#ffffff", strokeWidth:2, r:6},
         hover:{fill:"#D9564B", cursor:"pointer"}
@@ -769,7 +781,7 @@ function createMap(){
         const c=COUNTRIES.find(x=>x.code===code);
         if(c && location.hash!=="#"+c.id) location.hash=c.id;
       },
-      onMarkerClick(e, g){ handleMarker(+g); },
+      onMarkerClick(e, g){ g=+g; if(g>=ALL.length){ spotClick(g-ALL.length); return; } handleMarker(g); },
       onViewportChange(){ labelsWhileMoving(); }
     });
     mapReady=true;
@@ -784,8 +796,8 @@ function applyView(animate){
   paintSelection();
   const t=VIEW.target;
   const pin=MAPCARD.querySelector("#mappin");
-  if(pin){ pin.hidden=true; if(t.type==="spot") pin.querySelector(".mappin-lbl").textContent=t.label; }
-  const showPin=()=>{ if(pin && VIEW.target.type==="spot") pin.hidden=false; };
+  if(pin) pin.hidden=true;
+  const showPin=()=>{};
   const cfg = t.type==="spot" ? {coords:t.coords, scale:SPOT_SCALE}
             : t.type==="city" ? {coords:t.coords, scale:CITY_SCALE}
             : t.type==="country" ? (countryCfg(VIEW.country) || {regions:[t.code]})
@@ -806,7 +818,7 @@ function countryCfg(c){
   const m=currentMap; if(!m || !c) return null;
   const base=m._baseScale || m.baseScale;
   if(!base || typeof m.scale!=="number") return null;
-  const nodes=markerNodes(); if(nodes.length!==ALL.length) return null;
+  const nodes=markerNodes(); if(nodes.length<ALL.length) return null;
   const by=(f,dir)=>ALL.reduce((best,x,i)=> best<0 || (dir*(f(x)-f(ALL[best]))>0) ? i : best, -1);
   const iW=by(x=>x.lng,-1), iE=by(x=>x.lng,1), iS=by(x=>x.lat,-1), iN=by(x=>x.lat,1);
   const R=i=>nodes[i].getBoundingClientRect();
@@ -893,8 +905,23 @@ function markerNodes(){
   if(n.length && n[0].hasAttribute("data-index")) n.sort((p,q)=>(+p.getAttribute("data-index"))-(+q.getAttribute("data-index")));
   return n;
 }
+function spotClick(j){
+  const s=spotArr()[j]; if(!s) return;
+  const btn=[...document.querySelectorAll(".zchip")].find(b=>b.dataset.spot===s.key);
+  if(btn) zonePick(btn); else goTo({type:"spot", coords:[s.lat,s.lng], label:s.label, key:s.key}, VIEW.sel, VIEW.country, true);
+}
 function paintSelection(){
+  const spots=spotArr();
   markerNodes().forEach((n,i)=>{
+    if(i>=ALL.length){
+      const sp=spots[i-ALL.length]; if(!sp) return;
+      const show = VIEW.spotsFor===sp.city, on = VIEW.target.type==="spot" && VIEW.target.key===sp.key;
+      n.style.display = show ? "" : "none";
+      n.setAttribute("fill", on?"#B8372C":"#ffffff"); n.style.fill = on?"#B8372C":"#ffffff";
+      n.setAttribute("stroke", on?"#ffffff":"#D9564B"); n.style.stroke = on?"#ffffff":"#D9564B";
+      n.setAttribute("stroke-width", on?3:2.5); n.setAttribute("r", on?8:4.5);
+      return;
+    }
     const s=i===VIEW.sel;
     n.setAttribute("fill", s?"#B8372C":"#F26A5E"); n.style.fill = s?"#B8372C":"";
     n.setAttribute("stroke", s?"#5E1A14":"#ffffff"); n.style.stroke = s?"#5E1A14":"";
@@ -925,7 +952,17 @@ function placeLabels(){
       html+=`<div class="mlabel country" style="left:${Math.min(Math.max(cx,90),base.width-90)}px;top:${y}px">${esc(VIEW.country.name)}</div>`;
     }
   }
-  if(VIEW.sel>=0){
+  if(!fallbackMode && VIEW.spotsFor && (VIEW.target.type==="city" || VIEW.target.type==="spot")){
+    spotArr().forEach((sp,j)=>{
+      if(sp.city!==VIEW.spotsFor) return;
+      const n=nodes[ALL.length+j]; if(!n) return;
+      const r=n.getBoundingClientRect(); const x=r.left+r.width/2-base.left, y=r.top+r.height/2-base.top;
+      if(x<-20||x>base.width+20||y<-20||y>base.height+20) return;
+      const on=VIEW.target.type==="spot" && VIEW.target.key===sp.key;
+      html+=`<div class="mlabel spot${on?" on":""}" style="left:${x}px;top:${y}px">${esc(on?sp.label:sp.short)}</div>`;
+    });
+  }
+  if(VIEW.sel>=0 && VIEW.target.type!=="spot"){
     const p=pos(VIEW.sel);
     if(p) html+=`<div class="mlabel city" style="left:${p.x}px;top:${p.top}px">${esc(ALL[VIEW.sel].name)}</div>`;
   }
@@ -1134,6 +1171,7 @@ function renderCity(c){
   const ct = FR.cities.find(x=>x.link==="#"+c.id);
   VIEW.onCountryPick=null;
   mountMap(document.getElementById("mapslot"));
+  VIEW.spotsFor=ALL[ct.g].slug;
   goTo({type:"city", coords:[ct.lat,ct.lng]}, ct.g, FR, true);
 }
 
@@ -1325,7 +1363,7 @@ function zonePick(btn){
       ${s[2].length?`<p>Repères du secteur : ${s[2].map(esc).join(" · ")}</p>`:`<p>Centre de la commune.</p>`}
       <p class="zd-actions"><a href="${osm}">Voir le plan détaillé (rues) →</a></p>
       <p class="note">Les véhicules disponibles et les zones de stationnement exactes s'affichent en temps réel dans l'application Voi.</p>`; }
-  const go=()=>goTo({type:"spot", coords:[s[0],s[1]], label:s[3]}, VIEW.sel, VIEW.country, true);
+  const go=()=>goTo({type:"spot", coords:[s[0],s[1]], label:s[3], key}, VIEW.sel, VIEW.country, true);
   if(mapOnScreen()) go(); else { scrollToMap(); setTimeout(go,420); }
 }
 document.addEventListener("click",e=>{ const b=e.target.closest(".zchip"); if(b){ e.preventDefault(); zonePick(b); } });
@@ -1395,6 +1433,7 @@ function renderWelcome(m){
   document.getElementById("wform").addEventListener("submit",e=>{ e.preventDefault(); location.href=store; });
   VIEW.onCountryPick=null;
   mountMap(document.getElementById("mapslot"));
+  VIEW.spotsFor=m.slug;
   goTo({type:"city", coords:[m.lat,m.lng]}, m.g, c, true);
 }
 
@@ -1579,6 +1618,7 @@ function renderFaq(){
 /* ---------------- ROUTER ---------------- */
 function route(){
   const id=(location.hash||"").slice(1);
+  VIEW.spotsFor=null;
   const country=COUNTRIES.find(x=>x.id===id);
   const city=CITIES.find(x=>x.id===id);
   const welcome=id.startsWith("ville/") ? ALL.find(x=>x.slug===id.slice(6)) : null;
