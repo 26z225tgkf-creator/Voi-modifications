@@ -43,10 +43,10 @@
   .hero h1{font-size:clamp(40px,6vw,76px);font-weight:800;max-width:15ch}
   .hero h1 em{font-style:normal;color:var(--coral)}
   .hero p.lead{font-size:19px;color:var(--ink-2);max-width:58ch;margin:20px 0 0}
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:36px 0 0}
-  .stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px}
-  .stat b{display:block;font-family:"Bricolage Grotesque";font-size:32px;font-weight:800}
-  .stat span{color:var(--mute);font-size:14px}
+  .stats{display:flex;flex-wrap:wrap;gap:12px;margin:30px 0 0}
+  .stat{flex:0 1 auto;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 20px}
+  .stat b{display:block;font-family:"Bricolage Grotesque";font-size:clamp(24px,6vw,32px);font-weight:800;line-height:1.1;white-space:nowrap}
+  .stat span{display:block;color:var(--mute);font-size:14px;margin-top:2px;white-space:nowrap}
 
   /* map */
   .mapcard{background:var(--sea);border:1px solid var(--line);border-radius:24px;overflow:hidden;position:relative}
@@ -169,6 +169,12 @@
   table.prices td,table.prices th{padding:14px 18px;text-align:left;border-bottom:1px solid var(--line);font-size:15.5px}
   table.prices th{background:#FBF1EC;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2)}
   table.prices td:last-child{font-weight:700;white-space:nowrap}
+  .kpis{display:flex;flex-wrap:wrap;gap:12px;margin:0 0 16px}
+  .kpi{flex:1 1 220px;display:flex;gap:12px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:12px 16px}
+  .kpi .ic{flex:none;width:42px;height:42px;border-radius:12px;background:var(--coral-l);color:var(--coral-d);display:grid;place-items:center}
+  .kpi .ic svg{width:22px;height:22px}
+  .kpi b{display:block;font-family:"Bricolage Grotesque";font-size:20px;font-weight:800;line-height:1.15}
+  .kpi span{display:block;color:var(--mute);font-size:13px;line-height:1.3}
   .highlights{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
   .hl-item{display:flex;gap:14px;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:20px}
   .hl-item .ic{flex:none;width:42px;height:42px;border-radius:12px;background:var(--coral-l);display:grid;place-items:center;font-size:20px}
@@ -271,7 +277,7 @@
     .quizband{padding:26px}
     .welcome{grid-template-columns:1fr;gap:28px;padding-top:24px}
     .welcome .mapcard{height:60vh;min-height:380px}
-    .stats{grid-template-columns:repeat(2,1fr)}
+    .stat{flex:1 1 calc(50% - 6px);padding:10px 14px}
     .split,.chero{grid-template-columns:1fr}
     .cols,.highlights{grid-template-columns:1fr}
     .mapcard{height:74vh;min-height:460px}
@@ -358,6 +364,15 @@ const CITIES = [
     lead:"Depuis le 1er octobre 2025, Voi fait partie des trois opérateurs de vélos en libre-service retenus par la Ville de Paris. Un vélo électrique de dernière génération, à quelques pas de chez vous.",
     figures:[["6 000","vélos électriques"],["20","arrondissements"]],
     zone:["Paris intra-muros (75001 → 75020)"], zoneNote:"À Paris, les trottinettes en libre-service ne sont pas autorisées : Voi y propose uniquement des vélos électriques.",
+    prices:[
+      ["À la minute","Sans frais de déverrouillage","0,25 € / min"],
+      ["Pass 30 minutes","","2,99 €"],
+      ["Pass 1 heure","","5,49 €"],
+      ["Forfait 200 minutes","","16,99 €"],
+      ["Forfait 400 minutes","","31,99 €"],
+      ["Abonnement mensuel","Le prix à la minute le plus bas","dès 0,08 € / min"]
+    ],
+    pricesSrc:"Voi (lancement d'octobre 2025) et presse parisienne",
     highlights:[
       ["🚲","Une flotte toute neuve","6 000 vélos électriques déployés dans la capitale pour le lancement."],
       ["🅿️","Stationnement encadré","Garez-vous sur les emplacements autorisés indiqués dans l'application, en respectant les règles de stationnement fixées par la Ville."],
@@ -374,6 +389,14 @@ const CITIES = [
     bikes:true, scooters:true,
     short:"Trottinettes et vélos électriques, du Vieux-Port aux quartiers nord.",
     lead:"Marseille est l'une des villes historiques de Voi en France. On y trouve à la fois des trottinettes et des vélos électriques, pour relier les quartiers sans chercher de place pour se garer.",
+    prices:[
+      ["Tarif résident","Déverrouillage + prix à la minute","1 € + 0,20 € / min"],
+      ["Abonnés RTM","Tarif réduit","0,85 € + 0,17 € / min"],
+      ["Tarif solidaire","Quotient familial inférieur à 750 €","0,70 € + 0,14 € / min"],
+      ["Forfait 400 minutes","Tarif solidaire","dès 22,39 €"],
+      ["Réduction casque","Sur selfie avec casque","−20 %"]
+    ],
+    pricesSrc:"Made in Marseille (juillet 2026)",
     figures:[["1 500","trottinettes"],["750","vélos électriques"]],
     zone:["Les 16 arrondissements de Marseille"],
     highlights:[
@@ -392,6 +415,18 @@ const CITIES = [
     bikes:true, scooters:true, since:"été 2025",
     short:"Vélos et trottinettes sur 17 communes de la métropole — même avec vos skis.",
     lead:"Depuis l'été 2025, Voi équipe l'agglomération grenobloise en vélos et trottinettes électriques. Une offre pensée pour la montagne : certains vélos sont même équipés de porte-skis.",
+    prices:[
+      ["À la minute","Déverrouillage + prix à la minute (vélo et trottinette)","0,49 € + 0,25 € / min"],
+      ["Voi+","Déverrouillages offerts, pause et réservation 30 min","2,99 € / mois"],
+      ["Abonnement prix fixe","Puis 1,50 € par trajet (30 min max.)","6,99 € / mois"],
+      ["Pass 1 jour","30 minutes comprises","4,49 €"],
+      ["Pass 3 jours","60 minutes comprises","7,99 €"],
+      ["Pass 7 jours","120 minutes comprises","14,99 €"],
+      ["Pass 30 jours","300 minutes comprises","29,99 €"],
+      ["Pass 30 jours","450 minutes comprises","39,99 €"],
+      ["Voi 4 All","Revenus modestes","−30 %"]
+    ],
+    pricesSrc:"voi.com et Mobilités M",
     figures:[["1 300","vélos"],["1 300","trottinettes"]],
     zone:["Grenoble","+ 16 autres communes de l'agglomération"], zoneNote:"Le service couvre 17 communes de l'aire grenobloise. La carte détaillée des zones est disponible dans l'application.",
     highlights:[
@@ -439,6 +474,15 @@ const CITIES = [
     bikes:true, scooters:true,
     short:"Trottinettes et vélos électriques au Havre et à Octeville-sur-Mer.",
     lead:"Retenu par Le Havre Seine Métropole, Voi propose trottinettes et vélos à assistance électrique en libre-service, du centre reconstruit classé UNESCO jusqu'au front de mer.",
+    prices:[
+      ["À la minute","Déverrouillage + prix à la minute","1 € + 0,22 € / min"],
+      ["Déverrouillages illimités","Abonnement mensuel","3,99 € / mois"],
+      ["Pass 1 jour","30 minutes comprises","4,99 €"],
+      ["Pass 1 jour","60 minutes comprises","6,99 €"],
+      ["Forfait mensuel","300 minutes comprises","32,99 €"],
+      ["Forfait mensuel","750 minutes comprises","69,99 €"]
+    ],
+    pricesSrc:"voi.com, Tendance Ouest et ICI Normandie",
     figures:[["1 000+","trottinettes"],["350","vélos électriques"]],
     zone:["Le Havre","Octeville-sur-Mer"],
     zoneNote:"Les zones de dépose et les zones interdites (notamment près des bassins) sont affichées dans l'application.",
@@ -457,6 +501,11 @@ const CITIES = [
     bikes:true, scooters:true,
     short:"Trottinettes et vélos sur les 12 communes de l'agglomération.",
     lead:"Voi est l'opérateur de trottinettes et vélos électriques en libre-service de l'agglomération de Saint-Quentin-en-Yvelines. Parfait pour rejoindre la gare ou le travail.",
+    prices:[
+      ["À la minute","Déverrouillage + prix à la minute","0,49 € + 0,25 € / min"],
+      ["Pass et abonnements","Déverrouillages offerts ou minutes comprises","de 2,99 € à 41,99 €"]
+    ],
+    pricesSrc:"voi.com et TV78",
     figures:[["12","communes"],["45 000","utilisateurs"]],
     zone:["Montigny-le-Bretonneux","Guyancourt","Trappes","Élancourt","Plaisir","Maurepas","Coignières","La Verrière","Les Clayes-sous-Bois","Villepreux","Voisins-le-Bretonneux","Magny-les-Hameaux"],
     highlights:[
@@ -478,6 +527,17 @@ const CITIES = [
     zone:["Les Mureaux","Poissy","Meulan-en-Yvelines","Conflans-Sainte-Honorine","Andrésy","Mantes-la-Jolie","Mantes-la-Ville","Hardricourt","Carrières-sous-Poissy","…"],
     zoneNote:"12 communes desservies au total. Verneuil-sur-Seine et Vernouillet ont consulté leurs habitants en novembre 2026 sur l'arrivée du service.",
     soon:["Verneuil-sur-Seine","Vernouillet"],
+    prices:[
+      ["À la course","Déverrouillage + prix à la minute","0,49 € + 0,23 € / min"],
+      ["Déverrouillages gratuits","Pendant 30 jours","2,99 €"],
+      ["Pass 1 jour","30 minutes comprises","3,99 €"],
+      ["Pass 3 jours","60 minutes comprises","6,99 €"],
+      ["Pass hebdomadaire","120 minutes comprises","12,99 €"],
+      ["Pass mensuel","300 minutes comprises","29,99 €"],
+      ["Pass mensuel","500 minutes comprises","41,99 €"],
+      ["Forfait longs trajets","30 jours, puis 1 € par trajet de 30 minutes","9,99 € / mois"]
+    ],
+    pricesSrc:"Communauté urbaine GPS&O (mai 2026)",
     highlights:[
       ["🚆","Vers les gares","Un service conçu en complément des transports en commun, pour les trajets courts et les rabattements vers les gares."],
       ["🛴","700 trottinettes","Pour les trajets rapides en centre-ville."],
@@ -1154,11 +1214,7 @@ function renderCity(c){
       ${c.soon?`<p class="note" style="margin-top:18px"><span class="tag soon">En concertation</span> ${c.soon.map(esc).join(", ")}</p>`:""}
     </section>
     ${(()=>{ const mm=ALL.find(x=>x.link==="#"+c.id); return mm?rulesBox(mm):""; })()}
-    ${c.prices?`<section class="block" style="margin-top:0"><h2>Tarifs à ${esc(c.name)}</h2>
-      <table class="prices"><thead><tr><th>Formule</th><th>Détail</th><th>Prix</th></tr></thead><tbody>
-      ${c.prices.map(p=>`<tr><td>${esc(p[0])}</td><td>${esc(p[1])}</td><td>${esc(p[2])}</td></tr>`).join("")}
-      </tbody></table><p class="note">Tarifs indicatifs, susceptibles d'évoluer. Le prix exact s'affiche dans l'application avant chaque trajet.</p></section>`
-    :`<section class="block" style="margin-top:0"><h2>Tarifs</h2><p style="color:var(--ink-2);max-width:60ch">Paiement à la minute, pass journaliers ou abonnements mensuels : les formules disponibles à ${esc(c.name)} et leur prix s'affichent dans l'application avant chaque trajet.</p></section>`}
+    ${pricesBlock(c.name, c)}
     ${howBlock()}
     <section class="block" style="margin-top:0"><h2>Questions fréquentes</h2>
       ${c.faq.map(f=>`<details><summary>${esc(f[0])}</summary><p>${esc(f[1])}</p></details>`).join("")}
@@ -1387,13 +1443,121 @@ function miniFaq(m){
   qa.push([`Quel âge faut-il avoir ?`, age ? `${age[1]}. ${age[2]}` : `L'âge minimum pour louer est indiqué dans l'application au moment de créer votre compte.`]);
   const helmet=find(["⛑️"]);
   if(helmet) qa.push([`Le casque est-il obligatoire ?`, `${helmet[1]}. ${helmet[2]}`]);
-  qa.push([`Combien coûte un trajet ?`, `Les tarifs dépendent de la ville : paiement à la minute, pass ou abonnement. Le prix exact s'affiche dans l'application avant chaque trajet.`]);
+  qa.push([`Combien coûte un trajet ?`, `Les tarifs de ${m.name} (prix à la minute, pass et abonnements) sont détaillés dans le tableau « Tarifs » plus haut sur cette page.`]);
   return `<section class="minifaq" aria-labelledby="mf-${m.slug}">
     <h2 id="mf-${m.slug}">Questions fréquentes à ${esc(m.name)}</h2>
     ${qa.map((q,i)=>`<details${i===0&&lr.alert?" open":""}><summary>${esc(q[0])}</summary><p>${esc(q[1])}</p></details>`).join("")}
     <p class="minifaq-more">D'autres questions ? <a href="#faq">Voir toute la FAQ →</a></p>
   </section>`;
 }
+/* Tarifs à la minute relevés ville par ville (pages officielles voi.com, presse locale). */
+const CITY_PRICES = {
+  "Berlin":["0,49 € + 0,27 € / min","voi.com"],
+  "Hambourg":["0,30 € / min, sans frais de déverrouillage","voi.com"],
+  "Düsseldorf":["0,30 € / min, sans frais de déverrouillage","voi.com"],
+  "Brunswick":["0,22 € / min, sans frais de déverrouillage","voi.com"],
+  "Wurtzbourg":["0,49 € + 0,24 € / min","voi.com"],
+  "Oxford":["1 £ + 0,24 £ / min","voi.com"],
+  "Cambridge":["1 £ + 0,24 £ / min","avis clients 2026"],
+  "Glasgow":["0,16 £ / min, sans frais de déverrouillage (offre de lancement)","Université de Glasgow"],
+  "Londres":["0,49 £ + 0,18 £ / min · plafonné à 1,75 £ les 30 min à Hackney","voi.com, Hackney Council"],
+  "Göteborg":["3 kr / min, sans frais de déverrouillage","voi.com"],
+  "Oslo":["10 kr + 2,50 kr / min","voi.com"],
+  "Odense":["10 kr + 2,20 kr / min","voi.com"],
+  "Frauenfeld":["1 CHF + 0,42 CHF / min","voi.com"],
+  "Vienne":["1 € + 0,28 € / min","voi.com"],
+  "Reggio d'Émilie":["1 € + 0,24 € / min","voi.com"],
+  "Turin":["1 € + 0,24 € / min","voi.com"],
+  "Séville":["0,25 € / min, sans frais de déverrouillage","voi.com"],
+  "Anvers":["0,25 € / min, sans frais de déverrouillage","voi.com"],
+  "Bruxelles":["1 € + 0,23 € / min","DH (2024)"]
+};
+/* Fourchette des tarifs Voi relevés dans le pays (déverrouillage + minute), utilisée
+   quand la ville n'a pas de tarif propre publié. */
+const COUNTRY_PRICES = {
+  "allemagne":["0 à 0,49 € + 0,22 à 0,30 € / min","relevés voi.com dans 8 villes allemandes"],
+  "royaume-uni":["0 à 1 £ + 0,16 à 0,25 £ / min","relevés voi.com au Royaume-Uni"],
+  "suede":["0 à 10 kr + 2,50 à 3 kr / min","relevés voi.com en Suède"],
+  "norvege":["0 à 10 kr + 2,50 kr / min","relevés voi.com en Norvège"],
+  "danemark":["10 kr + 2,20 kr / min","relevé voi.com au Danemark"],
+  "finlande":["1 € + 0,20 à 0,30 € / min","relevés 2026 en Finlande"],
+  "suisse":["1 CHF + 0,42 à 0,45 CHF / min","relevés voi.com en Suisse"],
+  "autriche":["1 € + 0,28 € / min","relevé voi.com en Autriche"],
+  "italie":["1 € + 0,24 € / min","relevés voi.com en Italie"],
+  "espagne":["0,25 € / min, sans frais de déverrouillage","relevé voi.com en Espagne"],
+  "portugal":["1 € + 0,20 à 0,30 € / min","fourchette européenne Voi 2026"],
+  "belgique":["0 à 1 € + 0,23 à 0,25 € / min","relevés en Belgique"],
+  "pays-bas":["1 € + 0,20 à 0,30 € / min","fourchette européenne Voi 2026"]
+};
+/* Passes mensuels connus par pays. */
+const COUNTRY_PASS = {
+  "danemark":"179 kr / mois", "finlande":"39 € / 30 jours", "norvege":"249 kr / mois"
+};
+
+/* Chiffres clés par ville (pictogrammes), uniquement quand une source publie le chiffre.
+   trips = trajets / utilisateurs, time = gain de temps, since = opérateur depuis. */
+const CITY_STATS = {
+  "Paris":{since:"1er octobre 2025", src:"Ville de Paris"},
+  "Marseille":{since:"2019", trips:"210 000 trajets en un mois", tripsSub:"record de février 2026", src:"Made in Marseille, Tesla Mag"},
+  "Grenoble":{since:"été 2025"},
+  "Nantes Métropole":{since:"19 octobre 2026", src:"Nantes Métropole"},
+  "Le Havre":{since:"6 janvier 2025", src:"Le Havre Seine Métropole"},
+  "Saint-Quentin-en-Yvelines":{since:"30 janvier 2025", trips:"2,5 millions de trajets", tripsSub:"45 000 utilisateurs, service lancé en 2021", src:"Infos Yvelines (sept. 2026)"},
+  "Grand Paris Seine & Oise":{since:"4 mai 2026", src:"Ville de Meulan"},
+  "Berlin":{trips:"25 millions de trajets", tripsSub:"depuis le lancement"},
+  "Stockholm":{since:"août 2018", tripsSub:"ville natale de Voi", src:"Silicon Canals"},
+  "Göteborg":{time:"89 % des trajets plus rapides", timeSub:"qu'à pied ou en transports en commun", src:"étude KTH"},
+  "Oslo":{since:"mars 2019", trips:"21 millions de trajets", tripsSub:"650 000 utilisateurs (2023)", src:"Voi, Tech.eu"},
+  "Oxford":{trips:"4 millions de trajets", tripsSub:"dont 1,5 million en 2025", src:"Voi via BBC"},
+  "Cambridge":{since:"octobre 2020", trips:"1,15 million de trajets", tripsSub:"90 000 utilisateurs réguliers", src:"Cambridgeshire & Peterborough CA"},
+  "Liverpool":{since:"octobre 2020", trips:"2 millions de trajets", tripsSub:"1 habitant sur 4 a déjà roulé", src:"Zag Daily"},
+  "Northampton":{since:"2020", trips:"4 millions de trajets", tripsSub:"première ville Voi au Royaume-Uni", src:"Voi"},
+  "Bristol":{trips:"10 millions de trajets", tripsSub:"région West of England", src:"Intelligent Transport"},
+  "Portsmouth":{trips:"5,55 millions de trajets", tripsSub:"région Solent", src:"Micromobility Newsletter"},
+  "Southampton":{trips:"5,55 millions de trajets", tripsSub:"région Solent", src:"Micromobility Newsletter"},
+  "Île de Wight":{trips:"5,55 millions de trajets", tripsSub:"région Solent", src:"Micromobility Newsletter"},
+  "Édimbourg":{since:"3 septembre 2025", trips:"près d'1 million de trajets", tripsSub:"juillet 2026", src:"City of Edinburgh Council"},
+  "Glasgow":{since:"fin 2025", trips:"170 000 trajets", tripsSub:"depuis le lancement", src:"The Herald"}
+};
+const ICONS = {
+  trips:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.3-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14.5c2.4 0 4 1.4 4.5 4"/></svg>',
+  time:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9.5 2.5h5M12 2.5V5"/></svg>',
+  since:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>'
+};
+function kpisBlock(name){
+  const k=CITY_STATS[name]; if(!k) return "";
+  const items=[];
+  if(k.trips) items.push(["trips",k.trips,k.tripsSub||"Utilisateurs et trajets"]);
+  if(k.time) items.push(["time",k.time,k.timeSub||"Gain de temps"]);
+  if(k.since) items.push(["since","Depuis "+k.since,"Voi opérateur à "+name]);
+  if(!items.length) return "";
+  return `<div class="kpis">${items.map(i=>`<div class="kpi"><div class="ic" aria-hidden="true">${ICONS[i[0]]}</div><div><b>${esc(i[1])}</b><span>${esc(i[2])}</span></div></div>`).join("")}</div>`;
+}
+
+/* Bloc "Tarifs" : tableau détaillé si la ville a ses tarifs (t.prices), sinon le tarif
+   à la minute de la ville, sinon la fourchette relevée dans le pays. */
+function pricesBlock(name, t, country){
+  let rows, src, scope="";
+  if(t && t.prices){ rows=t.prices; src=t.pricesSrc; }
+  else {
+    const cid = country && country.id;
+    const own = CITY_PRICES[name];
+    const ref = own || COUNTRY_PRICES[cid] || ["1 € + 0,20 à 0,30 € / min","fourchette européenne Voi 2026"];
+    rows=[["À la minute", own ? "Déverrouillage + prix à la minute" : "Tarif indicatif Voi "+(country?country.prep+" "+country.name:"en Europe"), ref[0]]];
+    if(COUNTRY_PASS[cid]) rows.push(["Voi Pass mensuel","Trajets de 30 min illimités", COUNTRY_PASS[cid]]);
+    src=ref[1];
+    if(!own) scope=` Aucun tarif propre à ${esc(name)} n'est publié : le prix indiqué est celui relevé dans le reste du pays.`;
+  }
+  const k=CITY_STATS[name];
+  const ksrc = k && k.src ? ` Chiffres clés : ${esc(k.src)}.` : "";
+  return `<section class="block" style="margin-top:0"><h2>Tarifs à ${esc(name)}</h2>
+    ${kpisBlock(name)}
+    <table class="prices"><thead><tr><th>Formule</th><th>Détail</th><th>Prix</th></tr></thead><tbody>
+    ${rows.map(p=>`<tr><td>${esc(p[0])}</td><td>${esc(p[1])}</td><td>${esc(p[2])}</td></tr>`).join("")}
+    </tbody></table>
+    <p class="note">Tarifs relevés en novembre 2026, susceptibles d'évoluer${src?` (source : ${esc(src)})`:""}.${scope}${ksrc}</p></section>`;
+}
+
 /* ---------------- PAGE "BIENVENUE À <VILLE>" (toutes les villes) ---------------- */
 function renderWelcome(m){
   const c=m.country;
@@ -1422,6 +1586,7 @@ function renderWelcome(m){
       </div>
       <div id="mapslot"></div>
     </section>
+    ${pricesBlock(m.name, m.link ? CITIES.find(x=>"#"+x.id===m.link) : null, c)}
     ${zonesBlock(m)}
     ${rulesBox(m)}
     ${miniFaq(m)}
@@ -1567,7 +1732,7 @@ const FAQ = [
     ["Comment terminer mon trajet ?","Garez-vous sur une zone de stationnement autorisée indiquée dans l'application, appuyez sur « Terminer le trajet » puis prenez une photo du véhicule bien garé. Le trajet est alors clôturé et facturé."]
   ]},
   {id:"tarifs", title:"Tarifs et paiement", items:[
-    ["Combien coûte un trajet ?","Le prix dépend de la ville : en général des frais de déverrouillage puis un prix à la minute. Le tarif exact s'affiche toujours dans l'application avant que vous ne démarriez."],
+    ["Combien coûte un trajet ?","Le prix dépend de la ville : en général des frais de déverrouillage puis un prix à la minute. Par exemple 0,25 € / min sans déverrouillage à Paris, 0,49 € + 0,25 € / min à Grenoble, 1 € + 0,20 € / min à Marseille : chaque page ville détaille ses tarifs."],
     ["Existe-t-il des pass ou des abonnements ?","Oui, l'application propose selon les villes des pass (à la journée, au mois…) et des forfaits de minutes qui reviennent moins cher si vous roulez souvent. Ils se trouvent dans la rubrique dédiée de l'application."],
     ["Quels moyens de paiement sont acceptés ?","La carte bancaire et, selon le pays, Apple Pay, Google Pay ou d'autres moyens de paiement locaux. Vous les ajoutez et les gérez dans l'application."],
     ["Pourquoi ai-je été facturé de frais supplémentaires ?","Des frais peuvent s'appliquer si le véhicule est garé hors d'une zone autorisée ou abandonné en dehors de la zone de service. Le détail de chaque trajet est disponible dans votre historique. En cas de doute, contactez l'assistance depuis l'application."]
