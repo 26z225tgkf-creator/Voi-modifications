@@ -413,6 +413,15 @@
   .acredit-l a{color:var(--mute)}
   .aclose{position:absolute;top:12px;right:12px;z-index:2;width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.92);font-size:16px;cursor:pointer}
   @media (max-width:720px){ .acard{flex-basis:78%} .anav{display:none} }
+  /* noms départ / arrivée du trajet */
+  .tname{text-align:center;line-height:1.25}
+  .tname b{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--coral-d)}
+  .tname small{display:block;font-size:11px;font-weight:500;color:var(--mute)}
+  .thead{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-weight:800;font-size:15px;margin-bottom:8px}
+  .thead span span{font-weight:500;color:var(--mute)}
+  .thead i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:1px;background:#4A4240}
+  .thead .tto i{background:var(--coral);border-radius:2px}
+  .tarrow{color:var(--coral-d)}
 </style>
 </head>
 <body>
@@ -1932,12 +1941,20 @@ function addrLabel(p){
   const rest=[p.name && street && p.name!==p.street ? street : "", p.postcode, p.city && p.city!==main ? p.city : "", p.country].filter(Boolean).join(", ");
   return {main, rest, full:[main,rest].filter(Boolean).join(", ")};
 }
+/* short place name + town/arrondissement, for map labels and the trip header */
+function placeName(p){
+  const l=addrLabel(p);
+  let town=p.city||p.town||p.village||p.locality||"";
+  const arr=(p.district||p.suburb||"").match(/(\d{1,2})(?:e|er|ème)?\s*arrondissement/i) || (p.postcode||"").match(/^75(?:0(\d{2})|1(16))$/);
+  if(arr && /paris|marseille|lyon/i.test(town)){ const n=+(arr[1]||arr[2]); town+=" "+(n===1?"1er":n+"e"); }
+  return {main:l.main||town, town: town && town!==l.main ? town : ""};
+}
 /* one address field with suggestions; onPick(point,label) when an address is settled */
 function addressField(inp,list,pageCity,{onTyping,onTop,onPick,onFail}){
   let timer=null, seq=0, items=[], active=-1, top=null;
   const close=()=>{ list.hidden=true; list.innerHTML=""; items=[]; active=-1; };
   const pt=f=>({lat:f.geometry.coordinates[1], lng:f.geometry.coordinates[0]});
-  const choose=f=>{ inp.value=addrLabel(f.properties).full; close(); seq++; onPick(pt(f),inp.value); };
+  const choose=f=>{ inp.value=addrLabel(f.properties).full; close(); seq++; onPick(pt(f),inp.value,placeName(f.properties)); };
   inp.addEventListener("input",()=>{
     clearTimeout(timer); top=null;
     const q=inp.value.trim();
@@ -1987,7 +2004,10 @@ function loadLeaflet(){
     .then(()=>typeof L!=="undefined").catch(()=>false);
   return LEAFLET;
 }
-const TRIP={map:null, layer:null, dep:null, dst:null, seq:0, city:null};
+const TRIP={map:null, layer:null, dep:null, dst:null, depName:null, dstName:null, seq:0, city:null};
+const lab = n => n ? esc(n.main)+(n.town?`<small>${esc(n.town)}</small>`:"") : "";
+const nameTxt = n => n ? esc(n.main)+(n.town?` <span>· ${esc(n.town)}</span>`:"") : "";
+function tripHead(){ const a=TRIP.depName, b=TRIP.dstName; if(!a) return ""; return `<div class="thead"><span class="tfrom"><i></i>${nameTxt(a)}</span>${b?`<span class="tarrow">→</span><span class="tto"><i></i>${nameTxt(b)}</span>`:""}</div>`; }
 function mk(cls,html,size){ return L.divIcon({className:"",html:`<div class="mk ${cls}" style="width:${size}px;height:${size}px">${html||""}</div>`,iconSize:[size,size],iconAnchor:[size/2,size/2]}); }
 async function ensureStreetMap(){
   const ok=await loadLeaflet();
@@ -2026,7 +2046,7 @@ function routeLeg(profile,a,b){
 }
 const fmtMin = s => { const m=Math.max(1,Math.round(s/60)); return m<60?`${m} min`:`${Math.floor(m/60)} h ${String(m%60).padStart(2,"0")}`; };
 const fmtDist = m => m<1000?`${Math.round(m/10)*10} m`:`${(m/1000).toFixed(1).replace(".",",")} km`;
-function tripSummary(html){ const el=document.getElementById("tripsum"); if(el) el.innerHTML=html; }
+function tripSummary(html){ const el=document.getElementById("tripsum"); if(el) el.innerHTML=tripHead()+html; }
 const EXAMPLE_NOTE = `<p class="note">Vélo et zone de stationnement donnés à titre d'exemple : les vélos libres en temps réel sont dans l'application Voi.</p>`;
 
 async function drawTrip(){
@@ -2035,11 +2055,11 @@ async function drawTrip(){
   if(!await ensureStreetMap() || my!==TRIP.seq) return;
   const map=TRIP.map, lay=TRIP.layer; lay.clearLayers();
   const dep=TRIP.dep, dst=TRIP.dst;
-  L.marker([dep.lat,dep.lng],{icon:mk("me","",18),zIndexOffset:500}).bindTooltip("Vous êtes ici",{direction:"top",offset:[0,-12],className:"tlab"}).addTo(lay);
+  L.marker([dep.lat,dep.lng],{icon:mk("me","",18),zIndexOffset:500}).bindTooltip(TRIP.depName?`<b>Départ</b> ${lab(TRIP.depName)}`:"Vous êtes ici",{direction:"top",offset:[0,-12],className:"tlab tname",permanent:!!TRIP.depName}).addTo(lay);
   const city=bikesAt(dep);
   if(!city){
     map.setView([dep.lat,dep.lng],16);
-    if(dst){ L.marker([dst.lat,dst.lng],{icon:mk("dest","",18)}).bindTooltip("Destination",{direction:"top",offset:[0,-12],className:"tlab"}).addTo(lay);
+    if(dst){ L.marker([dst.lat,dst.lng],{icon:mk("dest","",18)}).bindTooltip(TRIP.dstName?`<b>Arrivée</b> ${lab(TRIP.dstName)}`:"Destination",{direction:"top",offset:[0,-12],className:"tlab tname",permanent:!!TRIP.dstName}).addTo(lay);
              map.fitBounds(L.latLngBounds([[dep.lat,dep.lng],[dst.lat,dst.lng]]),{padding:[50,50]}); }
     tripSummary(`<span class="msg">Aucun vélo Voi à proximité de votre position de départ.</span>`);
     return;
@@ -2057,7 +2077,7 @@ async function drawTrip(){
     return;
   }
   if(kmBetween(dep,dst)>MAX_TRIP_KM){
-    L.marker([dst.lat,dst.lng],{icon:mk("dest","",18)}).bindTooltip("Destination",{direction:"top",offset:[0,-12],className:"tlab"}).addTo(lay);
+    L.marker([dst.lat,dst.lng],{icon:mk("dest","",18)}).bindTooltip(TRIP.dstName?`<b>Arrivée</b> ${lab(TRIP.dstName)}`:"Destination",{direction:"top",offset:[0,-12],className:"tlab tname",permanent:!!TRIP.dstName}).addTo(lay);
     map.fitBounds(L.latLngBounds([[dep.lat,dep.lng],[dst.lat,dst.lng]]),{padding:[50,50]});
     tripSummary(`<span class="msg">Destination trop éloignée pour un trajet à vélo (plus de ${MAX_TRIP_KM} km).</span>`);
     return;
@@ -2072,7 +2092,7 @@ async function drawTrip(){
   L.polyline(ride.line,{color:"#F26A5E",weight:6,opacity:.95,lineCap:"round",lineJoin:"round"}).addTo(lay);
   L.polyline(walk2.line,{color:"#4A4240",weight:4,dashArray:"2 9",lineCap:"round"}).addTo(lay);
   L.marker(park,{icon:mk("park","P",24),zIndexOffset:300}).bindTooltip("Rendre le vélo",{direction:"top",offset:[0,-14],className:"tlab"}).addTo(lay);
-  L.marker([dst.lat,dst.lng],{icon:mk("dest","",18),zIndexOffset:350}).bindTooltip("Destination",{direction:"top",offset:[0,-12],className:"tlab"}).addTo(lay);
+  L.marker([dst.lat,dst.lng],{icon:mk("dest","",18),zIndexOffset:350}).bindTooltip(TRIP.dstName?`<b>Arrivée</b> ${lab(TRIP.dstName)}`:"Destination",{direction:"top",offset:[0,-12],className:"tlab tname",permanent:!!TRIP.dstName}).addTo(lay);
   map.fitBounds(L.latLngBounds([[dep.lat,dep.lng],bike,park,[dst.lat,dst.lng]].concat(ride.line)),{padding:[40,40]});
   const total=walk1.s+ride.s+walk2.s;
   tripSummary(`<div class="steps">
@@ -2084,17 +2104,17 @@ async function drawTrip(){
 }
 
 function setupDeparture(pageCity){
-  TRIP.dep=null; TRIP.dst=null; TRIP.seq++; TRIP.map=null;
+  TRIP.dep=null; TRIP.dst=null; TRIP.depName=null; TRIP.dstName=null; TRIP.seq++; TRIP.map=null;
   const inp=document.getElementById("dep");
   const dstInp=document.getElementById("dst");
   addressField(inp,document.getElementById("sugg"),pageCity,{
     onTyping:q=>{ setPill(q.length>=3?"wait":"", q.length>=3?"Vérification…":q?"Continuez à saisir l'adresse…":"Saisissez une adresse de départ"); },
     onTop:p=>{ if(p) pillForPoint(p); else setPill("no","Adresse introuvable"); },
-    onPick:(p)=>{ pillForPoint(p); TRIP.dep=p; drawTrip(); },
+    onPick:(p,_,n)=>{ pillForPoint(p); TRIP.dep=p; TRIP.depName=n||null; drawTrip(); },
     onFail:q=>pillFromText(q,pageCity)
   });
   addressField(dstInp,document.getElementById("sugg2"),pageCity,{
-    onPick:(p)=>{ TRIP.dst=p; drawTrip(); }
+    onPick:(p,_,n)=>{ TRIP.dst=p; TRIP.dstName=n||null; drawTrip(); }
   });
 }
 
