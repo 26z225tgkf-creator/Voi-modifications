@@ -280,6 +280,23 @@
     .clist{max-height:none}
   }
   .wordmark img{display:block;height:38px;width:auto}
+
+  /* encadré "Règles locales" */
+  .lrules{background:var(--card);border:1.5px solid var(--line);border-left:6px solid var(--coral);border-radius:var(--r);padding:26px 28px;margin:8px 0 8px}
+  .lrules-head{margin-bottom:6px}
+  .lrules-badge{display:inline-block;background:var(--coral-l);color:var(--coral-d);font-weight:700;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;border-radius:999px;margin-bottom:10px}
+  .lrules h2{font-size:clamp(24px,3vw,32px);font-weight:800}
+  .lrules h3{font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);margin:22px 0 10px;font-family:inherit;font-weight:700}
+  .lrules ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .lrules li{display:flex;gap:12px;background:var(--cream);border-radius:14px;padding:14px 16px}
+  .lrules li .ic{flex:none;width:36px;height:36px;border-radius:10px;background:#fff;display:grid;place-items:center;font-size:18px}
+  .lrules li b{display:block;font-size:15.5px;margin-bottom:2px}
+  .lrules li p{margin:0;color:var(--ink-2);font-size:14.5px;line-height:1.45}
+  .lrules-alert{background:#FFF0C7;color:#6B4E00;border-radius:12px;padding:12px 14px;margin:14px 0 0;font-weight:600;font-size:15px}
+  .lrules-none{margin:14px 0 0;color:var(--ink-2)}
+  .lrules-foot{margin:18px 0 0;font-size:13px;color:var(--mute)}
+  .lrules-foot a{color:var(--coral-d)}
+  @media (max-width:720px){ .lrules ul{grid-template-columns:1fr} .lrules{padding:20px} }
 </style>
 </head>
 <body>
@@ -1074,6 +1091,7 @@ function renderCity(c){
       ${c.soon?`<p class="note" style="margin-top:18px"><span class="tag soon">En concertation</span> ${c.soon.map(esc).join(", ")}</p>`:""}
       ${c.zoneNote?`<p class="note">${esc(c.zoneNote)}</p>`:""}
     </section>
+    ${(()=>{ const mm=ALL.find(x=>x.link==="#"+c.id); return mm?rulesBox(mm):""; })()}
     ${c.prices?`<section class="block" style="margin-top:0"><h2>Tarifs à ${esc(c.name)}</h2>
       <table class="prices"><thead><tr><th>Formule</th><th>Détail</th><th>Prix</th></tr></thead><tbody>
       ${c.prices.map(p=>`<tr><td>${esc(p[0])}</td><td>${esc(p[1])}</td><td>${esc(p[2])}</td></tr>`).join("")}
@@ -1092,6 +1110,153 @@ function renderCity(c){
   VIEW.onCountryPick=null;
   mountMap(document.getElementById("mapslot"));
   goTo({type:"city", coords:[ct.lat,ct.lng]}, ct.g, FR, true);
+}
+
+/* ---------------- RÈGLES LOCALES (encadré sur chaque page ville) ----------------
+   m = modes concernés : "s" trottinettes, "b" vélos, "bs" les deux.
+   Règles relevées en novembre 2026 ; les zones précises restent celles affichées dans l'application. */
+const RULES_UPDATED = "novembre 2026";
+const COUNTRY_RULES = {
+  france:{ items:[
+    ["🎂","14 ans minimum","Âge légal pour conduire une trottinette électrique (depuis septembre 2023).","s"],
+    ["⏱️","25 km/h maximum","Vitesse maximale des trottinettes ; 6 km/h dans les aires piétonnes quand elles y sont autorisées.","s"],
+    ["🚫","Jamais sur le trottoir","Rouler sur le trottoir en trottinette expose à une amende de 135 €. Pistes cyclables d'abord, sinon routes limitées à 50 km/h.","s"],
+    ["🎧","Seul, sans écouteurs","Pas de passager, pas d'écouteurs ni de téléphone tenu en main pendant le trajet.","bs"],
+    ["⛑️","Casque","Obligatoire en trottinette hors agglomération (avec gilet réfléchissant) ; à vélo, obligatoire pour les moins de 12 ans. Recommandé pour tous.","bs"]
+  ], src:[["Service-public.fr","https://www.service-public.gouv.fr/particuliers/vosdroits/F35470"]] },
+  allemagne:{ items:[
+    ["🎂","14 ans minimum","Aucun permis n'est nécessaire pour la trottinette électrique.","s"],
+    ["⏱️","20 km/h maximum","Vitesse maximale des trottinettes électriques en Allemagne.","s"],
+    ["🚫","Ni trottoir ni zone piétonne","Piste cyclable obligatoire, sinon la chaussée. Interdit aussi à contresens dans les rues à sens unique.","s"],
+    ["🍺","Mêmes limites d'alcool qu'en voiture","Le taux d'alcool autorisé est celui des automobilistes ; 0 ‰ pour les conducteurs novices.","s"],
+    ["⛑️","Casque recommandé","Il n'est pas obligatoire, mais fortement conseillé.","bs"]
+  ], src:[["ADAC","https://www.adac.de/rund-ums-fahrzeug/tests/elektromobilitaet/e-scooter-alltag/"]] },
+  "royaume-uni":{ items:[
+    ["🪪","Permis de conduire obligatoire","Pour une trottinette de location, il faut un permis britannique complet ou provisoire (catégorie Q). L'âge minimum est fixé par l'opérateur.","s"],
+    ["⏱️","25 km/h (15,5 mph)","Vitesse maximale des trottinettes de location.","s"],
+    ["🚫","Jamais sur le trottoir","Les trottinettes roulent sur la route et les pistes cyclables uniquement.","s"],
+    ["🧍","Une seule personne","Pas de passager, pas de remorquage, pas de téléphone en main.","s"],
+    ["⛑️","Casque recommandé","Non obligatoire, mais conseillé.","bs"]
+  ], src:[["GOV.UK","https://www.gov.uk/guidance/e-scooter-trials-guidance-for-users"]] },
+  suede:{ items:[
+    ["⛑️","Casque obligatoire avant 15 ans","Recommandé pour tous les autres.","bs"],
+    ["⏱️","20 km/h maximum","Au-delà, la trottinette n'est plus considérée comme un vélo.","s"],
+    ["🚫","Pas sur le trottoir","On roule sur la piste cyclable ; pas de passager.","s"],
+    ["🅿️","Stationnement","Interdit de laisser le véhicule sur une piste cyclable ou un trottoir sans emplacement prévu pour les vélos.","bs"]
+  ], src:[["Transportstyrelsen","https://www.transportstyrelsen.se/sv/vagtrafik/fordon/fordonsregler/elsparkcykel/"]] },
+  norvege:{ items:[
+    ["🎂","Âge minimum","12 ans selon la loi, mais 15 ou 16 ans pour louer selon l'opérateur. Le gouvernement a proposé en octobre 2026 de passer à 16 ans.","s"],
+    ["⛑️","Casque obligatoire avant 15 ans","Recommandé pour tous.","bs"],
+    ["🍺","0,2 ‰ d'alcool maximum","Même limite très basse que pour les voitures.","s"],
+    ["📸","Photo en fin de trajet","Prenez une photo de votre stationnement à la fin de chaque location.","bs"]
+  ], src:[["Ruter","https://ruter.no/flere-transporttilbud/sykkel-og-elsparkesykkel/lover-og-regler.md"]] },
+  danemark:{ items:[
+    ["⛑️","Casque obligatoire en trottinette","Pour tous, quel que soit l'âge (amende de 1 500 DKK). Il n'est pas obligatoire à vélo.","s"],
+    ["🎂","15 ans minimum","Plus jeune, seulement accompagné d'un adulte.","s"],
+    ["⏱️","20 km/h maximum","Les trottinettes suivent les règles du vélo : piste cyclable obligatoire.","s"],
+    ["💡","Feux allumés","Éclairage obligatoire jour et nuit en trottinette.","s"]
+  ], src:[["Rådet for Sikker Trafik","https://via.ritzau.dk/pressemeddelelse/15240649/radet-for-sikker-trafik-opfordrer-foraeldre-tjek-nu-de-el-lobehjul?publisherId=13562436"]] },
+  finlande:{ items:[
+    ["🎂","15 ans minimum","Il est aussi interdit de prêter une trottinette à un enfant de moins de 15 ans.","s"],
+    ["🍺","0,5 ‰ d'alcool maximum","Limite applicable aux trottinettes louées comme privées.","s"],
+    ["🌙","Restrictions de nuit","Dans de nombreuses villes, la vitesse est réduite à 15 km/h la nuit.","s"],
+    ["⛑️","Casque recommandé","Conseillé pour tous les trajets.","bs"]
+  ], src:[["Ville d'Helsinki","https://www.hel.fi/fi/uutiset/sahkopotkulautoihin-promilleraja-ja-15-vuoden-ikaraja"],["Yle","https://yle.fi/a/74-20228186"]] },
+  suisse:{ items:[
+    ["🎂","Âge et permis","Dès 14 ans avec un permis de catégorie M ; sans permis à partir de 16 ans.","s"],
+    ["⏱️","20 km/h maximum","Vitesse maximale des trottinettes électriques.","s"],
+    ["🚫","Règles du vélo","Pistes et bandes cyclables obligatoires, jamais sur le trottoir.","s"],
+    ["💡","Feux allumés","L'éclairage est obligatoire pour tous les véhicules électriques, même de jour.","bs"]
+  ], src:[["OFROU / ASTRA","https://www.astra.admin.ch/de/fahrzeugspezifische-regeln"],["BPA / bfu","https://www.bfu.ch/media/fffpzk2f/bfu_factsheet_e-langsamverkehr_regeln.pdf"]] },
+  autriche:{ items:[
+    ["⛑️","Casque obligatoire jusqu'à 16 ans","Depuis le 1er mai 2026.","s"],
+    ["🍺","0,5 ‰ d'alcool maximum","Abaissé de 0,8 à 0,5 ‰ le 1er mai 2026.","s"],
+    ["📵","Pas de téléphone","Téléphoner en roulant est interdit.","bs"]
+  ], src:[["Ville de Vienne","https://www.wien.gv.at/verkehr/scooter-roller/"]] },
+  italie:{ items:[
+    ["⛑️","Casque obligatoire pour tous","Quel que soit l'âge, y compris en libre-service (amende de 50 à 250 €).","s"],
+    ["🎂","14 ans minimum","Pas besoin de permis.","s"],
+    ["⏱️","20 km/h, 6 km/h en zone piétonne","Limites de vitesse des trottinettes électriques.","s"],
+    ["🦺","Gilet réfléchissant la nuit","Obligatoire de nuit.","s"]
+  ], src:[["QuiFinanza","https://quifinanza.it/info-utili/assicurazione-monopattini-rinviato-luglio-2026/975597/amp/"]] },
+  belgique:{ items:[
+    ["🎂","16 ans minimum","Âge légal pour rouler en trottinette électrique sur la voie publique.","s"],
+    ["🚫","Pas sur le trottoir","Piste cyclable ou chaussée obligatoire.","s"]
+  ], src:[["Ville d'Anvers (réponse parlementaire 2026)","https://vbleden.s3.eu-central-1.amazonaws.com/16/news_attachments/10527/c4ffea33-dd37-4b1a-b621-c3c25c901239/2026_SV_00049_Antwoord.pdf"]] },
+  "pays-bas":{ items:[
+    ["🚲","Règles du vélo","Les vélos Voi suivent le code de la route des cyclistes : piste cyclable dès qu'elle existe.","b"],
+    ["🔁","D'une commune à l'autre","Vous pouvez prendre un vélo dans une commune et le rendre dans une autre de la zone.","b"]
+  ], src:[] },
+  espagne:{ items:[], src:[] },
+  portugal:{ items:[], src:[] }
+};
+
+/* règles propres à une ville (clé = slug de la page ville) */
+const CITY_RULES = {
+  "paris":{ items:[
+    ["🛴","Pas de trottinettes en libre-service","Elles sont interdites à Paris : Voi n'y propose que des vélos.","b"],
+    ["🅿️","Stationnement des vélos","Uniquement sur les emplacements vélos sans arceaux, ou sur les arceaux par groupes d'au moins 4 (depuis le 1er octobre 2025).","b"]
+  ], src:[["Ville de Paris","https://www.paris.fr/pages/vehicules-partages-4541"]] },
+  "marseille":{ items:[
+    ["🅿️","Stationnement en station","Les trottinettes se garent dans les stations dédiées, et non plus n'importe où.","s"],
+    ["🐢","Vitesse réduite en zone piétonne","La vitesse est bridée automatiquement dans les zones piétonnes.","s"],
+    ["🌊","Zones sensibles","Le Vieux-Port et la Corniche sont surveillés : ne laissez jamais un véhicule près de l'eau.","bs"]
+  ], src:[["Made in Marseille","https://madeinmarseille.net/98450-trottinette-electrique-stationnnement-audrey-gatian/"]] },
+  "nantes-metropole":{ items:[
+    ["🅿️","Emplacements marqués au sol","Pas de bornes : les vélos se rendent sur des emplacements géolocalisés dans l'application. Si l'un est plein, l'application indique le plus proche.","b"],
+    ["📸","Photo de fin de trajet","Prenez une photo dans l'application pour valider la fin de votre location.","b"]
+  ], src:[["Nantes Métropole","https://metropole.nantes.fr/actualites/velos-en-libre-service-voi-comment-ca-marche"]] },
+  "grand-paris-seine-oise":{ items:[
+    ["🅿️","Stations marquées au sol","Environ 360 stations sont réparties sur les 12 communes : c'est là qu'il faut garer votre véhicule.","bs"]
+  ], src:[["Ville de Meulan","https://ville-meulan.fr/print/pdf/node/2348"]] },
+  "londres":{ items:[
+    ["🗺️","Zones par arrondissement","Le service couvre 10 arrondissements (boroughs). Hors zone, la location ne peut pas se terminer.","bs"]
+  ], src:[] },
+  "oslo":{ items:[
+    ["📱","Aussi dans l'application Ruter","Depuis le 25 juin 2026, les trottinettes se louent aussi directement dans l'application Ruter.","s"],
+    ["🎂","15 ou 16 ans pour louer","L'âge minimum dépend de l'opérateur.","s"]
+  ], src:[["Ruter","https://ruter.no/flere-transporttilbud/elsparkesykkel-og-bysykkel"]] },
+  "helsinki":{ items:[
+    ["🅿️","Places réservées en centre-ville","Dans le centre et une partie de la ville intérieure, les trottinettes et vélos partagés ne se garent que sur les places marquées (environ 250). Ailleurs, c'est une infraction.","bs"]
+  ], src:[["Ville d'Helsinki","https://www.hel.fi/en/news/electric-scooter-parking-reform-begins-in-the-city-centre"]] },
+  "vienne":{ items:[
+    ["🅿️","Jamais sur le trottoir","Garez-vous sur les emplacements rouges marqués au sol ; s'il n'y en a pas, rangez la trottinette dans la file de stationnement (amende de 25 €).","s"],
+    ["🏛️","Nombre limité en centre-ville","500 trottinettes au maximum dans la Innere Stadt (1er arrondissement).","s"]
+  ], src:[["ORF Wien","https://wien.orf.at/stories/3230529/"],["Ville de Vienne","https://www.wien.gv.at/verkehr/scooter-roller/"]] },
+  "anvers":{ items:[
+    ["⏱️","20 km/h, 8 km/h en zone lente","Les trottinettes partagées sont limitées à 20 km/h et ralentissent automatiquement dans les zones piétonnes.","s"],
+    ["🚷","Zones interdites","Dans certaines zones, on ne peut ni rouler ni se garer : la trottinette s'arrête ou ralentit toute seule.","s"],
+    ["🅿️","Dropzones","Garez-vous de préférence dans les zones de dépôt marquées.","s"]
+  ], src:[["Ville d'Anvers","https://vbleden.s3.eu-central-1.amazonaws.com/16/news_attachments/10527/c4ffea33-dd37-4b1a-b621-c3c25c901239/2026_SV_00049_Antwoord.pdf"],["VRT","https://www.vrt.be/vrtnws/nl/2022/02/15/no-gozones-voor-deelsteps-in-antwerpen/"]] },
+  "lisbonne":{ items:[
+    ["⏱️","20 km/h maximum","Limite fixée par la ville pour les trottinettes partagées.","s"],
+    ["🅿️","Stationnement obligatoire en « hotspots »","Interdit sur les trottoirs, dans les quartiers historiques et devant les monuments ou les accès au métro.","s"]
+  ], alert:"La mairie de Lisbonne a annoncé en octobre 2026 vouloir suspendre les trottinettes partagées. Vérifiez la disponibilité dans l'application.",
+  src:[["DN","https://www.dn.pt/opiniao-dn/trotinetese-a-insegurana"],["e-konomista","https://www.e-konomista.pt/lisboa-trotinetes-partilhadas/"]] },
+  "madrid":{ items:[],
+    alert:"À Madrid, la mairie a retiré en 2024 les licences des trottinettes en libre-service ; les opérateurs ont cessé leur activité début 2025. Vérifiez la disponibilité dans l'application.",
+    src:[["Movilidad Eléctrica","https://movilidadelectrica.com/madrid-sin-patinetes-electricos-alquiler/"]] },
+  "bruxelles":{ items:[],
+    alert:"Après une décision du Conseil d'État, tous les vélos et trottinettes partagés ont dû quitter Bruxelles le 1er septembre 2026. Vérifiez la disponibilité dans l'application.",
+    src:[["DH","https://www.dhnet.be/regions/bruxelles/bruxelles-mobilite/2026/08/03/bruxelles-sans-trottinettes-et-velos-partages-des-septembre-le-mr-appelle-au-maintien-des-velos-malgre-tout-MGVTUPROBJFA3L5XYTA422ER2M/"]] }
+};
+
+function rulesBox(m){
+  const c=m.country, cr=COUNTRY_RULES[c.id]||{items:[],src:[]}, lr=CITY_RULES[m.slug]||{items:[],src:[]};
+  const fits=it=>!it[3] || [...it[3]].some(x=>m.m.includes(x)) || !m.m;
+  const local=lr.items.filter(fits), nat=cr.items.filter(fits);
+  const li=it=>`<li><span class="ic">${it[0]}</span><div><b>${esc(it[1])}</b><p>${esc(it[2])}</p></div></li>`;
+  const src=[...lr.src,...cr.src];
+  return `<section class="lrules" aria-labelledby="lr-${m.slug}">
+    <div class="lrules-head"><span class="lrules-badge">Règles locales</span>
+      <h2 id="lr-${m.slug}">À savoir avant de rouler à ${esc(m.name)}</h2></div>
+    ${lr.alert?`<p class="lrules-alert">⚠️ ${esc(lr.alert)}</p>`:""}
+    ${local.length?`<h3>À ${esc(m.name)}</h3><ul>${local.map(li).join("")}</ul>`:""}
+    ${(!local.length && !nat.length && !lr.alert)?`<p class="lrules-none">Nous n'avons pas encore de règles locales détaillées pour ${esc(m.name)}. Suivez le code de la route du pays et les zones indiquées dans l'application.</p>`:""}
+    ${nat.length?`<h3>${c.flag} ${c.prep==="aux"?"Aux":c.prep==="au"?"Au":"En"} ${esc(c.name)}</h3><ul>${nat.map(li).join("")}</ul>`:""}
+    <p class="lrules-foot">🅿️ Les zones de stationnement, les zones lentes et les zones interdites exactes s'affichent sur la carte de l'application Voi : elles priment sur ce résumé.
+      Règles relevées en ${RULES_UPDATED}${src.length?` · Sources : ${src.map(s=>`<a href="${s[1]}">${esc(s[0])}</a>`).join(", ")}`:""}.</p>
+  </section>`;
 }
 
 /* ---------------- PAGE "BIENVENUE À <VILLE>" (toutes les villes) ---------------- */
@@ -1122,6 +1287,7 @@ function renderWelcome(m){
       </div>
       <div id="mapslot"></div>
     </section>
+    ${rulesBox(m)}
     ${howBlock()}
     ${appBand("à "+m.name)}
   </div>`;
