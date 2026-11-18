@@ -297,6 +297,10 @@
   .lrules-foot{margin:18px 0 0;font-size:13px;color:var(--mute)}
   .lrules-foot a{color:var(--coral-d)}
   @media (max-width:720px){ .lrules ul{grid-template-columns:1fr} .lrules{padding:20px} }
+  .minifaq{margin:30px 0 0}
+  .minifaq h2{font-size:clamp(24px,3vw,32px);font-weight:800;margin-bottom:14px}
+  .minifaq-more{margin:6px 0 0;font-size:15px;color:var(--ink-2)}
+  .minifaq-more a{color:var(--coral-d);font-weight:700}
 </style>
 </head>
 <body>
@@ -1259,6 +1263,32 @@ function rulesBox(m){
   </section>`;
 }
 
+
+/* ---------------- MINI FAQ (sur chaque page ville, générée à partir des données) ---------------- */
+function miniFaq(m){
+  const c=m.country, cr=COUNTRY_RULES[c.id]||{items:[]}, lr=CITY_RULES[m.slug]||{items:[]};
+  const fits=it=>!it[3] || [...it[3]].some(x=>m.m.includes(x));
+  const all=[...lr.items.filter(fits),...cr.items.filter(fits)];
+  const find=icons=>all.find(it=>icons.includes(it[0]));
+  const bikes=m.m.includes("b"), scoot=m.m.includes("s");
+  const veh = bikes&&scoot ? "des vélos électriques et des trottinettes" : bikes ? "des vélos électriques" : scoot ? "des trottinettes électriques" : "des véhicules en libre-service";
+  const one = bikes&&!scoot ? "mon vélo" : scoot&&!bikes ? "ma trottinette" : "mon véhicule";
+  const qa=[];
+  if(lr.alert) qa.push([`Voi est-il toujours disponible à ${m.name} ?`, lr.alert]);
+  qa.push([`Quels véhicules Voi trouve-t-on à ${m.name} ?`, `Voi propose ${veh} à ${m.name}.${m.note?" "+m.note:""} La carte de l'application affiche en temps réel les véhicules disponibles autour de vous.`]);
+  const park=find(["🅿️"]);
+  qa.push([`Où garer ${one} à ${m.name} ?`, park ? `${park[1]} : ${park[2].charAt(0).toLowerCase()+park[2].slice(1)}` : `Garez-vous uniquement dans les zones de stationnement autorisées affichées sur la carte de l'application, sans gêner les piétons. Prenez une photo pour terminer la location.`]);
+  const age=find(["🎂","🪪"]);
+  qa.push([`Quel âge faut-il avoir ?`, age ? `${age[1]}. ${age[2]}` : `L'âge minimum pour louer est indiqué dans l'application au moment de créer votre compte.`]);
+  const helmet=find(["⛑️"]);
+  if(helmet) qa.push([`Le casque est-il obligatoire ?`, `${helmet[1]}. ${helmet[2]}`]);
+  qa.push([`Combien coûte un trajet ?`, `Les tarifs dépendent de la ville : paiement à la minute, pass ou abonnement. Le prix exact s'affiche dans l'application avant chaque trajet.`]);
+  return `<section class="minifaq" aria-labelledby="mf-${m.slug}">
+    <h2 id="mf-${m.slug}">Questions fréquentes à ${esc(m.name)}</h2>
+    ${qa.map((q,i)=>`<details${i===0&&lr.alert?" open":""}><summary>${esc(q[0])}</summary><p>${esc(q[1])}</p></details>`).join("")}
+    <p class="minifaq-more">D'autres questions ? <a href="#faq">Voir toute la FAQ →</a></p>
+  </section>`;
+}
 /* ---------------- PAGE "BIENVENUE À <VILLE>" (toutes les villes) ---------------- */
 function renderWelcome(m){
   const c=m.country;
@@ -1288,6 +1318,7 @@ function renderWelcome(m){
       <div id="mapslot"></div>
     </section>
     ${rulesBox(m)}
+    ${miniFaq(m)}
     ${howBlock()}
     ${appBand("à "+m.name)}
   </div>`;
