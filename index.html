@@ -241,8 +241,12 @@
   .hv-card small{display:inline-block;margin-top:14px;padding:5px 12px;border-radius:999px;background:var(--cream);font-size:13px;color:var(--ink-2)}
   .hhow{margin:28px 0 0;border-radius:24px;overflow:hidden;border:1px solid var(--line);background:#fff}
   .hhow img{display:block;width:100%;height:auto}
-  .hsteps{list-style:none;padding:0;margin:20px 0 0;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-  .hsteps b{display:block;font-size:16px;margin-top:8px}
+  .hsteps{list-style:none;padding:0;margin:28px 0 0;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .hsteps li{background:#fff;border:1px solid var(--line);border-radius:24px;overflow:hidden;display:flex;flex-direction:column}
+  .hs-alt .hsteps li{background:var(--cream)}
+  .hsteps img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;object-position:center top;background:#FAF4EC}
+  .hst{padding:16px 18px 20px}
+  .hsteps b{display:block;font-size:16px;margin-top:10px}
   .hsteps p{margin:4px 0 0;color:var(--ink-2);font-size:14.5px;line-height:1.45}
   .hn{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--coral);color:#fff;font-weight:800;font-size:14px}
   .hfigs{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -255,7 +259,7 @@
   .hm-ic{width:44px;height:44px;flex:none;border-radius:50%;background:var(--coral-l);display:grid;place-items:center;font-size:22px}.hm-ic .ico{width:30px;height:30px}
   .hm b{display:block;font-size:16px}.hm small{display:block;color:var(--mute);font-size:14px;margin-top:2px}
   @media (max-width:860px){ .hsplit,.hv{grid-template-columns:1fr} .hsteps{grid-template-columns:1fr 1fr} .hs{padding:52px 0} }
-  @media (max-width:520px){ .hsteps{grid-template-columns:1fr} .home-hero2{min-height:80vh} .hh-in{padding-bottom:48px} }
+  @media (max-width:520px){ .hsteps{grid-template-columns:1fr} .hsteps li{flex-direction:row;align-items:center} .hsteps img{width:42%;flex:none;aspect-ratio:4/3;object-position:center} .hst{padding:12px 14px} .home-hero2{min-height:80vh} .hh-in{padding-bottom:48px} }
   /* pied de page : marque + 2 colonnes de liens + formulaire de retour */
   .fgrid{display:grid !important;grid-template-columns:1.4fr 1fr 1fr;gap:32px;padding-bottom:28px;color:var(--ink)}
   .fbrand-w{font:800 30px/1 "Plus Jakarta Sans",system-ui,sans-serif;color:var(--coral);letter-spacing:-.03em}
@@ -1878,8 +1882,7 @@ function renderHome(){
   <section class="hs hs-alt" aria-labelledby="h-how"><div class="wrap">
     <span class="eyebrow">Comment ça marche</span>
     <h2 id="h-how">Prêt à rouler en 4 étapes</h2>
-    <figure class="hhow"><img src="img/comment-utiliser-voi.jpg" width="1400" height="1045" loading="lazy" alt="Les 4 étapes pour utiliser un vélo Voi : localisez et réservez, scannez pour débloquer, équipez-vous et roulez, garez-vous et bloquez."></figure>
-    <ol class="hsteps">${HOME_STEPS.map((x,i)=>`<li><span class="hn">${i+1}</span><b>${esc(x[0])}</b><p>${esc(x[1])}</p></li>`).join("")}</ol>
+    <ol class="hsteps">${HOME_STEPS.map((x,i)=>`<li><img src="img/etape-${i+1}.jpg" width="640" height="361" loading="lazy" alt=""><div class="hst"><span class="hn">${i+1}</span><b>${esc(x[0])}</b><p>${esc(x[1])}</p></div></li>`).join("")}</ol>
   </div></section>
 
   <section class="hs" aria-labelledby="h-where"><div class="wrap hsplit">
