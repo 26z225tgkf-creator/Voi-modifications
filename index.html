@@ -2700,7 +2700,7 @@ const WHY_KPIS=VOI_FIGURES;
    grande phrase d'accroche, gros chiffres, puis une tuile par engagement avec très peu de texte.
    Contenu propre à Voi (chiffres repris des sources citées et des pages ville). */
 const WHY_THEMES=[
-  { tag:"Prix", ic:"💶", line:"Payez seulement ce que vous roulez.", big:["0,08 €","la minute, avec un forfait à Paris"],
+  { tag:"Prix compétitifs", ic:"💶", line:"Payez seulement ce que vous roulez.", big:null,
     chips:["Prix affiché avant de partir","Pass et forfaits","Tarifs solidaires"], link:"#ville/paris", tone:"coral" },
   { tag:"Sécurité", ic:"🦺", line:"Notre priorité, à chaque trajet.", big:["Vision Zéro","objectif 2030"],
     chips:["Vitesse bridée en zone piétonne","−20 % avec un casque à Marseille","Quiz sécurité"], link:"#securite", tone:"dark" },
@@ -2729,7 +2729,7 @@ function renderWhy(){
       <div class="why-tile ${w.tone}${w.wide?" wide":""}">
         <h3>${esc(w.tag)}</h3>
         <p class="wt-line">${esc(w.line)}</p>
-        <div class="wt-big"><b>${esc(w.big[0])}</b><span>${esc(w.big[1])}</span></div>
+        ${w.big?`<div class="wt-big"><b>${esc(w.big[0])}</b><span>${esc(w.big[1])}</span></div>`:`<div class="wt-big"></div>`}
         <div class="wt-chips">${w.chips.map(c=>`<span>${esc(c)}</span>`).join("")}</div>
       </div>`).join("")}
     </div>
