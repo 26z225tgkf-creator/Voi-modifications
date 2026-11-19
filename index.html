@@ -733,6 +733,12 @@
   .why-tile.dark .wt-chips span{background:rgba(255,255,255,.12);color:#fff}
   .why-tile.light .wt-chips span,.why-tile.light .wt-go{background:var(--cream)}
   @media (max-width:860px){ .why-tiles{grid-template-columns:1fr} .why-tile{min-height:280px} }
+  /* ville où Voi n'opère plus */
+  .gone{display:flex;flex-direction:column;gap:6px;margin:18px 0;padding:18px 22px;border-radius:20px;background:#FFF4E5;border:1px solid #F3D3A6}
+  .gone b{font-size:17px}
+  .gone span{font-size:15px;color:var(--ink-2)}
+  .gone .gone-go{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:4px}
+  .gone a{font-weight:700;color:var(--coral-d)}
 </style>
 </head>
 <body>
@@ -1477,6 +1483,32 @@ function appBand(where){
 }
 
 /* ---------------- HUB : PAYS ---------------- */
+/* Villes (et pays) où Voi n'opère plus : un ancien lien ou une recherche mène vers une
+   explication et une alternative au lieu d'une page vide. Vérifié en novembre 2026. */
+const GONE={
+  "malaga":{name:"Malaga",c:"espagne",alt:"barcelone",when:"mars 2025",why:"la mairie a retiré les autorisations des trottinettes et vélos de location"},
+  "seville":{name:"Séville",c:"espagne",alt:"barcelone",when:"2025",why:"la ville n'a pas renouvelé les autorisations des trottinettes partagées"},
+  "madrid":{name:"Madrid",c:"espagne",alt:"barcelone",why:"Voi ne fait pas partie des opérateurs autorisés"},
+  "lisbonne":{name:"Lisbonne",c:"portugal",why:"Voi a arrêté ses activités au Portugal"},
+  "porto":{name:"Porto",c:"portugal",why:"Voi a arrêté ses activités au Portugal"},
+  "rome":{name:"Rome",c:"italie",alt:"naples",why:"Voi ne fait pas partie des opérateurs autorisés"},
+  "milan":{name:"Milan",c:"italie",alt:"turin"},
+  "bologne":{name:"Bologne",c:"italie",alt:"genes"},
+  "bristol":{name:"Bristol",c:"royaume-uni",alt:"oxford",when:"2023",why:"le service est désormais assuré par un autre opérateur"},
+  "birmingham":{name:"Birmingham",c:"royaume-uni",alt:"oxford",when:"2023",why:"le service est désormais assuré par un autre opérateur"},
+  "coventry-univ-de-warwick":{name:"Coventry",c:"royaume-uni",alt:"oxford",why:"le service est désormais assuré par un autre opérateur"},
+  "liverpool":{name:"Liverpool",c:"royaume-uni",alt:"londres",when:"février 2026"},
+  "bergen":{name:"Bergen",c:"norvege",alt:"oslo",when:"avril 2026",why:"Voi n'a pas obtenu de nouvelle licence"},
+  "vantaa":{name:"Vantaa",c:"finlande",alt:"helsinki"}
+};
+const GONE_COUNTRIES={ "portugal":{name:"Portugal",prep:"au",why:"Voi a arrêté ses activités au Portugal"} };
+function goneNotice(g){
+  const alt=g.alt && ALL.find(x=>x.slug===g.alt);
+  const ctry=COUNTRIES.find(x=>x.id===g.c);
+  return `<div class="gone" role="status"><b>Voi n'est plus disponible ${g.prep||"à"} ${esc(g.name)}${g.when?` depuis ${esc(g.when)}`:""}.</b>
+    <span>${g.why?esc(g.why.charAt(0).toUpperCase()+g.why.slice(1))+". ":""}Les informations que vous avez pu trouver en ligne sur Voi ${g.prep||"à"} ${esc(g.name)} ne sont plus à jour.</span>
+    <span class="gone-go">${alt?`<a href="${cityHref(alt)}">Voir Voi à ${esc(alt.name)} →</a>`:""}${ctry?`<a href="#${ctry.id}">Toutes les villes ${ctry.prep} ${esc(ctry.name)} →</a>`:`<a href="#pays">Voir nos pays →</a>`}</span></div>`;
+}
 let query="";
 function renderHub(){
   document.title="Voi en Europe — Nos pays";
@@ -1496,6 +1528,7 @@ function renderHub(){
       <input id="q" type="search" placeholder="Pays ou ville (ex. Munich, Rezé…)" value="${esc(query)}" aria-label="Rechercher un pays ou une ville"></label></div>
     </div>
     <div class="grid" id="grid"></div>
+    <div id="gone"></div>
     <div class="empty" id="empty">Voi n'est pas encore présent ici. Ouvrez l'application pour vérifier la couverture autour de vous.</div>
     ${howBlock()}
     ${appBand()}
@@ -1528,6 +1561,12 @@ function drawGrid(){
       <span class="more">${openCountry===c.id?"Masquer les villes ▴":"Voir les villes ▾"}</span>
     </a>`).join("");
   document.getElementById("empty").style.display=list.length?"none":"block";
+  const goneEl=document.getElementById("gone");
+  if(goneEl){
+    const g= nq.length>=3 ? Object.values(GONE).find(g=>norm(g.name).startsWith(nq)||nq.startsWith(norm(g.name))) || Object.values(GONE_COUNTRIES).find(g=>norm(g.name).startsWith(nq)) : null;
+    goneEl.innerHTML = g ? goneNotice(g) : "";
+    if(g) document.getElementById("empty").style.display="none";
+  }
   placeCityPanel();
 }
 
@@ -3197,7 +3236,13 @@ function route(){
   else if(welcome) renderWelcome(welcome);
   else if(country) renderCountry(country);
   else if(city) renderCity(city);
-  else renderHub();
+  else {
+    /* ancien lien vers une ville ou un pays où Voi n'opère plus */
+    const g = id.startsWith("ville/") ? GONE[id.slice(6)] : (GONE[id] || GONE_COUNTRIES[id]);
+    const gc = g && g.c && COUNTRIES.find(x=>x.id===g.c);
+    if(gc) renderCountry(gc); else renderHub();
+    if(g){ const w=$app.querySelector(".wrap"); if(w) w.insertAdjacentHTML("afterbegin",goneNotice(g)); }
+  }
   document.getElementById("nav-pays").classList.toggle("on", !city && !welcome && !safety && !faq && !mag && !why);
   document.getElementById("nav-why").classList.toggle("on", why);
   document.getElementById("nav-secu").classList.toggle("on", safety);
