@@ -587,6 +587,11 @@
   section.articles .adots button.on{background:#fff}
   .acard{border:0}
   @media (max-width:720px){ section.articles{padding:30px 18px 20px;border-radius:28px;margin-left:-8px;margin-right:-8px} }
+  /* bloc Planifier un trajet (pages pays et guides) */
+  .planner .pgrid{display:grid;grid-template-columns:minmax(280px,1fr) 1.4fr;gap:24px;align-items:start;margin-top:16px}
+  .planner .wform{margin-top:0}
+  .planner .wmodes{margin-bottom:12px}
+  @media (max-width:860px){ .planner .pgrid{grid-template-columns:1fr} }
 </style>
 </head>
 <body>
@@ -1457,6 +1462,7 @@ function renderCountry(c){
           </div>`).join("")}
         ${c.more?`<p class="note" style="margin:8px 14px 12px">${esc(c.more)}</p>`:""}
       </div>
+    ${plannerBlock(c.prep+" "+c.name, [...new Set(c.cities.map(x=>x.m).join(""))].join(""))}
     ${howBlock()}
     <section class="block"><h2>Voi dans d'autres pays</h2>
       <div class="others">${others.map(o=>`<a href="#${o.id}">${o.flag} ${esc(o.name)}</a>`).join("")}</div>
@@ -1474,6 +1480,7 @@ function renderCountry(c){
   VIEW.onCountryPick=pick;
   items.forEach(it=>it.addEventListener("click",e=>{ if(e.target.closest("a")) return; pick(+it.dataset.i); }));
   mountMap(document.getElementById("mapslot"));
+  setupDeparture(ALL[c.cities[0].g]);
   const pend=c.cities.findIndex(x=>x.name===window.__pendingCity); window.__pendingCity=null;
   if(pend>=0){ mark(pend); const ct=c.cities[pend]; goTo({type:"city", coords:[ct.lat,ct.lng]}, ct.g, c, true); }
   else goTo({type:"country", code:c.code}, -1, c, true);
@@ -1515,6 +1522,7 @@ function renderCity(c){
       ${(()=>{ const mm=ALL.find(x=>x.link==="#"+c.id), z=mm&&ZONES[mm.slug]; return z ? zoneList(z,mm.slug) : `<div class="communes">${c.zone.map((z,i)=>`<span class="${(c.zoneHL&&i<c.zoneHL)?"hl":""}">${esc(z)}</span>`).join("")}</div>${c.zoneNote?`<p class="note">${esc(c.zoneNote)}</p>`:""}`; })()}
       ${c.soon?`<p class="note" style="margin-top:18px"><span class="tag soon">En concertation</span> ${c.soon.map(esc).join(", ")}</p>`:""}
     </section>
+    ${(()=>{ const mm=ALL.find(x=>x.link==="#"+c.id); return mm?plannerBlock("à "+c.name, mm.m):""; })()}
     ${(()=>{ const mm=ALL.find(x=>x.link==="#"+c.id); return mm?rulesBox(mm):""; })()}
     ${(()=>{ const mm=ALL.find(x=>x.link==="#"+c.id); return mm?articlesBlock(mm.slug, c.name):""; })()}
     ${pricesBlock(c.name, c)}
@@ -1530,6 +1538,7 @@ function renderCity(c){
   const ct = FR.cities.find(x=>x.link==="#"+c.id);
   VIEW.onCountryPick=null;
   mountMap(document.getElementById("mapslot"));
+  { const mm=ALL.find(x=>x.link==="#"+c.id); if(mm) setupDeparture(mm); }
   VIEW.spotsFor=ALL[ct.g].slug;
   goTo({type:"city", coords:[ct.lat,ct.lng]}, ct.g, FR, true);
 }
@@ -2099,7 +2108,7 @@ function renderWelcome(m){
         <h1>Bienvenue à <em>${esc(m.name)}</em></h1>
         <div class="tags">${modeTags(m.m,m.isNew)}</div>
         ${m.note?`<p class="lead">${esc(m.note)}</p>`:""}
-        <div class="wmodes" role="group" aria-label="Type de véhicule">${modes.map((x,i)=>`<button type="button" class="${i?"":"on"}">${x[1]}</button>`).join("")}</div>
+        <div class="wmodes" role="group" aria-label="Type de véhicule">${modes.map((x,i)=>`<button type="button" data-m="${x[0]}" class="${i?"":"on"}">${x[1]}</button>`).join("")}</div>
         <form class="wform" id="wform">
           <label><span class="pt"></span><input id="dep" placeholder="Saisissez votre adresse de départ" aria-label="Lieu de départ" autocomplete="off"><ul class="sugg" id="sugg" hidden></ul></label>
           <label><span class="pt sq"></span><input id="dst" placeholder="Saisissez votre destination" aria-label="Destination" autocomplete="off"><ul class="sugg" id="sugg2" hidden></ul></label>
@@ -2113,7 +2122,7 @@ function renderWelcome(m){
       </div>
       <div class="wright">
         <div id="mapslot"></div>
-        <div class="tripcard" id="tripcard" hidden>
+        <div class="tripcard" id="tripcard" data-swap="1" hidden>
           <div id="streetmap" aria-label="Carte de votre trajet"></div>
           <div class="tripsum" id="tripsum"></div>
         </div>
@@ -2127,8 +2136,6 @@ function renderWelcome(m){
     ${howBlock()}
     ${appBand("à "+m.name)}
   </div>`;
-  const btns=[...document.querySelectorAll(".wmodes button")];
-  btns.forEach(b=>b.addEventListener("click",()=>btns.forEach(x=>x.classList.toggle("on",x===b))));
   document.getElementById("wform").addEventListener("submit",e=>{ e.preventDefault(); location.href=store; });
   setupDeparture(m);
   VIEW.onCountryPick=null;
@@ -2164,6 +2171,19 @@ function nearestServed(pt){
   ALL.forEach(c=>{ const d=kmBetween(pt,c); if(d<dist){dist=d;best=c;} });
   return {city:best, km:dist};
 }
+const SCOOTER_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="18" r="2.6"/><circle cx="18.5" cy="18" r="2.6"/><path d="M8 18h8l-2.5-13H17M5.5 18 8 14"/></svg>`;
+/* vélo ou trottinette : textes et icône selon le véhicule du trajet */
+const VEH = {
+  b:{ Name:"Vélo", le:"le vélo", au:"au vélo", e:"", plural:"vélos", unAutre:"un autre vélo", en:"à vélo", emoji:"🚲", icon:BIKE_ICON },
+  s:{ Name:"Trottinette", le:"la trottinette", au:"à la trottinette", e:"e", plural:"trottinettes", unAutre:"une autre trottinette", en:"en trottinette", emoji:"🛴", icon:SCOOTER_ICON }
+};
+/* ville desservie la plus proche + véhicule : celui choisi (Vélo / Trottinette) s'il existe là, sinon celui disponible */
+function vehicleAt(pt){
+  const n=nearestServed(pt);
+  if(!n.city || n.km>AVAIL_RADIUS_KM) return null;
+  const v = TRIP.mode && n.city.m.includes(TRIP.mode) ? TRIP.mode : (n.city.m.includes("b") ? "b" : "s");
+  return {city:n.city, v};
+}
 const bikesAt = pt => { const n=nearestServed(pt); return n.city && n.km<=AVAIL_RADIUS_KM && n.city.m.includes("b") ? n.city : null; };
 function setPill(state,text){
   const el=document.getElementById("avail"); if(!el) return;
@@ -2172,9 +2192,9 @@ function setPill(state,text){
 }
 function pillForPoint(pt){
   const n=nearestServed(pt);
-  if(n.city && n.km<=AVAIL_RADIUS_KM && n.city.m.includes("b")) setPill("yes",`Vélo disponible · ${n.city.name}`);
-  else if(n.city && n.km<=AVAIL_RADIUS_KM) setPill("no",`Pas de vélo ici · trottinettes à ${n.city.name}`);
-  else setPill("no","Pas de vélo Voi à cette adresse");
+  const v=vehicleAt(pt);
+  if(v) setPill("yes",`${v.city.m.includes("b")&&v.city.m.includes("s")?"Vélos et trottinettes":v.city.m.includes("b")?"Vélos":"Trottinettes"} Voi disponibles · ${v.city.name}`);
+  else setPill("no","Pas de vélo ni trottinette Voi à cette adresse");
 }
 function cityInText(text){
   const t=" "+norm(text).replace(/[^a-z0-9]+/g," ")+" ";
@@ -2188,7 +2208,7 @@ function cityInText(text){
 }
 function pillFromText(text,pageCity){            /* offline fallback */
   const c=cityInText(text)||pageCity;
-  setPill(c.m.includes("b")?"yes":"no", (c.m.includes("b")?"Vélo disponible":"Pas de vélo disponible")+" · "+c.name);
+  setPill("yes", (c.m.includes("b")?"Vélos":"Trottinettes")+" Voi disponibles · "+c.name);
 }
 function addrLabel(p){
   const street=[p.housenumber,p.street].filter(Boolean).join(" ");
@@ -2290,7 +2310,7 @@ async function ensureStreetMap(){
   const card=document.getElementById("tripcard"), slot=document.getElementById("mapslot");
   if(!ok || !card) return false;
   defineStreetTiles();
-  if(card.hidden){ card.hidden=false; slot.style.display="none"; }
+  if(card.hidden){ card.hidden=false; if(card.dataset.swap && slot) slot.style.display="none"; }
   const el=document.getElementById("streetmap");
   if(!TRIP.map || TRIP.map.getContainer()!==el){
     TRIP.map=L.map(el,{zoomControl:true,scrollWheelZoom:false});
@@ -2381,42 +2401,42 @@ async function drawTrip(){
   const map=TRIP.map, lay=TRIP.layer; lay.clearLayers();
   const dep=TRIP.dep, dst=TRIP.dst;
   L.marker([dep.lat,dep.lng],{icon:mk("me","",18),zIndexOffset:500}).bindTooltip("Vous êtes ici",{direction:"top",offset:[0,-12],className:"tlab"}).addTo(lay);
-  const city=bikesAt(dep);
+  const near=vehicleAt(dep), city=near&&near.city, V=near&&VEH[near.v];
   if(!city){
     map.setView([dep.lat,dep.lng],16);
     if(dst){ L.marker([dst.lat,dst.lng],{icon:mk("dest","",18)}).bindTooltip("Destination",{direction:"top",offset:[0,-12],className:"tlab"}).addTo(lay);
              map.fitBounds(L.latLngBounds([[dep.lat,dep.lng],[dst.lat,dst.lng]]),{padding:[50,50]}); }
-    tripSummary(`<span class="msg">Aucun vélo Voi à proximité de votre position de départ.</span>`);
+    tripSummary(`<span class="msg">Aucun vélo ni trottinette Voi à proximité de votre position de départ.</span>`);
     return;
   }
   const spots=bikeSpots(dep);
   if(TRIP.bikeIdx==null || !spots[TRIP.bikeIdx]) TRIP.bikeIdx=0;
   const sel=spots[TRIP.bikeIdx];
   if(!TRIP.keepView) map.setView([dep.lat,dep.lng],17);
-  tripSummary(`<span class="msg">Itinéraire vers ${sel.zone?"la zone Voi":"le vélo"} sélectionné…</span>`);
+  tripSummary(`<span class="msg">Itinéraire vers ${sel.zone?"la zone Voi":V.le} sélectionné${V.e}…</span>`);
   const walk1=await routeLeg("foot",dep,sel);
   if(my!==TRIP.seq) return;
   const bike=[sel.lat,sel.lng];
   L.polyline(walk1.line.concat([bike]),{color:"#4A4240",weight:4,dashArray:"2 9",lineCap:"round"}).addTo(lay);
   spots.forEach((s,k)=>{
     const on=k===TRIP.bikeIdx, walkMin=Math.max(1,Math.round(kmBetween(dep,s)*1000*1.3/1.35/60));
-    const html=s.zone?`${BIKE_ICON}<b class="cnt">${s.n}</b>`:BIKE_ICON;
-    const tip=on ? (s.zone?`Zone Voi · ${s.n} vélos`:"Vélo Voi sélectionné")
-                 : `${s.zone?`Zone Voi · ${s.n} vélos`:`Vélo Voi · 🔋 ${s.bat} %`} · ${walkMin} min à pied<br><small>Cliquez pour y aller</small>`;
-    L.marker([s.lat,s.lng],{icon:mk("bike"+(on?" on":" alt")+(s.zone?" zone":""),html,on?32:(s.zone?28:24)),zIndexOffset:on?450:380,keyboard:true,title:s.zone?"Zone Voi":"Vélo Voi"})
+    const html=s.zone?`${V.icon}<b class="cnt">${s.n}</b>`:V.icon;
+    const tip=on ? (s.zone?`Zone Voi · ${s.n} ${V.plural}`:`${V.Name} Voi sélectionné${V.e}`)
+                 : `${s.zone?`Zone Voi · ${s.n} ${V.plural}`:`${V.Name} Voi · 🔋 ${s.bat} %`} · ${walkMin} min à pied<br><small>Cliquez pour y aller</small>`;
+    L.marker([s.lat,s.lng],{icon:mk("bike"+(on?" on":" alt")+(s.zone?" zone":""),html,on?32:(s.zone?28:24)),zIndexOffset:on?450:380,keyboard:true,title:s.zone?"Zone Voi":V.Name+" Voi"})
       .bindTooltip(tip,{direction:"top",offset:[0,on?-17:-14],className:"tlab",permanent:on})
       .on("click",()=>{ if(k===TRIP.bikeIdx) return; TRIP.bikeIdx=k; TRIP.keepView=true; drawTrip().finally(()=>TRIP.keepView=false); })
       .addTo(lay);
   });
   if(!dst){
     map.fitBounds(L.latLngBounds([[dep.lat,dep.lng]].concat(spots.map(s=>[s.lat,s.lng]))),{padding:[60,60],maxZoom:17});
-    tripSummary(`<div class="steps"><span class="st"><i></i>🚶 ${fmtMin(walk1.s)} jusqu'${sel.zone?"à la zone Voi":"au vélo"} · ${fmtDist(walk1.m)}</span><span class="msg">Touchez un autre vélo sur la carte pour changer. Ajoutez votre destination pour voir le trajet.</span></div>${EXAMPLE_NOTE}`);
+    tripSummary(`<div class="steps"><span class="st"><i></i>🚶 ${fmtMin(walk1.s)} jusqu'${sel.zone?"à la zone Voi":V.au} · ${fmtDist(walk1.m)}</span><span class="msg">Touchez ${V.unAutre} sur la carte pour changer. Ajoutez votre destination pour voir le trajet.</span></div>${EXAMPLE_NOTE}`);
     return;
   }
   if(kmBetween(dep,dst)>MAX_TRIP_KM){
     L.marker([dst.lat,dst.lng],{icon:mk("dest","",18)}).bindTooltip("Destination",{direction:"top",offset:[0,-12],className:"tlab"}).addTo(lay);
     map.fitBounds(L.latLngBounds([[dep.lat,dep.lng],[dst.lat,dst.lng]]),{padding:[50,50]});
-    tripSummary(`<span class="msg">Destination trop éloignée pour un trajet à vélo (plus de ${MAX_TRIP_KM} km).</span>`);
+    tripSummary(`<span class="msg">Destination trop éloignée pour un trajet ${V.en} (plus de ${MAX_TRIP_KM} km).</span>`);
     return;
   }
   tripSummary(`<span class="msg">Calcul du trajet…</span>`);
@@ -2428,20 +2448,51 @@ async function drawTrip(){
   if(my!==TRIP.seq) return;
   L.polyline(ride.line,{color:"#F26A5E",weight:6,opacity:.95,lineCap:"round",lineJoin:"round"}).addTo(lay);
   L.polyline(walk2.line,{color:"#4A4240",weight:4,dashArray:"2 9",lineCap:"round"}).addTo(lay);
-  L.marker(park,{icon:mk("park","P",24),zIndexOffset:300}).bindTooltip("Rendre le vélo",{direction:"top",offset:[0,-14],className:"tlab"}).addTo(lay);
+  L.marker(park,{icon:mk("park","P",24),zIndexOffset:300}).bindTooltip(`Rendre ${V.le}`,{direction:"top",offset:[0,-14],className:"tlab"}).addTo(lay);
   L.marker([dst.lat,dst.lng],{icon:mk("dest","",18),zIndexOffset:350}).bindTooltip("Destination",{direction:"top",offset:[0,-12],className:"tlab"}).addTo(lay);
   map.fitBounds(L.latLngBounds([[dep.lat,dep.lng],bike,park,[dst.lat,dst.lng]].concat(ride.line)),{padding:[40,40]});
   const total=walk1.s+ride.s+walk2.s, price=tripPrice(city,ride.s);
   tripSummary(`<div class="steps">
       <span class="st"><i></i>🚶 ${fmtMin(walk1.s)}</span>
-      <span class="st"><i class="ride"></i>🚲 ${fmtMin(ride.s)} · ${fmtDist(ride.m)}</span>
+      <span class="st"><i class="ride"></i>${V.emoji} ${fmtMin(ride.s)} · ${fmtDist(ride.m)}</span>
       <span class="st"><i></i>🚶 ${fmtMin(walk2.s)}</span>
       <span class="tot">${fmtMin(total)}${price.inline}</span>
-    </div>${price.note}<p class="note pick">🚲 ${spots.length} vélos Voi autour du départ : touchez-en un sur la carte pour recalculer le trajet depuis celui-ci.</p>${(walk1.approx||ride.approx||walk2.approx)?`<p class="note">Itinéraire indisponible : tracé et durée approximatifs.</p>`:""}${EXAMPLE_NOTE}`);
+    </div>${price.note}<p class="note pick">${V.emoji} ${spots.length} emplacements de ${V.plural} Voi autour du départ : touchez-en un sur la carte pour recalculer le trajet depuis celui-ci.</p>${(walk1.approx||ride.approx||walk2.approx)?`<p class="note">Itinéraire indisponible : tracé et durée approximatifs.</p>`:""}${EXAMPLE_NOTE}`);
 }
 
+document.addEventListener("click",e=>{
+  const b=e.target.closest(".wmodes button[data-m]"); if(!b) return;
+  b.parentNode.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));
+  TRIP.mode=b.dataset.m; TRIP.bikeIdx=null;
+  if(TRIP.dep){ pillForPoint(TRIP.dep); drawTrip(); }
+});
+/* bloc « Planifier un trajet » pour les pages pays et les guides des villes françaises
+   (sur les pages ville, le même formulaire est déjà en haut de page) */
+function plannerBlock(where, modesStr){
+  const modes=[["b","Vélo électrique"],["s","Trottinette"]].filter(x=>modesStr.includes(x[0]));
+  return `<section class="block planner">
+    <span class="lrules-badge">Itinéraire</span>
+    <h2>Planifier un trajet ${esc(where)}</h2>
+    <p class="lead">Saisissez votre départ et votre destination : la carte affiche ${modes.length>1?"les vélos et trottinettes":modes[0][0]==="b"?"les vélos":"les trottinettes"} Voi autour de vous, le trajet, sa durée et son prix estimé.</p>
+    <div class="pgrid">
+      <div>
+        ${modes.length>1?`<div class="wmodes" role="group" aria-label="Type de véhicule">${modes.map((x,i)=>`<button type="button" data-m="${x[0]}" class="${i?"":"on"}">${x[1]}</button>`).join("")}</div>`:""}
+        <form class="wform" id="wform" onsubmit="return false">
+          <label><span class="pt"></span><input id="dep" placeholder="Saisissez votre adresse de départ" aria-label="Lieu de départ" autocomplete="off"><ul class="sugg" id="sugg" hidden></ul></label>
+          <label><span class="pt sq"></span><input id="dst" placeholder="Saisissez votre destination" aria-label="Destination" autocomplete="off"><ul class="sugg" id="sugg2" hidden></ul></label>
+        </form>
+        <div class="cta-row"><span class="avail" id="avail" role="status" aria-live="polite"><span class="adot"></span><span class="lbl">Saisissez une adresse de départ</span></span></div>
+      </div>
+      <div class="tripcard" id="tripcard" hidden>
+        <div id="streetmap" aria-label="Carte de votre trajet"></div>
+        <div class="tripsum" id="tripsum"></div>
+      </div>
+    </div>
+  </section>`;
+}
 function setupDeparture(pageCity){
   TRIP.dep=null; TRIP.dst=null; TRIP.bikeIdx=null; TRIP.seq++; TRIP.map=null;
+  const first=document.querySelector(".wmodes button.on"); TRIP.mode=first?first.dataset.m:null;
   const inp=document.getElementById("dep");
   const dstInp=document.getElementById("dst");
   addressField(inp,document.getElementById("sugg"),pageCity,{
