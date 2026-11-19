@@ -1183,8 +1183,10 @@ const FR_COORDS = {
 const COUNTRIES = [
   { id:"france", volume:"10 000 – 15 000", prep:"en", code:"FR", flag:"🇫🇷", name:"France",
     intro:"Troisième marché de Voi en 2026 : vélos électriques à Paris et Nantes, vélos et trottinettes à Marseille, Grenoble, Le Havre et dans les Yvelines.",
-    stats:[["7","territoires"],["65+","communes"],["11 000+","vélos électriques"]],
-    cities: CITIES.map(c=>({name:c.name, lat:FR_COORDS[c.id][0], lng:FR_COORDS[c.id][1], m:(c.bikes&&c.scooters)?"bs":c.bikes?"b":"s", note:c.short, link:"#"+c.id, isNew:c.badge==="new"}))
+    stats:[["8","territoires"],["65+","communes"],["11 000+","vélos électriques"]],
+    cities: CITIES.map(c=>({name:c.name, lat:FR_COORDS[c.id][0], lng:FR_COORDS[c.id][1], m:(c.bikes&&c.scooters)?"bs":c.bikes?"b":"s", note:c.short, link:"#"+c.id, isNew:c.badge==="new"})).concat([
+      {name:"V'Lônes (sud de Lyon)", lat:45.715, lng:4.79, m:"b", note:"Vélos électriques à Saint-Genis-Laval, Vernaison, Irigny et Charly, depuis début 2026.", isNew:true}
+    ])
   },
   { id:"allemagne", volume:"30 000 – 40 000", prep:"en", code:"DE", flag:"🇩🇪", name:"Allemagne",
     intro:"Premier marché de Voi, avec 41 villes actives — de Berlin, capitale européenne de la micromobilité, à Magdebourg, où Voi est l'opérateur exclusif.",
