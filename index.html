@@ -1002,14 +1002,6 @@ const COUNTRIES = [
       {name:"Malaga",lat:36.7213,lng:-4.4214,m:"s"}
     ], more:"…et d'autres villes espagnoles."
   },
-  { id:"portugal", volume:"~3 000", prep:"au", code:"PT", flag:"🇵🇹", name:"Portugal",
-    intro:"Trottinettes électriques Voi à Lisbonne et à Porto.",
-    stats:[],
-    cities:[
-      {name:"Lisbonne",lat:38.7223,lng:-9.1393,m:"s"},
-      {name:"Porto",lat:41.1579,lng:-8.6291,m:"s"}
-    ], more:"…et d'autres villes portugaises."
-  },
   { id:"belgique", more:"…et d'autres villes.", volume:"2 000 – 4 000", prep:"en", code:"BE", flag:"🇧🇪", name:"Belgique",
     intro:"Vélos et trottinettes électriques Voi à Bruxelles et à Anvers.",
     stats:[],
@@ -1036,7 +1028,7 @@ const COUNTRIES = [
   }
 ];
 
-const ORDER=["france","allemagne","royaume-uni","suede","norvege","italie","finlande","suisse","danemark","espagne","portugal","belgique","autriche","pays-bas"];
+const ORDER=["france","allemagne","royaume-uni","suede","norvege","italie","finlande","suisse","danemark","espagne","belgique","autriche","pays-bas"];
 COUNTRIES.sort((a,b)=>ORDER.indexOf(a.id)-ORDER.indexOf(b.id));
 
 const HOW = [
@@ -1081,7 +1073,7 @@ const LIB = (async()=>{
 /* every city of every country, with a global index */
 const ALL=[];
 COUNTRIES.forEach(c=>c.cities.forEach((ct,j)=>{ ct.g=ALL.length; ALL.push(Object.assign({},ct,{country:c, j})); }));
-const EUROPE=["PT","FI","GB","IT","NO","AT"];
+const EUROPE=["ES","FI","GB","IT","NO","AT"];
 const CITY_SCALE=30;
 
 const legend = `<div class="maplegend"><span><span class="dot"></span>Ville desservie par Voi</span><span class="lg-spot"><span class="dot" style="background:#fff;border-color:#D9564B;box-shadow:none;width:9px;height:9px"></span>Arrondissement / commune</span><span><span class="dot" style="background:#B8372C;border-color:#5E1A14;box-shadow:none"></span>Ville sélectionnée</span></div>`;
@@ -1652,8 +1644,7 @@ const COUNTRY_RULES = {
     ["🚲","Règles du vélo","Les vélos Voi suivent le code de la route des cyclistes : piste cyclable dès qu'elle existe.","b"],
     ["🔁","D'une commune à l'autre","Vous pouvez prendre un vélo dans une commune et le rendre dans une autre de la zone.","b"]
   ], src:[] },
-  espagne:{ items:[], src:[] },
-  portugal:{ items:[], src:[] }
+  espagne:{ items:[], src:[] }
 };
 
 /* règles propres à une ville (clé = slug de la page ville) */
@@ -1693,11 +1684,6 @@ const CITY_RULES = {
     ["🚷","Zones interdites","Dans certaines zones, on ne peut ni rouler ni se garer : la trottinette s'arrête ou ralentit toute seule.","s"],
     ["🅿️","Dropzones","Garez-vous de préférence dans les zones de dépôt marquées.","s"]
   ], src:[["Ville d'Anvers","https://vbleden.s3.eu-central-1.amazonaws.com/16/news_attachments/10527/c4ffea33-dd37-4b1a-b621-c3c25c901239/2026_SV_00049_Antwoord.pdf"],["VRT","https://www.vrt.be/vrtnws/nl/2022/02/15/no-gozones-voor-deelsteps-in-antwerpen/"]] },
-  "lisbonne":{ items:[
-    ["⏱️","20 km/h maximum","Limite fixée par la ville pour les trottinettes partagées.","s"],
-    ["🅿️","Stationnement obligatoire en « hotspots »","Interdit sur les trottoirs, dans les quartiers historiques et devant les monuments ou les accès au métro.","s"]
-  ], alert:"La mairie de Lisbonne a annoncé en octobre 2026 vouloir suspendre les trottinettes partagées. Vérifiez la disponibilité dans l'application.",
-  src:[["DN","https://www.dn.pt/opiniao-dn/trotinetese-a-insegurana"],["e-konomista","https://www.e-konomista.pt/lisboa-trotinetes-partilhadas/"]] },
   "madrid":{ items:[],
     alert:"À Madrid, la mairie a retiré en 2024 les licences des trottinettes en libre-service ; les opérateurs ont cessé leur activité début 2025. Vérifiez la disponibilité dans l'application.",
     src:[["Movilidad Eléctrica","https://movilidadelectrica.com/madrid-sin-patinetes-electricos-alquiler/"]] },
@@ -1805,7 +1791,7 @@ function articlesBlock(slug, cityName){
    On cherche sur Wikimedia Commons (licences libres) une photo du lieu principal de l'article,
    puis du quartier / thème dans la ville, puis de la ville. Une même photo n'est jamais utilisée
    deux fois dans le blog d'une ville. L'auteur est crédité en bas de l'article. */
-const CITY_Q = {"dusseldorf":"Düsseldorf","stuttgart":"Stuttgart","nuremberg":"Nürnberg","hanovre":"Hannover","aix-la-chapelle":"Aachen","lubeck":"Lübeck","magdebourg":"Magdeburg","mannheim":"Mannheim","darmstadt":"Darmstadt","potsdam":"Potsdam","kiel":"Kiel","brunswick":"Braunschweig","wurtzbourg":"Würzburg","tubingen":"Tübingen","birmingham":"Birmingham","bristol":"Bristol","northampton":"Northampton","peterborough":"Peterborough","coventry-univ-de-warwick":"Coventry","portsmouth":"Portsmouth","southampton":"Southampton","ile-de-wight":"Isle of Wight","glasgow":"Glasgow","edimbourg":"Edinburgh","swansea":"Swansea","goteborg":"Göteborg","malmo":"Malmö","uppsala":"Uppsala","lund":"Lund Sweden","helsingborg":"Helsingborg","linkoping":"Linköping","trondheim":"Trondheim","bergen":"Bergen Norway","drammen":"Drammen","aarhus":"Aarhus","aalborg":"Aalborg","odense":"Odense","tampere":"Tampere","turku":"Turku","vantaa":"Vantaa","berne":"Bern","winterthour":"Winterthur","bale":"Basel","saint-gall":"St. Gallen","frauenfeld":"Frauenfeld","illnau-effretikon":"Effretikon","innsbruck":"Innsbruck","turin":"Torino","bologne":"Bologna","genes":"Genova","reggio-d-emilie":"Reggio Emilia","naples":"Napoli","malaga":"Málaga","anvers":"Antwerpen","hilversum":"Hilversum","gooise-meren-bussum":"Naarden","soest":"Soest Utrecht","baarn":"Baarn","huizen":"Huizen","laren":"Laren Noord-Holland","blaricum":"Blaricum","eemnes":"Eemnes","wijdemeren":"Loosdrecht","madrid":"Madrid","lisbonne":"Lisboa"};
+const CITY_Q = {"dusseldorf":"Düsseldorf","stuttgart":"Stuttgart","nuremberg":"Nürnberg","hanovre":"Hannover","aix-la-chapelle":"Aachen","lubeck":"Lübeck","magdebourg":"Magdeburg","mannheim":"Mannheim","darmstadt":"Darmstadt","potsdam":"Potsdam","kiel":"Kiel","brunswick":"Braunschweig","wurtzbourg":"Würzburg","tubingen":"Tübingen","birmingham":"Birmingham","bristol":"Bristol","northampton":"Northampton","peterborough":"Peterborough","coventry-univ-de-warwick":"Coventry","portsmouth":"Portsmouth","southampton":"Southampton","ile-de-wight":"Isle of Wight","glasgow":"Glasgow","edimbourg":"Edinburgh","swansea":"Swansea","goteborg":"Göteborg","malmo":"Malmö","uppsala":"Uppsala","lund":"Lund Sweden","helsingborg":"Helsingborg","linkoping":"Linköping","trondheim":"Trondheim","bergen":"Bergen Norway","drammen":"Drammen","aarhus":"Aarhus","aalborg":"Aalborg","odense":"Odense","tampere":"Tampere","turku":"Turku","vantaa":"Vantaa","berne":"Bern","winterthour":"Winterthur","bale":"Basel","saint-gall":"St. Gallen","frauenfeld":"Frauenfeld","illnau-effretikon":"Effretikon","innsbruck":"Innsbruck","turin":"Torino","bologne":"Bologna","genes":"Genova","reggio-d-emilie":"Reggio Emilia","naples":"Napoli","malaga":"Málaga","anvers":"Antwerpen","hilversum":"Hilversum","gooise-meren-bussum":"Naarden","soest":"Soest Utrecht","baarn":"Baarn","huizen":"Huizen","laren":"Laren Noord-Holland","blaricum":"Blaricum","eemnes":"Eemnes","wijdemeren":"Loosdrecht","madrid":"Madrid"};
 const TAG_Q = {"En famille":"park","Entre amis":"park","Sortie":"market","En amoureux":"sunset","City trip":"old town","Photo":"panorama","Bien-être":"cycling","Quotidien":"street tram","Escapade":"lake","Soirée":"night","Curiosités":"street","Saisons":"autumn"};
 const PHOTO_CACHE = {}, PHOTO_USED = {};
 function placeCore(n){ return n.replace(/^(Le tour d[eu] |Le long d[eu] (la |l')?|Les rives d[eu] (la |l')?|Les quais d[eu] (la |l')?|Le quartier d[eu] |Le parc d[eu] |Le coucher de soleil (sur|à|depuis|au) (le |la |l')?|Le soir (sur|à|au|dans) (le |la |les |l')?|Le |La |Les |L'|Un |Une )/i,"").replace(/^(d[eu] |des |l')/i,""); }
@@ -2057,7 +2043,6 @@ const COUNTRY_PRICES = {
   "autriche":["1 € + 0,28 € / min","relevé voi.com en Autriche"],
   "italie":["1 € + 0,24 € / min","relevés voi.com en Italie"],
   "espagne":["0,25 € / min, sans frais de déverrouillage","relevé voi.com en Espagne"],
-  "portugal":["1 € + 0,20 à 0,30 € / min","fourchette européenne Voi 2026"],
   "belgique":["0 à 1 € + 0,23 à 0,25 € / min","relevés en Belgique"],
   "pays-bas":["1 € + 0,20 à 0,30 € / min","fourchette européenne Voi 2026"]
 };
