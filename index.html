@@ -121,7 +121,7 @@
   .phead .lead{font-size:18px;color:var(--ink-2);max-width:60ch;margin:16px 0 0}
   .pstats{display:flex;gap:12px;flex-wrap:wrap}
   .pstat{background:var(--coral);color:#fff;border-radius:18px;padding:14px 18px;min-width:130px}
-  .pstat b{display:block;font-family:"Plus Jakarta Sans";font-size:30px;font-weight:800;line-height:1.1}
+  .pstat b{display:block;font-family:"Plus Jakarta Sans",system-ui,sans-serif;font-size:30px;font-weight:800;line-height:1.1}
   .pstat span{font-size:13.5px;opacity:.92}
   .pstat.alt{background:var(--ink)}
 
@@ -160,10 +160,10 @@
   /* France city page (reused) */
   .chero{display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:end;padding:28px 0 44px}
   .chero h1{font-size:clamp(42px,6.5vw,84px);font-weight:800}
-  .chero h1 small{display:block;font-size:.32em;font-weight:600;color:var(--coral-d);letter-spacing:0;margin-bottom:10px;font-family:"Plus Jakarta Sans"}
+  .chero h1 small{display:block;font-size:.32em;font-weight:600;color:var(--coral-d);letter-spacing:0;margin-bottom:10px;font-family:"Plus Jakarta Sans",system-ui,sans-serif}
   .chero .lead{font-size:18px;color:var(--ink-2);margin:18px 0 24px}
   .figure{background:var(--coral);border-radius:28px;padding:30px;color:#fff;min-height:260px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
-  .figure .big{font-family:"Plus Jakarta Sans";font-weight:800;font-size:64px;line-height:1}
+  .figure .big{font-family:"Plus Jakarta Sans",system-ui,sans-serif;font-weight:800;font-size:64px;line-height:1}
   .figure .lbl{opacity:.9;font-weight:500}
   .figure svg{position:absolute;right:-10px;bottom:-14px;opacity:.22}
   .figure .row{display:flex;gap:28px;position:relative}
@@ -178,7 +178,7 @@
   .kpi{flex:1 1 220px;display:flex;gap:12px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:12px 16px}
   .kpi .ic{flex:none;width:42px;height:42px;border-radius:12px;background:var(--coral-l);color:var(--coral-d);display:grid;place-items:center}
   .kpi .ic svg{width:22px;height:22px}
-  .kpi b{display:block;font-family:"Plus Jakarta Sans";font-size:20px;font-weight:800;line-height:1.15}
+  .kpi b{display:block;font-family:"Plus Jakarta Sans",system-ui,sans-serif;font-size:20px;font-weight:800;line-height:1.15}
   .kpi span{display:block;color:var(--mute);font-size:13px;line-height:1.3}
   .highlights{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
   .hl-item{display:flex;gap:14px;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:20px}
@@ -772,6 +772,103 @@
   .gone span{font-size:15px;color:var(--ink-2)}
   .gone .gone-go{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:4px}
   .gone a{font-weight:700;color:var(--coral-d)}
+
+  /* ═══ Harmonisation du design (même langage visuel partout, comme voi.com) ═══ */
+  /* 1. Pas de majuscules forcées : surtitres, badges, en-têtes de tableau, sous-titres */
+  .eyebrow{font-size:15px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--coral)}
+  .lrules-badge{font-size:13px;font-weight:600;letter-spacing:0;text-transform:none;background:var(--coral-l);color:var(--coral-d);padding:5px 12px;border-radius:999px}
+  .lrules h3{font-size:16px;letter-spacing:0;text-transform:none;color:var(--ink)}
+  .clist h4{font-size:13.5px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--mute)}
+  .zgroup h4{font-size:15px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--ink)}
+  table.prices th{font-size:14px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--mute);background:var(--cream)}
+  /* 2. Étiquettes aux couleurs Voi (plus de vert ni de bleu) */
+  .tag{font-weight:600;padding:5px 12px}
+  .tag.bike,.tag.scoot{background:var(--cream);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+  .tag.new{background:var(--coral);color:#1B1717}
+  .tag.soon{background:var(--coral-l);color:var(--coral-d)}
+  /* 3. Pastilles numérotées et icônes : mêmes cercles partout */
+  .num{background:var(--coral);color:#1B1717}
+  .kpi .ic,.hl-item .ic,.lrules li .ic{border-radius:50%;background:var(--coral-l)}
+  /* 4. Cartes, accordéons et réponses : mêmes arrondis et mêmes bordures */
+  .kpi,.hl-item{border-radius:24px}
+  details{border-radius:20px;border:1px solid var(--line);padding:18px 22px}
+  .qopt{border-radius:20px;border-width:1px}
+  .lrules{border:1px solid var(--line);border-radius:32px;padding:30px 32px}
+  .why-kpis div{background:#fff;border:1px solid var(--line);border-radius:24px;padding:16px 18px}
+  /* 5. Bandeaux d'appel en corail, comme les sections phares de voi.com */
+  .appband,.quizband{border-radius:40px;padding:40px 44px}
+  .appband{background:var(--coral);color:#fff}
+  .appband h2{color:#fff}
+  .appband p{color:rgba(255,255,255,.92)}
+  .store{border-radius:999px;padding:12px 22px;color:var(--ink)}
+  .quizband{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  .quizband h2{color:var(--ink)}
+  .quizband p{color:var(--ink-2)}
+  .quizband .btn,.quizband .btn.coral{background:var(--coral);color:#1B1717}
+  .quizband .btn:hover{background:#E85B53}
+  .why-kpis b{color:var(--ink)}
+  /* 6. Carte : noms de villes dans la police du site */
+  .jvm-container svg text,#map svg text,svg text{font-family:"Plus Jakarta Sans",system-ui,sans-serif}
+  @media (max-width:720px){ table.prices{table-layout:fixed;width:100%;min-width:0} table.prices th,table.prices td{padding:10px 8px;font-size:13.5px;overflow-wrap:anywhere;white-space:normal} .appband,.quizband{border-radius:28px;padding:28px 24px} .lrules{border-radius:24px;padding:22px 20px} }
+
+  /* Pourquoi Voi ? : cartes cliquables et pages détaillées */
+  a.rlink{display:block;color:inherit;text-decoration:none;cursor:pointer;transition:border-color .15s,transform .15s,box-shadow .15s}
+  a.rlink:hover{border-color:var(--coral);transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,0,0,.07)}
+  .why-kpis a.rlink{background:#fff;border:1px solid var(--line);border-radius:24px;padding:16px 18px}
+  .why-kpis a.rlink b{display:block;font-size:28px;line-height:1.1;color:var(--ink)}
+  .why-kpis a.rlink span{color:var(--mute);font-size:14px}
+  .rule.rlink{display:flex;flex-direction:column}
+  .rule .rgo{margin-top:auto;padding-top:12px;font-weight:600;font-size:14.5px;color:var(--coral)}
+  .whero .whic{display:grid;place-items:center;width:64px;height:64px;border-radius:50%;background:var(--coral-l);font-size:32px;margin-bottom:18px}
+  .whero h1{max-width:18ch}
+  .wfigs{grid-template-columns:repeat(3,1fr)}
+  .wfigs b{font-size:32px}
+  .wbody{max-width:880px}
+  .wsec{margin:44px 0 0}
+  .wsec h2{font-size:clamp(26px,3vw,34px);margin:0 0 14px}
+  .wsec p{font-size:17.5px;line-height:1.75;color:var(--ink-2);margin:0 0 14px}
+  .wlist{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+  .wlist li{position:relative;padding:14px 18px 14px 46px;background:#fff;border:1px solid var(--line);border-radius:20px;font-size:16.5px;line-height:1.55;color:var(--ink-2)}
+  .wlist li::before{content:"→";position:absolute;left:18px;top:13px;color:var(--coral);font-weight:700}
+  .wsteps{list-style:none;padding:0;margin:0;counter-reset:ws;display:grid;gap:10px}
+  .wsteps li{counter-increment:ws;position:relative;padding:14px 18px 14px 62px;background:#fff;border:1px solid var(--line);border-radius:20px;font-size:16.5px;line-height:1.55;color:var(--ink-2)}
+  .wsteps li::before{content:counter(ws);position:absolute;left:16px;top:12px;width:32px;height:32px;border-radius:50%;background:var(--coral);color:#1B1717;font-weight:800;display:grid;place-items:center}
+  .wsteps li b{color:var(--ink)}
+  .wtable{overflow-x:auto}
+  .wmore{margin-top:54px}
+  .wmore h2{font-size:clamp(26px,3vw,34px)}
+  @media (max-width:720px){ .wfigs{grid-template-columns:1fr} .why-kpis{grid-template-columns:1fr 1fr} }
+
+  /* tuiles « Nos engagements » cliquables + pages détaillées */
+  a.why-tile{cursor:pointer}
+  a.why-tile:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(0,0,0,.1)}
+  .why-tile .wt-more{margin-top:14px;font-weight:600;font-size:14.5px;opacity:.9}
+  .why-tile.small{min-height:240px}
+  .why-figs a.stat{color:inherit;text-decoration:none}
+  .whero .wline{font-size:clamp(20px,2.4vw,26px);font-weight:700;letter-spacing:-.02em;margin:6px 0 0;color:var(--ink)}
+  .wchips{margin-top:18px}
+  .wchips span{background:#fff;border:1px solid var(--line)}
+
+  /* page Prix compétitifs : avantages */
+  .wben{margin-top:6px}
+  .wbody{max-width:none}
+  .wsec > p,.wsec > ul,.wsec > ol{max-width:880px}
+
+  /* GEO : bloc « En bref » en tête des pages détaillées */
+  .wtldr{max-width:880px;margin:30px 0 0;background:#fff;border:1px solid var(--line);border-left:0;border-radius:28px;padding:24px 28px}
+  .wtldr h2{font-size:15px;font-weight:700;color:var(--coral);margin:0 0 8px;letter-spacing:0}
+  .wtldr p{font-size:18px;line-height:1.65;color:var(--ink);margin:0}
+  .wtldr .wupd{font-size:13.5px;color:var(--mute);margin-top:12px}
+  .wbody details{max-width:880px}
+
+  /* mise en valeur : mots importants en gras, encadré « L'essentiel à retenir » */
+  .wbody strong,.wtldr strong,.whero .lead strong{font-weight:700;color:var(--ink)}
+  .wtldr strong{background:linear-gradient(transparent 62%, var(--coral-l) 62%)}
+  .wkey{max-width:880px;margin:44px 0 0}
+  .wkey ul{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:10px}
+  .wkey li{position:relative;padding-left:38px;font-size:17px;line-height:1.55}
+  .wkey li::before{content:"✓";position:absolute;left:0;top:0;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:14px}
+  .wkey strong{color:#fff;font-weight:800}
 </style>
 </head>
 <body>
@@ -2942,11 +3039,448 @@ const WHY_THEMES=[
     chips:["Vitesse bridée en zone piétonne","−20 % avec un casque à Marseille","Quiz sécurité"], link:"#securite", tone:"dark" },
   { tag:"Innovation", ic:"⚡", line:"Des véhicules pensés pour la ville.", big:["2026","nouvelle génération de véhicules"],
     chips:["Batteries échangeables","Dans Bonjour RATP","Vélos porte-skis"], link:"#pays", tone:"light" },
-  { tag:"Durabilité", ic:"🌱", line:"Moins de voitures, plus de ville.", big:["−95 %","d'émissions liées aux opérations"],
-    chips:["Véhicules qui durent ~5 ans","Moins de trajets en voiture","Complément du métro"], link:"#pays", tone:"cream" },
+  { tag:"Durabilité", ic:"🌱", line:"Moins de voitures, plus de ville.", big:["−77 %","d'intensité d'émissions depuis 2019"],
+    chips:["Véhicules 5× plus durables","Batteries recyclées ou réutilisées","Complément des transports en commun"], link:"#pays", tone:"cream" },
   { tag:"Proximité", ic:"📍", line:"Une app, partout en Europe.", big:["130+","villes, 13 pays"],
-    chips:["Maison Voi à Nantes","Espace Voi à Grenoble","Assistance dans l'app"], link:"#pays", tone:"coral-l", wide:true }
+    chips:["Maisons Voi en France","Assistance 24h/24 dans l'app","Aussi dans Bonjour RATP"], link:"#pays", tone:"coral-l", wide:true }
 ];
+/* ---------------- POURQUOI VOI ? : une page détaillée par tuile « Nos engagements » ---------------- */
+const WHY_IDS=["prix","securite","innovation","durabilite","proximite"];
+const WHY_FIG_LINK=["proximite","proximite","innovation","durabilite"];
+const WHY_PAGES={
+ "prix": {
+  "key": [
+   "Voi se paie **à la minute**, sans abonnement obligatoire.",
+   "Le prix exact s'affiche **avant chaque trajet** dans l'application.",
+   "**Pass et abonnements** font baisser le prix si vous roulez souvent.",
+   "À Paris : **0,25 €/min**, soit 2,50 € pour 10 minutes."
+  ],
+  "desc": "Combien coûte Voi ? Prix à la minute, sans abonnement obligatoire, pass et forfaits, tarifs solidaires : le fonctionnement des tarifs Voi expliqué simplement.",
+  "tldr": "Voi se paie à la minute, **sans abonnement obligatoire**. Selon la ville, un trajet comprend un prix de déverrouillage et un prix à la minute, ou seulement un prix à la minute ; le tarif exact **s'affiche dans l'application avant chaque trajet**. Pour ceux qui roulent souvent, des pass et des abonnements font baisser le prix. À Paris, par exemple, la minute coûte 0,25 € sans frais de déverrouillage.",
+  "lead": "Pas de vélo à acheter, à entretenir ou à se faire voler : avec Voi, vous payez uniquement le temps que vous roulez, et vous connaissez le prix avant de partir.",
+  "sections": [
+   {
+    "h": "Combien coûte un trajet Voi ?",
+    "p": [
+     "Le prix d'un trajet dépend de la ville. Il se compose soit d'un prix de déverrouillage et d'un prix à la minute, soit d'un prix à la minute seul. Avant de déverrouiller, l'application Voi affiche le tarif de la ville où vous vous trouvez : vous savez toujours combien vous allez payer.",
+     "Exemple à Paris (tarifs Voi, novembre 2026) : 0,25 € la minute, sans frais de déverrouillage. Un trajet de 10 minutes coûte donc 2,50 €. Le détail des prix de chaque ville se trouve sur sa page, rubrique « Tarifs »."
+    ]
+   },
+   {
+    "h": "Pourquoi Voi revient moins cher qu'il n'y paraît",
+    "benefits": [
+     [
+      "💶",
+      "Vous payez ce que vous roulez",
+      "À la minute, sans engagement. Un petit trajet coûte un petit prix."
+     ],
+     [
+      "👀",
+      "Aucune surprise",
+      "Le tarif de la ville s'affiche dans l'application avant chaque trajet."
+     ],
+     [
+      "🔧",
+      "Zéro frais cachés",
+      "Pas d'achat, pas d'entretien, pas d'assurance, pas d'antivol : Voi s'occupe de tout."
+     ],
+     [
+      "🎟️",
+      "Des pass qui font baisser la note",
+      "Pass 30 min, 1 h, forfaits en minutes ou abonnement : plus vous roulez, moins vous payez."
+     ],
+     [
+      "🅿️",
+      "Pas de parking à payer",
+      "Vous laissez le véhicule sur un emplacement autorisé, et c'est terminé."
+     ],
+     [
+      "⏱️",
+      "Du temps gagné",
+      "Pas d'attente du bus ni de détour : le trajet se fait d'une traite."
+     ]
+    ]
+   },
+   {
+    "h": "Faut-il un abonnement pour utiliser Voi ?",
+    "p": [
+     "Non. Il suffit de télécharger l'application, de créer un compte et d'enregistrer un moyen de paiement. Les abonnements et les pass sont facultatifs : ils servent seulement à payer moins cher quand on roule souvent."
+    ]
+   },
+   {
+    "h": "Quels pass et forfaits existent ?",
+    "ul": [
+     "**Des pass courts** (30 minutes, 1 heure), pratiques pour une sortie ou une visite.",
+     "**Des pass à la journée**, dans certaines villes.",
+     "**Des forfaits en minutes**, à utiliser quand vous voulez.",
+     "**Des abonnements mensuels** : à Paris, la minute descend dès 0,08 € avec l'abonnement."
+    ]
+   },
+   {
+    "h": "Existe-t-il des tarifs réduits ?",
+    "p": [
+     "Oui, dans plusieurs villes. Voi y propose des tarifs solidaires, par exemple pour les étudiants ou les personnes aux revenus modestes. Les conditions et la démarche sont indiquées dans l'application."
+    ]
+   },
+   {
+    "h": "Comment payer moins cher avec Voi ?",
+    "ol": [
+     "Choisir un pass : plusieurs trajets dans la journée ? Un pass revient souvent moins cher.",
+     "Repérer le véhicule le plus proche : la carte de l'application évite de chercher.",
+     "Bien se garer : un stationnement sur un emplacement autorisé évite des frais supplémentaires."
+    ]
+   }
+  ],
+  "faq": [
+   [
+    "Voi est-il payant à la minute ?",
+    "Oui. Selon la ville, vous payez un prix à la minute, parfois précédé d'un prix de déverrouillage. Le tarif s'affiche dans l'application avant chaque trajet."
+   ],
+   [
+    "Combien coûte un trajet de 10 minutes à Paris ?",
+    "2,50 € : la minute coûte 0,25 € à Paris, sans frais de déverrouillage (tarifs relevés en novembre 2026)."
+   ],
+   [
+    "Faut-il payer un abonnement ?",
+    "Non, l'abonnement est facultatif. Il permet seulement de payer la minute moins cher si vous roulez souvent."
+   ],
+   [
+    "Comment payer ?",
+    "Par carte bancaire ou par un autre moyen de paiement enregistré dans l'application Voi."
+   ]
+  ],
+  "cta": [
+   "Télécharger l'app et rouler",
+   ""
+  ]
+ },
+ "innovation": {
+  "key": [
+   "En 2026, Voi lance **3 nouveaux véhicules** : la trottinette Voiager 9 et les vélos Explorer 5 et Explorer Light 2.",
+   "Cette flotte 2026 est conçue pour durer **au moins 10 ans**.",
+   "Les batteries s'échangent **sans retirer le véhicule de la rue**.",
+   "En Île-de-France, les vélos et trottinettes Voi se louent aussi dans **Bonjour RATP**.",
+   "À Grenoble, **une centaine de vélos** ont un porte-skis depuis décembre 2025."
+  ],
+  "desc": "Innovation chez Voi : nouvelle génération 2026 (Voiager 9, Explorer 5, Explorer Light 2), batteries échangeables, location dans Bonjour RATP, vélos porte-skis à Grenoble.",
+  "tldr": "En février 2026, Voi a lancé **trois nouveaux véhicules** : la trottinette **Voiager 9** et les vélos électriques Explorer 5 et Explorer Light 2, d'abord à Stockholm puis dans d'autres villes européennes. Cette flotte est conçue pour durer au moins 10 ans. Les batteries sont échangeables, les véhicules Voi se louent aussi dans l'application Bonjour RATP en Île-de-France, et à Grenoble une centaine de vélos portent des porte-skis.",
+  "lead": "De nouveaux véhicules chaque année, des batteries qu'on échange sur place et des services adaptés à chaque ville : voici ce que Voi a réellement lancé.",
+  "faq": [
+   [
+    "Quels sont les nouveaux véhicules Voi en 2026 ?",
+    "La trottinette Voiager 9 et les vélos électriques Explorer 5 et Explorer Light 2. Ils sont entrés en service en février 2026, d'abord à Stockholm."
+   ],
+   [
+    "Comment Voi recharge-t-il ses véhicules ?",
+    "Les véhicules Voi ont des batteries échangeables : l'équipe remplace la batterie vide par une batterie chargée, sans retirer le véhicule de la circulation."
+   ],
+   [
+    "Peut-on louer un Voi avec Bonjour RATP ?",
+    "Oui. Tous les vélos et trottinettes Voi présents en Île-de-France se louent dans l'application Bonjour RATP (à Paris, ce sont des vélos)."
+   ],
+   [
+    "Où trouver un vélo Voi avec porte-skis ?",
+    "À Grenoble, depuis le 18 décembre 2025. L'application Voi indique les vélos équipés d'un porte-skis ou d'un siège enfant, et on peut les réserver jusqu'à 10 minutes à l'avance."
+   ]
+  ],
+  "sections": [
+   {
+    "h": "Quels sont les nouveaux véhicules Voi en 2026 ?",
+    "p": [
+     "En février 2026, Voi a présenté trois nouveaux modèles, déployés d'abord à Stockholm (3 000 trottinettes) puis progressivement dans d'autres villes européennes. Selon Voi, cette flotte est conçue pour une durée de service d'au moins 10 ans."
+    ],
+    "ul": [
+     "**Voiager 9** (trottinette) : guidon courbé, freins repositionnés, accélérateur plus grand, clignotants et sonnette revus, et 15 % de matériaux recyclés en plus que la génération précédente.",
+     "**Explorer 5** et Explorer Light 2 (vélos) : environ 40 % de capacité de batterie en plus que les versions précédentes et plus de sept fois plus de matériaux recyclés.",
+     "L'Explorer Light 2 est environ 15 % plus léger que l'Explorer 5."
+    ]
+   },
+   {
+    "h": "Des véhicules connectés",
+    "p": [
+     "Les trois modèles 2026 utilisent la plateforme connectée développée par Voi : GPS, zones géographiques qui adaptent le comportement du véhicule (par exemple les zones à vitesse réduite) et détection des chutes et des accidents. Le logiciel, conçu en interne, permet d'adapter les véhicules aux règles de chaque ville."
+    ]
+   },
+   {
+    "h": "Comment fonctionnent les batteries échangeables ?",
+    "p": [
+     "Les véhicules Voi ont des batteries échangeables : au lieu de transporter le véhicule entier jusqu'à un entrepôt, l'équipe remplace la batterie vide par une batterie chargée sur place, et le véhicule reste disponible.",
+     "D'après les analyses de cycle de vie menées pour Dott, TIER et Voi, les batteries échangeables ont permis de diviser par deux les trajets logistiques entre l'entrepôt et la ville et de réduire les émissions de CO₂ liées aux opérations de 56 % à 81 % selon les tests."
+    ]
+   },
+   {
+    "h": "Des services pensés pour chaque ville",
+    "ul": [
+     "**Île-de-France** : tous les vélos et trottinettes Voi se louent directement dans l'application Bonjour RATP, sans télécharger une autre application.",
+     "**Grenoble** : depuis le 18 décembre 2025, une centaine de vélos sont équipés d'un porte-skis, pour rejoindre la gare routière et les cars vers les stations. D'autres ont un siège enfant."
+    ]
+   }
+  ],
+  "cta": [
+   "Voir les villes Voi",
+   "#pays"
+  ],
+  "src": [
+   [
+    "Bonjour RATP",
+    "https://www.bonjour-ratp.fr/actualites/articles/velos-trottinettes-voi"
+   ],
+   [
+    "Zag Daily (fév. 2026)",
+    "https://zagdaily.com/micromobility/voi-unveils-new-vehicle-family/"
+   ],
+   [
+    "Cleanrider (déc. 2025)",
+    "https://www.cleanrider.com/actus/voi-portes-ski-velo-electrique-libre-service-grenoble/"
+   ],
+   [
+    "Analyses de cycle de vie Dott, TIER et Voi",
+    "https://ridedott.com/why-swappable-batteries-are-the-way-to-go/"
+   ]
+  ]
+ },
+ "durabilite": {
+  "key": [
+   "Voi a réduit son **intensité d'émissions de 77 %** depuis 2019.",
+   "Ses émissions directes et liées à l'énergie sont **presque éliminées** (électricité renouvelable, véhicules de service électriques).",
+   "La trottinette Voiager 4 dure **4,6 ans** (cadre), environ 5 fois plus que les premiers modèles ; la flotte 2026 vise au moins 10 ans.",
+   "**Chaque batterie Voi est recyclée ou réutilisée**.",
+   "**Près d'un usager sur deux** dit utiliser moins sa voiture."
+  ],
+  "desc": "Durabilité chez Voi : intensité d'émissions réduite de 77 % depuis 2019, véhicules qui durent plus longtemps, batteries recyclées ou réutilisées, moins de trajets en voiture.",
+  "tldr": "Selon son rapport de durabilité 2024, Voi a **réduit son intensité d'émissions de 77 % depuis 2019** et a **presque éliminé ses émissions directes** grâce à l'électricité renouvelable et à des véhicules de service électriques. Ses trottinettes durent environ 5 fois plus longtemps que les premiers modèles, chaque batterie est recyclée ou réutilisée, et près d'un usager sur deux dit utiliser moins sa voiture.",
+  "lead": "Un véhicule partagé est d'autant plus utile pour la planète qu'il dure longtemps et remplace des trajets en voiture. Voici ce que montrent les chiffres publiés par Voi et les études indépendantes.",
+  "faq": [
+   [
+    "Les trottinettes Voi sont-elles écologiques ?",
+    "Selon l'analyse de cycle de vie réalisée par EY, un trajet moyen en trottinette Voi émet 29 g de CO₂e par kilomètre et par passager, contre 184 g pour une voiture, en comptant toute la vie du véhicule."
+   ],
+   [
+    "Combien de temps dure une trottinette Voi ?",
+    "D'après l'étude Brightside (2022), le cadre de la Voiager 4 dure 4,6 ans et chaque batterie 3,7 ans. Voi annonce au moins 10 ans de service pour sa flotte 2026."
+   ],
+   [
+    "Que deviennent les batteries Voi ?",
+    "Chaque batterie est recyclée ou réutilisée. Par exemple, 450 batteries de vélos alimentent aujourd'hui des stations de mesure de l'eau, du sol et de l'air."
+   ],
+   [
+    "Voi remplace-t-il les transports en commun ?",
+    "Non, il les complète : 51 % des usagers utilisent Voi en plus des transports en commun."
+   ]
+  ],
+  "sections": [
+   {
+    "h": "Combien Voi a-t-il réduit ses émissions ?",
+    "p": [
+     "Dans son rapport de durabilité 2024, Voi indique avoir réduit son intensité d'émissions de 77 % depuis 2019. Ses émissions directes et celles liées à l'énergie sont presque éliminées, grâce au passage à l'électricité renouvelable et à des véhicules de service électriques.",
+     "Le principal défi restant concerne la fabrication et la chaîne d'approvisionnement. Voi travaille avec ses fournisseurs sur les matériaux recyclés, la conception modulaire et un nouveau site pour réparer et reconditionner les pièces détachées."
+    ]
+   },
+   {
+    "h": "Combien de temps durent les véhicules Voi ?",
+    "p": [
+     "L'étude indépendante Brightside (2022), menée sur les données réelles de Voi, estime que la trottinette Voiager 4 dure 4,6 ans pour le cadre et 3,7 ans pour chaque batterie, soit environ 5 fois plus que les modèles du lancement en 2018. Selon l'étude, ce sont les batteries échangeables et les pièces modulaires qui ont permis cet allongement.",
+     "La Voiager 5, lancée en mars 2022, était estimée à 5 ans de durée de vie. La nouvelle flotte de 2026 est conçue pour une durée de service d'au moins 10 ans."
+    ]
+   },
+   {
+    "h": "Que deviennent les batteries en fin de vie ?",
+    "ul": [
+     "**Chaque batterie Voi est recyclée ou réutilisée**, selon la responsable du développement durable de Voi.",
+     "**450 batteries de vélos** ont reçu une seconde vie en 2024 : elles alimentent des stations sans fil qui mesurent la qualité de l'eau, du sol et de l'air.",
+     "Les véhicules et batteries retirés de la flotte peuvent aussi être revendus via Voi Resell."
+    ]
+   },
+   {
+    "h": "Voi fait-il baisser l'usage de la voiture ?",
+    "p": [
+     "Selon le rapport 2024, près d'un usager sur deux dit avoir réduit son usage de la voiture ; Voi vise 60 % d'ici 2026. Et 51 % des usagers combinent déjà Voi avec les transports en commun : Voi ne les remplace pas, il les complète.",
+     "D'après l'analyse de cycle de vie réalisée par EY, un trajet moyen en trottinette Voi émet 29 g de CO₂e par kilomètre et par passager, contre 184 g pour une voiture."
+    ]
+   }
+  ],
+  "cta": [
+   "Des idées de trajets dans Le Mag",
+   "#mag"
+  ],
+  "src": [
+   [
+    "Rapport de durabilité 2024, via Zag Daily (sept. 2025)",
+    "https://zagdaily.com/trends/voi-cuts-emissions-intensity-by-77/"
+   ],
+   [
+    "Étude Brightside (2022)",
+    "https://futuretransport-news.com/brightside-publishes-e-scooter-lifespan-report"
+   ],
+   [
+    "Zag Daily (mars 2024)",
+    "https://zagdaily.com/trends/voi-e-bike-batteries-given-second-life-in-environment-monitoring-stations/"
+   ],
+   [
+    "Analyse de cycle de vie EY, via Cities Today",
+    "https://cities-today.com/?p=45748"
+   ],
+   [
+    "Zag Daily (fév. 2026)",
+    "https://zagdaily.com/micromobility/voi-unveils-new-vehicle-family/"
+   ]
+  ]
+ },
+ "proximite": {
+  "key": [
+   "Voi est présent dans **plus de 130 villes** de 13 pays européens.",
+   "**Une seule application** pour louer un vélo ou une trottinette Voi.",
+   "Le service client répond **24h/24 et 7j/7** depuis l'application.",
+   "Des **Maisons Voi** accueillent le public au Havre, à Grenoble et à Nantes.",
+   "En Île-de-France, les véhicules Voi se louent aussi dans **Bonjour RATP**."
+  ],
+  "desc": "Voi en Europe : plus de 130 villes dans 13 pays, une seule application, un service client 24h/24 et des Maisons Voi au Havre, à Grenoble et à Nantes.",
+  "tldr": "Voi est présent dans **plus de 130 villes de 13 pays européens**, avec **une seule application**. Le service client répond 24h/24 et 7j/7 depuis l'application. En France, des Maisons Voi accueillent le public au Havre, à Grenoble et à Nantes, et en Île-de-France les véhicules Voi se louent aussi dans Bonjour RATP.",
+  "lead": "Une application dans plus de 130 villes, une assistance joignable à toute heure et des lieux d'accueil en France : voici comment Voi reste proche de ses usagers.",
+  "faq": [
+   [
+    "Dans combien de pays et de villes Voi est-il présent ?",
+    "Selon Voi, dans plus de 130 villes de 13 pays européens."
+   ],
+   [
+    "Comment contacter Voi ?",
+    "Le service client est disponible 24h/24 et 7j/7 depuis l'application, ou via le QR code « Signaler à Voi » présent sur chaque vélo (à Nantes)."
+   ],
+   [
+    "Où se trouvent les Maisons Voi ?",
+    "Au Havre, à Grenoble (11 rue de la Liberté, près de la place Vaucanson) et à Nantes (boulevard Guist'hau), où une Maison Voi mobile circule aussi dans les communes."
+   ],
+   [
+    "Peut-on louer un Voi sans l'application Voi ?",
+    "En Île-de-France, oui : tous les vélos et trottinettes Voi de la région se louent aussi dans l'application Bonjour RATP."
+   ]
+  ],
+  "sections": [
+   {
+    "h": "Où peut-on rouler avec Voi ?",
+    "p": [
+     "Selon Voi, le service est présent dans plus de 130 villes de 13 pays européens, avec plus de 8 millions d'usagers et plus de 400 millions de trajets depuis sa création. Partout, on utilise la même application Voi.",
+     "En France, Voi est présent à Paris, Marseille, Grenoble, Nantes, au Havre et dans les Yvelines : chaque ville a sa page sur ce site, avec ses tarifs et ses règles."
+    ]
+   },
+   {
+    "h": "Où trouver de l'aide ?",
+    "ul": [
+     "**Dans l'application** : le service client Voi répond 24h/24 et 7j/7 (d'après Nantes Métropole).",
+     "**Sur le véhicule** : à Nantes, chaque vélo porte un QR code « Signaler à Voi ».",
+     "**Sur place** : dans les Maisons Voi (voir ci-dessous)."
+    ]
+   },
+   {
+    "h": "Les Maisons Voi en France",
+    "ul": [
+     "**Le Havre** : la première Maison Voi de France.",
+     "**Grenoble** : ouverte en avril 2026 au 11 rue de la Liberté, près de la place Vaucanson, pour répondre aux questions des usagers.",
+     "**Nantes** : une Maison Voi boulevard Guist'hau, et une Maison Voi mobile qui circule dans les communes de la métropole avec des essais et ateliers gratuits."
+    ]
+   },
+   {
+    "h": "Voi dans les applications de transport",
+    "p": [
+     "En Île-de-France, tous les vélos et trottinettes Voi se louent directement dans l'application Bonjour RATP, sans télécharger l'application Voi. Les règles (âge minimum, casque, stationnement) changent d'un pays à l'autre : avant de rouler à l'étranger, consultez la page du pays sur ce site."
+    ]
+   }
+  ],
+  "cta": [
+   "Trouver ma ville",
+   "#pays"
+  ],
+  "src": [
+   [
+    "Communiqué Voi (Innsbruck)",
+    "https://storage.mfn.se/13860b99-be0a-4a3f-bab3-327571a9c80f/schwedischer-e-scooter-anbieter-voi-startet-in-innsbruck.pdf"
+   ],
+   [
+    "Nantes Métropole (oct. 2026)",
+    "https://metropole.nantes.fr/actualites/velos-en-libre-service-voi-comment-ca-marche"
+   ],
+   [
+    "L'Essentiel Grenoble (avr. 2026)",
+    "https://www.lessentiel.fr/grenoble/bonnes-adresses/2026-04-08/un-lieu-dedie-la-location-de-deux-roues-grenoble-19415"
+   ],
+   [
+    "Bonjour RATP",
+    "https://www.bonjour-ratp.fr/actualites/articles/velos-trottinettes-voi"
+   ]
+  ]
+ }
+};
+
+
+/* GEO / SEO : description de la page et données structurées (FAQPage + Organization) mises à jour à chaque page */
+const SEO_DEFAULT_DESC=(document.querySelector('meta[name="description"]')||{}).content||"";
+function setSeo(desc, faq, name){
+  const m=document.querySelector('meta[name="description"]'); if(m) m.setAttribute("content", desc||SEO_DEFAULT_DESC);
+  let el=document.getElementById("ld-page"); if(el) el.remove();
+  if(!faq) return;
+  el=document.createElement("script"); el.type="application/ld+json"; el.id="ld-page";
+  el.textContent=JSON.stringify({"@context":"https://schema.org","@graph":[
+    {"@type":"FAQPage","name":name+" — Voi","dateModified":"2026-11-19","mainEntity":faq.map(q=>({"@type":"Question","name":q[0],"acceptedAnswer":{"@type":"Answer","text":q[1]}}))},
+    {"@type":"Organization","name":"Voi Technology","url":"https://www.voi.com","foundingDate":"2018","foundingLocation":"Stockholm"}]});
+  document.head.appendChild(el);
+}
+
+const md=t=>esc(t).replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>");
+const plain=t=>String(t).replace(/\*\*/g,"");
+function renderWhyPage(pid){
+  const i=WHY_IDS.indexOf(pid), w=WHY_THEMES[i], d=WHY_PAGES[pid];
+  if(pid==="securite"){ CURRENT="securite"; try{history.replaceState(null,"","#securite");}catch(e){} route(); return; }
+  if(i<0||!w||!d){ renderWhy(); return; }
+  document.title=`${w.tag} — Pourquoi Voi ? | Voi`;
+  setSeo(plain(d.desc||d.lead), d.faq&&d.faq.map(q=>[plain(q[0]),plain(q[1])]), w.tag);
+  const sec=x=>`<section class="wsec"><h2>${esc(plain(x.h))}</h2>
+    ${x.benefits?`<div class="rules wben">${x.benefits.map(b=>`<div class="rule"><div class="ic">${b[0]}</div><b>${esc(plain(b[1]))}</b><p>${md(b[2])}</p></div>`).join("")}</div>`:""}
+    ${(x.p||[]).map(t=>`<p>${md(t)}</p>`).join("")}
+    ${x.ul?`<ul class="wlist">${x.ul.map(t=>`<li>${md(t)}</li>`).join("")}</ul>`:""}
+    ${x.ol?`<ol class="wsteps">${x.ol.map(t=>{const k=t.indexOf(" : ");return `<li>${k>0?`<b>${md(t.slice(0,k))}</b>${md(t.slice(k))}`:md(t)}</li>`;}).join("")}</ol>`:""}
+    ${x.table?`<div class="wtable"><table class="prices"><thead><tr>${x.table[0].map(c=>`<th>${esc(c)}</th>`).join("")}</tr></thead><tbody>${x.table.slice(1).map(r=>`<tr>${r.map((c,k)=>k?`<td>${esc(c)}</td>`:`<td><b>${esc(c)}</b></td>`).join("")}</tr>`).join("")}</tbody></table></div>`:""}
+  </section>`;
+  $app.innerHTML=`
+  <div class="wrap">
+    <div class="crumbs"><a href="#pourquoi-voi">Pourquoi Voi ?</a> / ${esc(w.tag)}</div>
+    <section class="secu-hero whero">
+      <span class="whic" aria-hidden="true">${w.ic}</span>
+      <span class="eyebrow">Pourquoi Voi ? · Nos engagements</span>
+      <h1>${esc(w.tag)}</h1>
+      <p class="wline">${esc(w.line)}</p>
+      <p class="lead">${md(d.lead)}</p>
+      <div class="wt-chips wchips">${w.chips.map(c=>`<span>${esc(c)}</span>`).join("")}</div>
+    </section>
+    ${d.tldr?`<section class="wtldr" aria-label="En bref"><h2>En bref</h2><p>${md(d.tldr)}</p><p class="wupd">Mis à jour le 19 novembre 2026 · Sources : ${d.src?d.src.map(x=>`<a href="${x[1]}" target="_blank" rel="noopener">${esc(x[0])}</a>`).join(", "):"Voi Technology, pages ville de ce site"}</p></section>`:""}
+    ${d.figs?`<div class="why-kpis wfigs">${d.figs.map(f=>`<div><b>${esc(plain(f[0]))}</b><span>${esc(plain(f[1]))}</span></div>`).join("")}</div>`:""}
+    <div class="wbody">${d.sections.map(sec).join("")}
+      ${d.key?`<aside class="akey wkey"><h2><span>✓</span> L'essentiel à retenir</h2><ul>${d.key.map(k=>`<li>${md(k)}</li>`).join("")}</ul></aside>`:""}
+      ${d.faq?`<section class="wsec"><h2>Questions fréquentes</h2>${d.faq.map(q=>`<details><summary>${esc(plain(q[0]))}</summary><p>${md(q[1])}</p></details>`).join("")}</section>`:""}
+    </div>
+    <div class="quizband">
+      <div><h2>${esc(w.line)}</h2><p>${esc(w.chips.join(" · "))}</p></div>
+      <a class="btn coral" href="${d.cta[1]||(/Android/i.test(navigator.userAgent)?APP_AND:APP_IOS)}"${d.cta[1]?"":' target="_blank" rel="noopener"'}>${esc(d.cta[0])} →</a>
+    </div>
+    <section class="wmore">
+      <h2>Nos autres engagements</h2>
+      <div class="why-tiles">${WHY_THEMES.map((t,k)=>k===i?"":whyTile(t,k,true)).join("")}</div>
+    </section>
+    ${d.src?"":`<p class="why-src">Chiffres : page investisseurs de voi.com (rapport annuel 2025), rapport de durabilité 2024 de Voi Technology, étude Brightside (2022) ; tarifs et services des pages ville (novembre 2026).</p>`}
+    ${appBand()}
+  </div>`;
+}
+function whyTile(w,k,small){
+  const href = WHY_IDS[k]==="securite" ? "#securite" : "#pourquoi-voi/"+WHY_IDS[k];   /* la tuile Sécurité renvoie directement à la page Sécurité */
+  return `<a class="why-tile ${w.tone}${w.wide&&!small?" wide":""}${small?" small":""}" href="${href}">
+        <div class="wt-top"><span class="wt-ic" aria-hidden="true">${w.ic}</span><span class="wt-go" aria-hidden="true">→</span></div>
+        <h3>${esc(w.tag)}</h3>
+        <p class="wt-line">${esc(w.line)}</p>
+        ${w.big?`<div class="wt-big"><b>${esc(w.big[0])}</b><span>${esc(w.big[1])}</span></div>`:`<div class="wt-big"></div>`}
+        <div class="wt-chips">${w.chips.map(c=>`<span>${esc(c)}</span>`).join("")}</div>
+        <span class="wt-more">En savoir plus →</span>
+      </a>`;
+}
+
 function renderWhy(){
   document.title="Pourquoi choisir Voi ?";
   $app.innerHTML=`
@@ -2958,16 +3492,10 @@ function renderWhy(){
     </section>
     <section class="why-figs">
       <h2>Voi en chiffres</h2>
-      <div class="stats">${WHY_KPIS.map(k=>`<div class="stat"><b>${k[0]}</b><span>${esc(k[1])}</span></div>`).join("")}</div>
+      <div class="stats">${WHY_KPIS.map((k,j)=>`<a class="stat rlink" href="#pourquoi-voi/${WHY_FIG_LINK[j]||"proximite"}"><b>${k[0]}</b><span>${esc(k[1])}</span></a>`).join("")}</div>
     </section>
     <h2 class="why-h">Nos engagements</h2>
-    <div class="why-tiles">${WHY_THEMES.map(w=>`
-      <div class="why-tile ${w.tone}${w.wide?" wide":""}">
-        <h3>${esc(w.tag)}</h3>
-        <p class="wt-line">${esc(w.line)}</p>
-        ${w.big?`<div class="wt-big"><b>${esc(w.big[0])}</b><span>${esc(w.big[1])}</span></div>`:`<div class="wt-big"></div>`}
-        <div class="wt-chips">${w.chips.map(c=>`<span>${esc(c)}</span>`).join("")}</div>
-      </div>`).join("")}
+    <div class="why-tiles">${WHY_THEMES.map((w,k)=>whyTile(w,k,false)).join("")}
     </div>
     <p class="why-src">Chiffres : page investisseurs de voi.com (rapport annuel 2025, novembre 2026). Sources : rapport annuel 2025 et rapport de durabilité 2024 de Voi Technology, étude Brightside (2022) ; tarifs et services des pages ville (novembre 2026).</p>
     ${appBand()}
@@ -3326,10 +3854,10 @@ function route(){
   const city=CITIES.find(x=>x.id===id);
   const welcome=id.startsWith("ville/") ? ALL.find(x=>x.slug===id.slice(6)) : null;
   const safety = id==="securite" || id==="securite/quiz";
-  const faq = id==="faq", mag = id==="mag", why = id==="pourquoi-voi";
+  const faq = id==="faq", mag = id==="mag", why = id==="pourquoi-voi" || id.startsWith("pourquoi-voi/");
   if(faq) renderFaq();
   else if(mag) renderMag();
-  else if(why) renderWhy();
+  else if(why) (id.includes("/") ? renderWhyPage(id.split("/")[1]) : renderWhy());
   else if(id==="securite") renderSafety();
   else if(id==="securite/quiz") renderQuiz();
   else if(welcome) renderWelcome(welcome);
@@ -3352,6 +3880,7 @@ function route(){
   if(welcome || safety || faq || mag || why) window.scrollTo(0,0);
   else if(country || city) scrollToMap("auto");
   else window.scrollTo(0,0);
+  if(!/^pourquoi-voi\//.test(id) && typeof setSeo==="function") setSeo(null,null,"");
   closeArticle(); requestAnimationFrame(initCarousels);
 }
 
