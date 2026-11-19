@@ -690,6 +690,19 @@
   @media (max-width:430px){ nav.top a,.ddbtn{font-size:13.5px!important} nav.top > *,nav.top a{margin-left:0!important} nav.top{gap:4px 8px!important} }
   @media (max-width:380px){ nav.top a,.ddbtn{font-size:12.5px!important} nav.top{gap:4px 5px!important} .langbtn{padding:4px} }
   @media (max-width:430px){ .langdd{margin-left:8px} .langbtn .chev{display:none} .langbtn{padding:6px 10px;gap:4px;font-size:13px} .navdd{margin-left:9px} .ddbtn{font-size:14px;gap:3px} .ddbtn svg{display:none} header.top .wordmark img{width:58px} header.top .wrap{padding-left:12px;padding-right:12px} }
+
+  /* Articles en (presque) pleine largeur sur ordinateur */
+  @media (min-width:900px){
+    .acol{max-width:min(1240px,92vw);padding:52px 40px 80px}
+    .acol h1{font-size:clamp(40px,4.6vw,68px);max-width:none}
+    .alead{font-size:22px}
+    .acol p,.acol ul.alist{font-size:18.5px}
+    .acol ol.alist{font-size:18px}
+    .afacts{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+    .afaq{grid-template-columns:repeat(3,1fr);align-items:stretch}
+    .akey{padding:40px 48px}
+    .acover{height:min(62vh,640px)}
+  }
 </style>
 </head>
 <body>
