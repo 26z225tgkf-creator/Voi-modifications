@@ -204,11 +204,11 @@
   .home-figs b{display:block;font:800 clamp(30px,4vw,44px)/1.05 "Plus Jakarta Sans",system-ui,sans-serif;white-space:nowrap}
   .home-figs span{display:block;margin-top:6px;font-size:15px;color:var(--mute)}
   .home-links{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:48px}
-  .home-card{position:relative;display:flex;align-items:center;gap:12px;padding:18px 44px 18px 20px;border:1px solid var(--line);border-radius:var(--r);background:var(--card);color:var(--ink);text-decoration:none;transition:border-color .15s,transform .15s}
-  .home-card:hover{border-color:var(--coral);transform:translateY(-2px)}
-  .home-card .hi{font-size:22px}
-  .home-card b{font:700 16px/1.25 "Plus Jakarta Sans",system-ui,sans-serif}
-  .home-card .go{position:absolute;right:18px;color:var(--coral)}
+  .home-card{display:flex;gap:14px;align-items:flex-start;padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--ink);text-decoration:none;transition:background .15s,border-color .15s}
+  .home-card:hover{background:var(--cream);border-color:var(--coral)}
+  .home-card .hi{width:40px;height:40px;flex:none;border-radius:50%;background:var(--coral-l);display:grid;place-items:center;font-size:19px}
+  .home-card b{display:block;font-size:16px;font-weight:700;letter-spacing:-.01em}
+  .home-card small{display:block;font-size:13.5px;color:var(--mute);margin-top:2px;line-height:1.35}
   @media (max-width:860px){ .home-figs,.home-links{grid-template-columns:repeat(2,1fr)} }
   @media (max-width:430px){ .home-links{grid-template-columns:1fr} .home-hero{padding-top:40px} .home-figs{margin-top:40px} }
   /* pied de page : marque + 2 colonnes de liens + formulaire de retour */
@@ -1759,11 +1759,11 @@ let query="";
 /* ---------------- ACCUEIL ----------------
    Page d'entrée : chiffres clés, chiffres d'usage et accès direct aux pages stratégiques
    (trouver une ville, villes phares, Pourquoi Voi ?, sécurité, Mag, FAQ). */
-const HOME_LINKS=[            /* pages absentes du pied de page, sans ville en particulier */
-  ["💶","Tarifs et pass","#pourquoi-voi/prix"],
-  ["⚡","Innovation","#pourquoi-voi/innovation"],
-  ["🌱","Durabilité","#pourquoi-voi/durabilite"],
-  ["📍","Partout en Europe","#pourquoi-voi/proximite"]
+const HOME_LINKS=[            /* pages absentes du pied de page, sans ville en particulier ; même présentation que le menu « Découvrir » */
+  ["💶","Tarifs et pass","Payez seulement ce que vous roulez.","#pourquoi-voi/prix"],
+  ["⚡","Innovation","Des véhicules pensés pour la ville.","#pourquoi-voi/innovation"],
+  ["🌱","Durabilité","Moins de voitures, plus de ville.","#pourquoi-voi/durabilite"],
+  ["📍","Partout en Europe","Une app, partout en Europe.","#pourquoi-voi/proximite"]
 ];
 function renderHome(){
   document.title="Voi — Vélos et trottinettes électriques en libre-service en Europe";
@@ -1775,7 +1775,7 @@ function renderHome(){
       <div class="home-cta"><a class="btn coral" href="#pays">Trouver une ville →</a><a class="btn ghost" href="${APP_IOS}">Télécharger l'app</a></div>
     </section>
     <div class="home-figs">${VOI_FIGURES.map(k=>`<div><b>${k[0]}</b><span>${esc(k[1])}</span></div>`).join("")}</div>
-    <nav class="home-links" aria-label="Accès rapide">${HOME_LINKS.map(l=>`<a class="home-card" href="${l[2]}"><span class="hi" aria-hidden="true">${l[0]}</span><b>${esc(l[1])}</b><span class="go" aria-hidden="true">→</span></a>`).join("")}</nav>
+    <nav class="home-links" aria-label="Accès rapide">${HOME_LINKS.map(l=>`<a class="home-card" href="${l[3]}"><span class="hi" aria-hidden="true">${l[0]}</span><span class="ht"><b>${esc(l[1])}</b><small>${esc(l[2])}</small></span></a>`).join("")}</nav>
   </div>`;
 }
 
