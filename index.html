@@ -1247,13 +1247,27 @@ const COUNTRIES = [
       {name:"Linköping",lat:58.4108,lng:15.6214,m:"s"}
     ]
   },
-  { id:"norvege", more:"…et d'autres villes.", volume:"~10 000", prep:"en", code:"NO", flag:"🇳🇴", name:"Norvège",
-    intro:"Trottinettes Voi à Oslo (également réservables dans l'application Ruter), Trondheim et Drammen.",
+  { id:"norvege", volume:"~10 000", prep:"en", code:"NO", flag:"🇳🇴", name:"Norvège",
+    intro:"Trottinettes Voi à Oslo (également réservables dans l'application Ruter), Trondheim, Stavanger, Kristiansand et dans une quinzaine de communes.",
     stats:[],
     cities:[
       {name:"Oslo",lat:59.9139,lng:10.7522,m:"s",note:"Aussi disponible dans l'application Ruter."},
       {name:"Trondheim",lat:63.4305,lng:10.3951,m:"s",note:"Voi retenu comme l'un des trois opérateurs."},
-      {name:"Drammen",lat:59.7439,lng:10.2045,m:"s"}
+      {name:"Lillestrøm",lat:59.956,lng:11.0492,m:"s"},
+      {name:"Bærum",lat:59.894,lng:10.546,m:"s"},
+      {name:"Moss",lat:59.434,lng:10.6577,m:"s"},
+      {name:"Fredrikstad",lat:59.2181,lng:10.9298,m:"s"},
+      {name:"Stavanger",lat:58.97,lng:5.7331,m:"s"},
+      {name:"Bryne",lat:58.736,lng:5.6475,m:"s"},
+      {name:"Ålgård",lat:58.7656,lng:5.852,m:"s"},
+      {name:"Kristiansand",lat:58.1599,lng:8.0182,m:"s"},
+      {name:"Vennesla",lat:58.269,lng:7.9706,m:"s"},
+      {name:"Lillesand",lat:58.249,lng:8.3779,m:"s"},
+      {name:"Grimstad",lat:58.3405,lng:8.5934,m:"s"},
+      {name:"Arendal",lat:58.4618,lng:8.7724,m:"s"},
+      {name:"Askøy",lat:60.4085,lng:5.226,m:"s"},
+      {name:"Sotra",lat:60.357,lng:5.1,m:"s"},
+      {name:"Knarvik",lat:60.5464,lng:5.2869,m:"s"}
     ]
   },
   { id:"danemark", more:"…et d'autres villes.", volume:"~5 000", prep:"au", code:"DK", flag:"🇩🇰", name:"Danemark",
@@ -1695,7 +1709,8 @@ const GONE={
   "coventry-univ-de-warwick":{name:"Coventry",c:"royaume-uni",alt:"oxford",why:"le service est désormais assuré par un autre opérateur"},
   "liverpool":{name:"Liverpool",c:"royaume-uni",alt:"londres",when:"février 2026"},
   "bergen":{name:"Bergen",c:"norvege",alt:"oslo",when:"avril 2026",why:"Voi n'a pas obtenu de nouvelle licence"},
-  "vantaa":{name:"Vantaa",c:"finlande",alt:"helsinki"}
+  "vantaa":{name:"Vantaa",c:"finlande",alt:"helsinki"},
+  "drammen":{name:"Drammen",c:"norvege",alt:"oslo"}
 };
 const GONE_COUNTRIES={ "portugal":{name:"Portugal",prep:"au",why:"Voi a arrêté ses activités au Portugal"} };
 function goneNotice(g){
