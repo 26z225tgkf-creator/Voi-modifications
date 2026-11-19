@@ -610,8 +610,7 @@
   .why-figs span{font-size:15px;color:var(--ink-2)}
   .why-h{font-size:clamp(32px,4vw,48px);margin:54px 0 18px}
   .why-tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-  .why-tile{display:flex;flex-direction:column;min-height:330px;padding:28px 30px;border-radius:32px;text-decoration:none;color:var(--ink);transition:transform .2s ease,box-shadow .2s ease}
-  .why-tile:hover{transform:translateY(-4px);box-shadow:0 22px 40px -26px rgba(0,0,0,.45)}
+  .why-tile{display:flex;flex-direction:column;min-height:290px;padding:28px 30px;border-radius:32px;text-decoration:none;color:var(--ink);transition:transform .2s ease,box-shadow .2s ease}
   .why-tile.wide{grid-column:1/-1;min-height:260px}
   .why-tile.coral{background:var(--coral)}
   .why-tile.dark{background:var(--ink-2);color:#fff}
@@ -622,7 +621,7 @@
   .wt-ic{font-size:34px}
   .wt-go{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:20px;background:rgba(255,255,255,.75);color:var(--ink);transition:transform .2s ease}
   .why-tile:hover .wt-go{transform:translateX(4px)}
-  .why-tile h3{font-size:clamp(30px,3.4vw,42px);margin:18px 0 4px;color:inherit}
+  .why-tile h3{font-size:clamp(30px,3.4vw,42px);margin:0 0 4px;color:inherit}
   .why-tile .wt-line{margin:0;font-size:17px;color:inherit;opacity:.85}
   .wt-big{margin:auto 0 16px;padding-top:22px}
   .wt-big b{display:block;font-size:clamp(40px,5vw,60px);font-weight:800;letter-spacing:-.05em;line-height:1}
@@ -2728,13 +2727,12 @@ function renderWhy(){
     </section>
     <h2 class="why-h">Nos engagements</h2>
     <div class="why-tiles">${WHY_THEMES.map(w=>`
-      <a class="why-tile ${w.tone}${w.wide?" wide":""}" href="${w.link}">
-        <div class="wt-top"><span class="wt-ic">${w.ic}</span><span class="wt-go">→</span></div>
+      <div class="why-tile ${w.tone}${w.wide?" wide":""}">
         <h3>${esc(w.tag)}</h3>
         <p class="wt-line">${esc(w.line)}</p>
         <div class="wt-big"><b>${esc(w.big[0])}</b><span>${esc(w.big[1])}</span></div>
         <div class="wt-chips">${w.chips.map(c=>`<span>${esc(c)}</span>`).join("")}</div>
-      </a>`).join("")}
+      </div>`).join("")}
     </div>
     <p class="why-src">Sources : rapport annuel 2025 et rapport de durabilité 2024 de Voi Technology, étude Brightside (2022) ; tarifs et services des pages ville (novembre 2026).</p>
     ${appBand()}
