@@ -599,6 +599,27 @@
   .planner .wform{margin-top:0}
   .planner .wmodes{margin-bottom:12px}
   @media (max-width:860px){ .planner .pgrid{grid-template-columns:1fr} }
+  /* page Pourquoi Voi ? : une section par engagement */
+  .why-nav{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 6px;padding:10px 0;position:sticky;top:76px;z-index:5;background:var(--cream)}
+  .why-nav button{cursor:pointer;font-family:inherit;background:#fff;border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-weight:600;font-size:14.5px;color:var(--ink);text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .why-nav button:hover{border-color:var(--coral);color:var(--coral-d)}
+  .why-sec{display:grid;grid-template-columns:1fr 1.15fr;gap:22px;margin-top:26px;scroll-margin-top:140px}
+  .why-big{background:var(--coral);color:var(--ink);border-radius:var(--r);padding:32px 34px;display:flex;flex-direction:column;align-items:flex-start}
+  .why-sec.alt .why-big{background:var(--ink-2);color:#fff}
+  .why-sec.alt .why-big p,.why-sec.alt .why-big h2{color:#fff}
+  .why-big .lrules-badge{background:rgba(255,255,255,.85);color:var(--ink)}
+  .why-big h2{font-size:clamp(26px,3vw,36px);margin:12px 0 8px;line-height:1.08}
+  .why-big p{margin:0 0 18px;font-size:16px}
+  .why-stat{margin:auto 0 20px}
+  .why-stat b{display:block;font-size:clamp(38px,5vw,56px);font-weight:800;letter-spacing:-.04em;line-height:1}
+  .why-stat span{font-size:14.5px;opacity:.85}
+  .why-sec.alt .why-big .btn{background:var(--coral);color:#1B1717}
+  .why-pts{display:grid;gap:12px}
+  .why-pt{display:flex;gap:16px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:22px;padding:20px 22px}
+  .why-pt .ic{flex:none;width:46px;height:46px;border-radius:14px;background:var(--coral-l);display:grid;place-items:center;font-size:22px}
+  .why-pt b{font-size:17px}
+  .why-pt p{margin:4px 0 0;font-size:14.5px;color:var(--ink-2)}
+  @media (max-width:860px){ .why-sec{grid-template-columns:1fr} .why-nav{position:static} }
 </style>
 </head>
 <body>
@@ -2665,13 +2686,44 @@ const FAQ = [
 let faqCat="all";
 /* ---------------- POURQUOI VOI ? ---------------- */
 const WHY_KPIS=[["115 M+","trajets en 2025"],["+55 %","de trajets en un an"],["130+","villes en Europe"],["12","pays"]];
-const WHY=[
-  ["🌍","Une seule app dans toute l'Europe","Le même compte et le même moyen de paiement fonctionnent dans plus de 130 villes et 12 pays. En voyage, vous roulez comme chez vous."],
-  ["🚲","Vélos et trottinettes","Selon le trajet, choisissez un vélo électrique ou une trottinette. Voi déploie désormais plus de vélos que de trottinettes."],
-  ["🔋","Batteries échangeables","Les batteries sont changées sur place au lieu de transporter les véhicules : les émissions liées aux opérations ont baissé de 95 %."],
-  ["♻️","Des véhicules qui durent","Pièces modulaires, réparations locales, seconde vie pour les véhicules et les batteries : une trottinette Voi roule environ 5 ans."],
-  ["🚗","Moins de voiture en ville","Près de la moitié des usagers disent moins utiliser leur voiture depuis qu'ils roulent avec Voi."],
-  ["🦺","La sécurité d'abord","Objectif « Vision Zéro » d'ici 2030 : zéro mort et zéro blessé grave. Révisez les règles et testez-vous avec notre quiz."],
+/* Thèmes de la page, sur le modèle de la page « Why » de Lime (chiffres clés, puis une
+   section par engagement) — contenu propre à Voi, repris des pages ville et des sources citées. */
+const WHY_THEMES=[
+  { id:"prix", tag:"Prix", ic:"💶", title:"Des petits prix, pour tous les trajets",
+    lead:"Payez seulement ce que vous roulez, ou économisez avec un pass dès que vous roulez souvent.",
+    big:["dès 0,08 €","la minute avec un forfait à Paris"],
+    pts:[["⏱️","À la minute, sans surprise","Le prix s'affiche avant de partir. À Paris, 0,25 € / min sans frais de déverrouillage ; sur notre carte, le prix estimé de votre trajet s'affiche à côté du temps."],
+         ["🎟️","Pass et forfaits","Pass 30 minutes, pass jour, forfaits de minutes et abonnements mensuels selon les villes : plus vous roulez, moins vous payez."],
+         ["🤝","Tarifs solidaires","Tarif solidaire à Marseille, jusqu'à −80 % selon le quotient familial à Nantes, tarif social au Havre : la mobilité pour tous."]],
+    link:["Voir les tarifs à Paris →","#ville/paris"] },
+  { id:"innovation", tag:"Innovation", ic:"⚡", title:"Des véhicules pensés pour la ville",
+    lead:"Une nouvelle génération de vélos et de trottinettes, et une seule application dans toute l'Europe.",
+    big:["1 app","pour plus de 130 villes en Europe"],
+    pts:[["🛴","Nouvelle génération 2026","Trottinettes Voiager 9 et vélo électrique Explorer 4 : plus robustes, plus confortables, déployés en premier à Stockholm et Zurich."],
+         ["🔋","Batteries échangeables","Les batteries sont changées sur place, sans emporter les véhicules : vos vélos et trottinettes restent chargés et disponibles."],
+         ["📱","Intégré aux transports","Les vélos Voi se louent aussi dans Bonjour RATP en Île-de-France et dans l'application Ruter à Oslo. Vélos porte-skis à Grenoble."]],
+    link:["Planifier un trajet →","#ville/paris"] },
+  { id:"securite", tag:"Sécurité", ic:"🦺", title:"La sécurité d'abord, à chaque trajet",
+    lead:"Objectif « Vision Zéro » d'ici 2030 : zéro mort et zéro blessé grave sur nos véhicules.",
+    big:["Vision Zéro","objectif 2030"],
+    pts:[["🐢","Vitesse adaptée automatiquement","Dans les zones piétonnes et les zones lentes, la vitesse est bridée toute seule : la carte de l'application les affiche en couleur."],
+         ["⛑️","Le casque récompensé","À Marseille, −20 % sur le trajet avec un selfie casqué. Au Havre, la conduite prudente est récompensée."],
+         ["🧠","Apprendre en jouant","Les règles essentielles et un quiz de 10 questions pour vérifier vos réflexes avant de rouler."]],
+    link:["Faire le quiz sécurité →","#securite/quiz"] },
+  { id:"planete", tag:"Durabilité", ic:"🌱", title:"Moins de voitures, des villes plus vivables",
+    lead:"Chaque trajet Voi peut remplacer un trajet en voiture : moins de bruit, moins de pollution, plus de place.",
+    big:["−95 %","d'émissions liées aux opérations grâce aux batteries échangeables"],
+    pts:[["🚗","Moins de voiture","Près de la moitié des usagers disent moins utiliser leur voiture depuis qu'ils roulent avec Voi."],
+         ["♻️","Des véhicules qui durent","Pièces modulaires, réparations locales, seconde vie pour les batteries : une trottinette Voi roule environ 5 ans."],
+         ["🚉","Le complément du métro et du bus","Pour le premier et le dernier kilomètre, Voi rejoint les gares et les arrêts que la marche rendrait trop longs."]],
+    link:["Lire nos idées de balades →","#ville/paris"] },
+  { id:"proche", tag:"Proximité", ic:"📍", title:"Près de chez vous, partout en Europe",
+    lead:"Le même compte et le même paiement dans 12 pays : en voyage, vous roulez comme chez vous.",
+    big:["130+","villes en Europe"],
+    pts:[["🏠","Des lieux pour nous rencontrer","La Maison Voi à Nantes, avec essais et ateliers gratuits, et un espace Voi au cœur de Grenoble."],
+         ["🌍","Une app, 12 pays","Paris, Berlin, Rome, Stockholm, Londres… vos pass et votre compte vous suivent."],
+         ["💬","Une aide quand il faut","Signalement, objet oublié, trajet qui ne se termine pas : l'assistance répond depuis l'application."]],
+    link:["Voir nos pays →","#pays"] }
 ];
 function renderWhy(){
   document.title="Pourquoi choisir Voi ?";
@@ -2683,14 +2735,28 @@ function renderWhy(){
       <p class="lead">Née à Stockholm en 2018, Voi propose des vélos et trottinettes électriques en libre-service partout en Europe, pour des trajets plus courts, plus simples et plus propres.</p>
     </section>
     <div class="why-kpis">${WHY_KPIS.map(k=>`<div><b>${k[0]}</b><span>${esc(k[1])}</span></div>`).join("")}</div>
-    <div class="rules">${WHY.map(r=>`<div class="rule"><div class="ic">${r[0]}</div><b>${esc(r[1])}</b><p>${esc(r[2])}</p></div>`).join("")}</div>
+    <nav class="why-nav" aria-label="Nos engagements">${WHY_THEMES.map(w=>`<button type="button" data-why="${w.id}">${w.ic} ${esc(w.tag)}</button>`).join("")}</nav>
+    ${WHY_THEMES.map((w,i)=>`
+    <section class="why-sec ${i%2?"alt":""}" id="why-${w.id}">
+      <div class="why-big">
+        <span class="lrules-badge">${esc(w.tag)}</span>
+        <h2>${esc(w.title)}</h2>
+        <p>${esc(w.lead)}</p>
+        <div class="why-stat"><b>${esc(w.big[0])}</b><span>${esc(w.big[1])}</span></div>
+        <a class="btn" href="${w.link[1]}">${esc(w.link[0])}</a>
+      </div>
+      <div class="why-pts">${w.pts.map(p=>`<div class="why-pt"><div class="ic">${p[0]}</div><div><b>${esc(p[1])}</b><p>${esc(p[2])}</p></div></div>`).join("")}</div>
+    </section>`).join("")}
     <div class="quizband">
       <div><h2>Trouvez Voi près de chez vous</h2><p>Choisissez un pays puis une ville pour voir les tarifs, les zones et les balades.</p></div>
       <a class="btn coral" href="#pays">Voir nos pays →</a>
     </div>
-    <p class="why-src">Sources : rapport annuel 2025 et rapport de durabilité 2024 de Voi Technology, étude Brightside sur la durée de vie des trottinettes (2022).</p>
+    <p class="why-src">Sources : rapport annuel 2025 et rapport de durabilité 2024 de Voi Technology, étude Brightside sur la durée de vie des trottinettes (2022) ; tarifs et services relevés sur les pages ville (novembre 2026), susceptibles d'évoluer.</p>
     ${appBand()}
   </div>`;
+  $app.querySelectorAll(".why-nav button").forEach(a=>a.addEventListener("click",e=>{
+    const el=document.getElementById("why-"+a.dataset.why); if(el) el.scrollIntoView({behavior:"smooth",block:"start"});
+  }));
 }
 
 function renderFaq(){
