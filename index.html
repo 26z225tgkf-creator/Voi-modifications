@@ -518,7 +518,7 @@
     --land:#F3E9DE; --land-on:#FBD2CE;
     --r:28px;
   }
-  body{color:var(--ink);background:var(--cream)}
+  body{color:var(--ink);background:var(--cream);letter-spacing:-.012em}   /* texte courant légèrement resserré, comme voi.com */
   h1,h2,h3{font-weight:800;letter-spacing:-.04em}
   p{color:var(--ink)}
   /* en-tête blanc, liens noirs, lien actif en corail */
@@ -2780,12 +2780,24 @@ function trText(s){
 }
 /* each text node / attribute keeps its French original, so the language can change back and forth */
 const I18N_ORIG=new WeakMap(), I18N_LAST=new WeakMap(), I18N_ATTRS=["placeholder","aria-label","title","alt"];
+/* typographie (comme voi.com) : apostrophe courbe ’ partout ; en français, espace fine
+   insécable avant ? ! : ; et à l'intérieur des « guillemets ». Appliquée à l'affichage
+   seulement : les textes d'origine (et les clés de traduction) ne changent pas. */
+function typo(s){
+  if(!s || !/['?!:;«»]/.test(s)) return s;
+  s=s.replace(/(\p{L})'(?=\p{L})/gu,"$1’");
+  if(LANG==="fr"){
+    s=s.replace(/[ \u00A0]([?!:;»])/g,"\u202F$1").replace(/«[ \u00A0]/g,"«\u202F")
+       .replace(/(\p{L})([?!;])(?=\s|$)/gu,"$1\u202F$2");
+  }
+  return s;
+}
 function i18nSkip(el){ return !el || el.closest("script,style,noscript,[data-noi18n]"); }
 function i18nText(n){
   if(i18nSkip(n.parentElement)) return;
   let orig=I18N_ORIG.get(n);
   if(orig===undefined || I18N_LAST.get(n)!==n.nodeValue){ orig=n.nodeValue; I18N_ORIG.set(n,orig); }
-  const t=trText(orig);
+  const t=typo(trText(orig));
   if(t!==n.nodeValue) n.nodeValue=t;
   I18N_LAST.set(n,n.nodeValue);
 }
@@ -2794,7 +2806,7 @@ function i18nAttr(el,a){
   let rec=I18N_ORIG.get(el); if(!rec){ rec={}; I18N_ORIG.set(el,rec); }
   const cur=el.getAttribute(a);
   if(!rec[a] || rec[a][1]!==cur) rec[a]=[cur,cur];
-  const t=trText(rec[a][0]);
+  const t=typo(trText(rec[a][0]));
   if(t!==cur) el.setAttribute(a,t);
   rec[a][1]=t;
 }
