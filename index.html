@@ -203,6 +203,9 @@
   summary::after{content:"+";color:var(--coral-d);font-size:22px;line-height:1}
   details[open] summary::after{content:"–"}
   details p{margin:10px 0 0;color:var(--ink-2)}
+  /* accueil seulement : logo « voi. » dans l'autre couleur de la charte (noir) */
+  body.is-home header.top .wordmark img{filter:brightness(0)}
+  body.is-home .fbrand-w{color:var(--ink)}
   /* accueil : photo plein écran + 6 sections */
   .home-hero2{position:relative;min-height:min(84vh,740px);display:flex;align-items:flex-end;overflow:hidden;background:linear-gradient(135deg,var(--coral),var(--coral-d));color:#fff}
   .hh-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%}
@@ -4103,6 +4106,7 @@ function route(){
   const safety = id==="securite" || id==="securite/quiz";
   const faq = id==="faq", mag = id==="mag", why = id==="pourquoi-voi" || id.startsWith("pourquoi-voi/");
   const home = id==="" || id==="accueil";
+  document.body.classList.toggle("is-home", home);   /* logo « voi. » en noir sur l'accueil seulement */
   if(home) renderHome();
   else if(faq) renderFaq();
   else if(mag) renderMag();
