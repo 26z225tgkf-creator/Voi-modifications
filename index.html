@@ -1322,17 +1322,19 @@ const COUNTRIES = [
     ]
   },
   { id:"suisse", volume:"5 000 – 8 000", prep:"en", code:"CH", flag:"🇨🇭", name:"Suisse",
-    intro:"Voi est présent dans 16 villes et communes suisses. Zurich a été la première ville du pays à accueillir le vélo électrique Explorer 4.",
-    stats:[["16","villes et communes"]],
+    intro:"Voi est présent dans 9 villes et communes suisses. Zurich a été la première ville du pays à accueillir le vélo électrique Explorer 4.",
+    stats:[["9","villes et communes"]],
     cities:[
       {name:"Zurich",lat:47.3769,lng:8.5417,m:"bs",note:"Trottinettes et vélos électriques Explorer 4."},
       {name:"Berne",lat:46.948,lng:7.4474,m:"s",note:"Autorisation jusqu'en 2029 ; stationnements dans les gares BLS."},
-      {name:"Winterthour",lat:47.4988,lng:8.7237,m:"s",note:"Première ville suisse de Voi, en 2019."},
+      {name:"Winterthour",lat:47.4988,lng:8.7237,m:"bs",note:"Seul opérateur depuis 2026 : 450 trottinettes et 100 vélos électriques."},
       {name:"Bâle",lat:47.5596,lng:7.5886,m:"s"},
-      {name:"Saint-Gall",lat:47.4245,lng:9.3767,m:"s"},
       {name:"Frauenfeld",lat:47.5536,lng:8.8986,m:"s"},
-      {name:"Illnau-Effretikon",lat:47.4076,lng:8.7246,m:"s"}
-    ], more:"…et d'autres communes des agglomérations."
+      {name:"Illnau-Effretikon",lat:47.4076,lng:8.7246,m:"s"},
+      {name:"Bienne",lat:47.1368,lng:7.2468,m:"s"},
+      {name:"Nyon",lat:46.3833,lng:6.2396,m:"s"},
+      {name:"Schaffhouse",lat:47.6973,lng:8.6349,m:"s",note:"Repris en juillet 2026, aussi à Neuhausen am Rheinfall."}
+    ]
   },
   { id:"autriche", prep:"en", code:"AT", flag:"🇦🇹", name:"Autriche",
     intro:"Plus de 2 millions de trajets Voi à Vienne, et une nouvelle ville en 2026 : Innsbruck.",
@@ -1742,7 +1744,8 @@ const GONE={
   "bergen":{name:"Bergen",c:"norvege",alt:"oslo",when:"avril 2026",why:"Voi n'a pas obtenu de nouvelle licence"},
   "vantaa":{name:"Vantaa",c:"finlande",alt:"helsinki"},
   "drammen":{name:"Drammen",c:"norvege",alt:"oslo"},
-  "peterborough":{name:"Peterborough",c:"royaume-uni",alt:"cambridge"}
+  "peterborough":{name:"Peterborough",c:"royaume-uni",alt:"cambridge"},
+  "saint-gall":{name:"Saint-Gall",c:"suisse",alt:"zurich"}
 };
 const GONE_COUNTRIES={ "portugal":{name:"Portugal",prep:"au",why:"Voi a arrêté ses activités au Portugal"} };
 function goneNotice(g){
